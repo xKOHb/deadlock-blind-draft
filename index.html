@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Deadlock Minigames</title>
-<meta name="description" content="Мини-игры для друзей по мотивам Deadlock. Сейчас доступен «Слепой драфт»: загадывай карты предметов, выбирай свои вслепую и бейтесь 1 на 1.">
+<meta name="description" content="Мини-режимы для игры в Deadlock с друзьями: слепой драфт предметов, аукцион и другие. Выбери режим, собери билд и бейтесь 1 на 1 в игре.">
 <meta name="theme-color" content="#141311">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141311'/%3E%3Cpath d='M32 6 58 32 32 58 6 32z' fill='%23e0c58a'/%3E%3Cpath d='M32 18 46 32 32 46 18 32z' fill='%23141311'/%3E%3Cpath d='M32 25 39 32 32 39 25 32z' fill='%237ec4d1'/%3E%3C/svg%3E">
 <!-- Превью ссылки (Telegram, Discord). ВАЖНО: замени YOUR-DOMAIN на адрес сайта, картинка og.png лежит рядом с index.html -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Deadlock Minigames">
-<meta property="og:title" content="Deadlock Minigames — мини-игры для друзей">
-<meta property="og:description" content="Слепой драфт предметов и другие мини-игры по Deadlock. Заходи по ссылке!">
+<meta property="og:title" content="Deadlock Minigames — мини-режимы для игры в Deadlock">
+<meta property="og:description" content="Слепой драфт, аукцион предметов и другие мини-режимы для матча в Deadlock. Заходи по ссылке!">
 <meta property="og:image" content="https://YOUR-DOMAIN/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -167,6 +167,19 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ii-mline{display:flex;gap:8px;align-items:baseline;margin-top:6px;padding:6px 10px;background:rgba(0,0,0,.3);font-size:13px;font-family:var(--f-itext)}
 .ii-mline b{font-weight:600}
 .ii-cd{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);padding:1px 8px;font-family:var(--f-itext)}
+.hub-card{transition:transform .2s,box-shadow .2s}.hub-card.live:hover{transform:translateY(-4px);box-shadow:0 0 0 1px var(--goldDim),0 10px 34px rgba(224,197,138,.22)}
+.hub-art{height:96px;display:flex;align-items:center;gap:0;color:var(--gold2)}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border:1px solid var(--edge2);background:rgba(20,19,17,.6);font-family:var(--f-display);letter-spacing:.06em;font-size:12px;color:var(--gold2);text-transform:uppercase}
+.faq-q{font-family:var(--f-head);font-weight:700;font-size:16px;color:var(--gold2);margin-bottom:4px}
+.faq-a{font-size:14px;color:var(--text);line-height:1.55}
+.gear{width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--gold);background:var(--bg2);color:var(--gold2);cursor:pointer;transition:transform .4s}
+.gear:hover{transform:rotate(60deg);border-color:var(--gold2)}
+.set-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:10px 0;border-bottom:1px solid rgba(74,65,50,.6)}
+.set-row:last-child{border-bottom:0}
+.set-l{font-family:var(--f-head);font-weight:700;color:var(--gold2);font-size:15px}
+.no-anim *,.no-anim *::before,.no-anim *::after{animation:none!important;transition:none!important}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.hub-art .fl{animation:floaty 4s ease-in-out infinite}
 .stepper{display:flex;flex-wrap:wrap}
 .step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;font-size:13px;color:var(--muted);border-bottom:2px solid var(--edge)}
 .step.on{color:var(--gold2);border-color:var(--gold2)}
@@ -1132,24 +1145,298 @@ function CatalogError({err, onRetry}){
     <div><button className="btn gold" onClick=${onRetry}>Повторить</button></div>
   </div>`;
 }
+/* ======================= МУЗЫКА (генерируется прямо в браузере, без файлов) =======================
+   Настоящие саундтреки Deadlock мы не вшиваем (авторские права). Свои mp3 можно добавить в FILE_TRACKS: {id:'my', name:'Мой трек', src:'music/my.mp3'}. */
+const FILE_TRACKS = [];
+const GEN_TRACKS = [
+  {id:'noir', name:'Ночной нуар', bpm:66, root:45, wave:'triangle', chord:[0,3,7,10], prog:[0,5,3,7], arp:false},
+  {id:'neon', name:'Неоновый дрейф', bpm:84, root:40, wave:'sawtooth', chord:[0,3,7,12], prog:[0,8,5,10], arp:true},
+  {id:'rain', name:'Дождь над городом', bpm:54, root:38, wave:'sine', chord:[0,4,7,11], prog:[0,3,8,5], arp:true}
+];
+const ALL_TRACKS = GEN_TRACKS.concat(FILE_TRACKS);
+const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'noir', anim:true};
+const Music = (() => {
+  let ctx = null, master = null, timer = null, cur = null, vol = .35, step = 0, next = 0, audio = null;
+  const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
+  const ensure = () => {
+    if (!ctx){
+      const C = window.AudioContext || window.webkitAudioContext; if (!C) return false;
+      ctx = new C(); master = ctx.createGain(); master.gain.value = vol;
+      const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1500;
+      master.connect(lp); lp.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return true;
+  };
+  const note = (m, t, dur, type, g) => {
+    const o = ctx.createOscillator(), e = ctx.createGain(); o.type = type; o.frequency.value = mtof(m);
+    e.gain.setValueAtTime(0.0001, t); e.gain.linearRampToValueAtTime(g, t + Math.min(.5, dur / 3)); e.gain.linearRampToValueAtTime(0.0001, t + dur);
+    o.connect(e); e.connect(master); o.start(t); o.stop(t + dur + .05);
+  };
+  const tick = () => {
+    const T = cur, beat = 60 / T.bpm;
+    while (next < ctx.currentTime + .6){
+      const b = step % 8, ch = T.prog[Math.floor(step / 8) % T.prog.length];
+      if (b === 0){ T.chord.forEach(iv => note(T.root + 12 + ch + iv, next, beat * 4.2, T.wave, .045)); note(T.root + ch, next, beat * 3.6, 'sine', .14); }
+      if (b === 4) note(T.root + ch, next, beat * 2.5, 'sine', .09);
+      if (T.arp && b % 2 === 0) note(T.root + 24 + ch + T.chord[(b / 2 + Math.floor(step / 8)) % T.chord.length], next, beat * 1.2, 'triangle', .035);
+      if (!T.arp && b === 6) note(T.root + 31 + ch, next, beat * 2, 'sine', .03);
+      next += beat / 2; step++;
+    }
+  };
+  const stopAll = () => { if (timer){ clearInterval(timer); timer = null; } if (audio){ audio.pause(); audio = null; } cur = null; };
+  return {
+    play(id, v){
+      vol = v; const t = ALL_TRACKS.find(x => x.id === id) || ALL_TRACKS[0];
+      if (cur === t && (timer || audio)){ if (ctx && ctx.state === 'suspended') ctx.resume(); return; }
+      stopAll(); cur = t;
+      if (t.src){ audio = new Audio(t.src); audio.loop = true; audio.volume = vol; audio.play().catch(() => {}); return; }
+      if (!ensure()) return;
+      master.gain.value = vol; step = 0; next = ctx.currentTime + .1; timer = setInterval(tick, 200); tick();
+    },
+    stop(){ stopAll(); },
+    vol(v){ vol = v; if (master) master.gain.value = v; if (audio) audio.volume = v; }
+  };
+})();
+
+function GearIcon(){
+  return html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>`;
+}
+function SettingsModal({prefs, setPrefs, onClose}){
+  const set = p => setPrefs({...prefs, ...p});
+  const lang = [{v:'ru', l:'RU'}, {v:'en', l:'EN'}], onoff = [{v:true, l:'Вкл'}, {v:false, l:'Выкл'}];
+  useEffect(() => { const k = e => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
+  return html`<div className="modal-bg" onClick=${onClose}>
+    <div className="panel p-5" style=${{width:'min(480px,100%)',maxHeight:'90vh',overflow:'auto'}} onClick=${e => e.stopPropagation()} role="dialog" aria-label="Настройки">
+      <div className="flex items-center justify-between mb-2"><div className="panel-h" style=${{fontSize:'22px'}}>Настройки</div><button className="btn sm" onClick=${onClose}>Закрыть</button></div>
+      <div className="set-row"><span className="set-l">Названия предметов</span><${Seg} value=${prefs.nameLang} options=${lang} onChange=${v => set({nameLang:v})}/></div>
+      <div className="set-row"><span className="set-l">Описания предметов</span><${Seg} value=${prefs.descLang} options=${lang} onChange=${v => set({descLang:v})}/></div>
+      <div className="set-row"><span className="set-l">Музыка</span><${Seg} value=${prefs.musicOn} options=${onoff} onChange=${v => set({musicOn:v})}/></div>
+      <div className="set-row"><span className="set-l">Трек</span>
+        <select className="fld" style=${{width:'auto',minWidth:'180px'}} value=${prefs.track} onChange=${e => set({track:e.target.value})}>${ALL_TRACKS.map(t => html`<option key=${t.id} value=${t.id}>${t.name}</option>`)}</select></div>
+      <div className="set-row"><span className="set-l">Громкость</span><input type="range" min="0" max="1" step="0.05" value=${prefs.vol} style=${{width:'200px'}} onChange=${e => set({vol:Number(e.target.value)})}/></div>
+      <div className="set-row"><span className="set-l">Анимации</span><${Seg} value=${prefs.anim !== false} options=${onoff} onChange=${v => set({anim:v})}/></div>
+      <p className="muted mt-3" style=${{fontSize:'12px'}}>Музыка создаётся прямо в браузере (спокойный чил в духе Deadlock). Настоящие саундтреки игры не используются из-за авторских прав. Если музыка не пошла, нажми в любом месте страницы: браузер не даёт играть звук до первого клика.</p>
+      <div className="mt-3"><button className="btn sm danger" onClick=${() => setPrefs({...PREF_DEF})}>Сбросить настройки</button></div>
+    </div>
+  </div>`;
+}
+
+/* ======================= ХАБ ======================= */
+const HASH_GAME = {'#draft':'draft', '#auction':'auction'};
+const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион'};
+const FAQ = [
+  ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
+  ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
+  ['Как играть со слепым драфтом?', 'Каждый раунд вы загадываете сопернику три предмета, а он вслепую выбирает один из них. Так у обоих набирается билд. Потом идёте в игру и бьётесь 1 на 1 на этих предметах.'],
+  ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются.'],
+  ['Как сыграть с другом по сети?', 'Создай комнату и отправь другу код из пяти символов. Он вводит его на сайте и садится на второе место. Если друг рядом, можно играть вдвоём на одном экране.'],
+  ['Кто побеждает в итоге?', 'Сайт победителя не объявляет. Он собирает билды, а выясняете вы это уже в игре: кто победил в бою 1 на 1, тот и молодец.'],
+  ['Описание предмета не совпадает с игрой. Почему?', 'Данные берутся из сообщества Deadlock API, а сайт сделан с помощью ИИ, поэтому часть описаний могла остаться неточной. Мы их постепенно поправляем.'],
+  ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
+  ['Как поменять язык названий или включить музыку?', 'Нажми на шестерёнку справа вверху. По умолчанию названия предметов на английском, а описания на русском.'],
+  ['Это официальный проект Valve?', 'Нет. Это неофициальный фанатский проект, он никак не связан с Valve Corporation и не одобрен ею.']
+];
 function Hub({onOpen}){
   const games = [
-    {id:'draft', title:'Слепой драфт', tag:'1 на 1 · онлайн или за одним экраном', desc:'Загадывай сопернику по три карты предметов, выбирай свои вслепую. Когда драфт закончится, идите биться в игру на собранных предметах.', btn:'Играть'},
-    {id:null, title:'Скоро', tag:'Вторая мини-игра', desc:'Здесь появится новая мини-игра. Следи за обновлениями.', btn:'В разработке'}
+    {id:'draft', title:'Слепой драфт', tag:'1 на 1 · онлайн или на одном экране', desc:'Загадывай сопернику по три карты, выбирай свои вслепую и собери билд. Потом идите биться в игру на собранных предметах.', btn:'Играть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><rect x="14" y="22" width="44" height="60" fill="#9a62d6" transform="rotate(-12 36 52)"/><rect x="52" y="14" width="44" height="60" fill="#e58a1f"/><rect x="90" y="22" width="44" height="60" fill="#7fb53a" transform="rotate(12 112 52)"/><path d="M74 36 88 50 74 64 60 50z" fill="#141311"/></g></svg>`},
+    {id:'auction', title:'Чёрный аукцион', tag:'1 на 1 · торги за предметы', desc:'Выставляй предмет, перебивай ставки и не дай сопернику забрать лучшее. Бюджет один, делай ставки с умом.', btn:'Играть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl" fill="none" stroke="#e0c58a" strokeWidth="5"><path d="M30 26 62 58M46 18l24 24M20 40l24 24" /><path d="M58 52 112 82" strokeWidth="9"/></g><circle cx="116" cy="34" r="18" fill="#e0c58a"/><text x="116" y="42" textAnchor="middle" fontSize="24" fontWeight="700" fill="#141311">$</text></svg>`}
   ];
-  return html`<div className="flex flex-col gap-6">
+  return html`<div className="flex flex-col gap-8">
     <div className="hero text-center">
       <h1 className="hero-t" style=${{fontSize:'clamp(32px,7.5vw,64px)'}}>Deadlock Minigames</h1>
-      <p className="muted" style=${{maxWidth:'52ch',margin:'0 auto'}}>Мини-игры для друзей по мотивам Deadlock. Выбери игру.</p>
+      <p className="muted" style=${{maxWidth:'56ch',margin:'0 auto 14px'}}>Мини-режимы для игры в Deadlock с друзьями. Выбери режим, собери билд и вызови друга на бой.</p>
+      <div className="flex flex-wrap justify-center gap-2"><span className="badge"><${Soul} size=${10}/>Бесплатно</span><span className="badge">Без регистрации</span><span className="badge">Онлайн на двоих</span></div>
     </div>
     <div className="grid gap-5 md:grid-cols-2">
-      ${games.map((g, i) => html`<div key=${i} className=${cx('panel p-6 flex flex-col gap-3', g.id && 'active')} style=${{opacity:g.id ? 1 : .6}}>
-        <div style=${{color:g.id ? 'var(--gold2)' : 'var(--edge2)',fontSize:'42px',lineHeight:1}}>${g.id ? html`<${Soul} size=${44}/>` : html`<span className="disp">?</span>`}</div>
+      ${games.map(g => html`<div key=${g.id} className="hub-card live panel p-6 flex flex-col gap-3 active" style=${{cursor:'pointer'}} onClick=${() => onOpen(g.id)}>
+        <div className="hub-art">${g.art}</div>
         <div className="muted disp" style=${{fontSize:'12px'}}>${g.tag}</div>
         <div className="panel-h" style=${{fontSize:'26px'}}>${g.title}</div>
         <p className="muted" style=${{fontSize:'14px',flex:1}}>${g.desc}</p>
-        <div><button className=${cx('btn', g.id && 'gold')} disabled=${!g.id} onClick=${() => g.id && onOpen(g.id)}>${g.btn}</button></div>
+        <div><button className="btn gold" onClick=${e => { e.stopPropagation(); onOpen(g.id); }}>${g.btn}</button></div>
       </div>`)}
+    </div>
+    <div>
+      <div className="panel-h text-center mb-3" style=${{fontSize:'24px'}}>Частые вопросы</div>
+      <div className="grid gap-4 md:grid-cols-2">
+        ${FAQ.map((f, i) => html`<div key=${i} className="panel p-4"><div className="faq-q">${f[0]}</div><div className="faq-a">${f[1]}</div></div>`)}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ======================= АУКЦИОН ======================= */
+const otherSeat = x => (x === 'A' ? 'B' : 'A');
+function auInit(cfg, seats){
+  return {cfg, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, nominator:'A', item:'', turn:'', bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
+}
+// Одна функция правил: работает и на одном экране, и в онлайне (транзакция Firebase).
+function auReduce(st, a){
+  if (!st) return st;
+  const s = {...st, money:{...st.money}, won:{A:[...((st.won && st.won.A) || [])], B:[...((st.won && st.won.B) || [])]}, log:[...(st.log || [])]};
+  const bid = st.bid || {amount:0, by:''};
+  if (a.t === 'nominate'){
+    if (s.phase !== 'nominate' || a.seat !== s.nominator) return st;
+    if (s.won.A.concat(s.won.B).some(w => w.id === a.id)) return st;
+    s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; return s;
+  }
+  if (a.t === 'bid'){
+    const n = Math.floor(Number(a.amount));
+    if (s.phase !== 'bid' || a.seat !== s.turn || !(n > bid.amount) || n > s.money[a.seat]) return st;
+    s.bid = {amount:n, by:a.seat}; s.turn = otherSeat(a.seat); return s;
+  }
+  if (a.t === 'pass'){
+    if (s.phase !== 'bid' || a.seat !== s.turn) return st;
+    const winner = bid.by || s.nominator, price = bid.by ? bid.amount : 0;
+    s.won[winner].push({id:s.item, price, round:s.round}); s.money[winner] -= price;
+    s.log.push({round:s.round, id:s.item, winner, price});
+    if (s.round >= s.cfg.rounds) s.phase = 'done'; else { s.round++; s.nominator = otherSeat(s.nominator); s.phase = 'nominate'; }
+    s.item = ''; s.turn = ''; s.bid = {amount:0, by:''}; return s;
+  }
+  return st;
+}
+function ItemPicker({taken, onPick}){
+  const [slot, setSlot] = useState('all'), [tier, setTier] = useState(0), [q, setQ] = useState('');
+  const list = ITEMS.filter(i => (slot === 'all' || i.slot === slot) && (!tier || i.tier === tier) && matchItem(i, q));
+  return html`<div className="flex flex-col gap-3">
+    <div className="flex flex-wrap items-center gap-3">
+      <${Seg} value=${slot} options=${TABS.map(t => ({v:t[0], l:t[1]}))} onChange=${setSlot}/>
+      <${Seg} value=${tier} options=${[{v:0, l:'Все тиры'}, {v:1, l:'I'}, {v:2, l:'II'}, {v:3, l:'III'}, {v:4, l:'IV'}]} onChange=${setTier}/>
+      <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск предмета" value=${q} onChange=${e => setQ(e.target.value)}/>
+    </div>
+    <div className="flex flex-wrap gap-3">
+      ${list.map(i => html`<${Card} key=${i.id} item=${i} size="g" state=${taken.has(i.id) ? 'banned' : ''} tag=${taken.has(i.id) ? 'Куплен' : null} onClick=${() => onPick(i.id)}/>`)}
+    </div>
+  </div>`;
+}
+function AuctionBoard({st, controls, dispatch, onExit}){
+  const {nameLang} = useContext(PrefCtx);
+  const names = {A:(st.seats.A && st.seats.A.name) || 'Игрок А', B:(st.seats.B && st.seats.B.name) || 'Игрок Б'};
+  const won = {A:(st.won && st.won.A) || [], B:(st.won && st.won.B) || []}, log = st.log || [], bid = st.bid || {amount:0, by:''};
+  const taken = new Set(won.A.concat(won.B).map(w => w.id));
+  const [amt, setAmt] = useState('');
+  useEffect(() => { setAmt(String(bid.amount + 1)); }, [bid.amount, st.item]);
+  const can = seat => controls.includes(seat);
+  const money = seat => html`<div className=${cx('panel p-3', st.turn === seat || (st.phase === 'nominate' && st.nominator === seat) ? 'active' : '')}>
+    <div className="panel-h truncate">${names[seat]}${controls.length === 1 && controls[0] === seat ? ' (ты)' : ''}</div>
+    <div className="disp num" style=${{fontSize:'28px',color:'var(--soul)'}}>${'$' + st.money[seat]}</div>
+    <div className="flex flex-wrap gap-2 mt-2">${won[seat].map((w, i) => html`<${Card} key=${i} item=${BY_ID[w.id]} size="s"/>`)}</div>
+  </div>`;
+  const item = st.item ? BY_ID[st.item] : null, turnSeat = st.turn, nom = st.nominator;
+  const mine = Math.max(0, ...controls.filter(x => x === turnSeat).map(x => st.money[x]));
+  const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, bid.amount + d)));
+  return html`<div className="flex flex-col gap-4">
+    <div className="panel p-4 text-center">
+      <div className="muted disp" style=${{fontSize:'12px'}}>Чёрный аукцион · раунд ${Math.min(st.round, st.cfg.rounds)} из ${st.cfg.rounds}</div>
+      <div className="disp" style=${{fontSize:'clamp(22px,4.5vw,36px)',color:'var(--gold2)'}}>
+        ${st.phase === 'lobby' ? 'Ждём второго игрока' : st.phase === 'done' ? 'Торги закончены' : st.phase === 'nominate' ? names[nom] + ' выставляет предмет' : 'Ставка: ' + (bid.by ? '$' + bid.amount + ' (' + names[bid.by] + ')' : 'пока нет')}
+      </div>
+      ${st.phase === 'done' ? html`<div className="muted mt-1">Предметы куплены. Удачи в бою!</div><div className="mt-3"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>` : null}
+    </div>
+    <div className="grid gap-4 md:grid-cols-2">${money('A')}${money('B')}</div>
+    ${st.phase === 'nominate' ? html`<div className="panel p-4">
+      ${can(nom) ? html`<div className="panel-h mb-3">${names[nom]}, выбери предмет для торгов</div><${ItemPicker} taken=${taken} onPick=${id => dispatch({t:'nominate', seat:nom, id})}/>`
+        : html`<div className="muted">Ждём, пока ${names[nom]} выберет предмет…</div>`}
+    </div>` : null}
+    ${st.phase === 'bid' && item ? html`<div className="panel p-4 flex flex-wrap gap-5 items-start">
+      <div style=${{width:'min(340px,100%)'}}><${ItemInfo} item=${item}/></div>
+      <div className="flex flex-col gap-3" style=${{flex:1,minWidth:'240px'}}>
+        <div className="panel-h">${can(turnSeat) ? 'Твой ход: ' : 'Ход: '}${names[turnSeat]}</div>
+        <div className="muted" style=${{fontSize:'13px'}}>${bid.by ? 'Текущая ставка $' + bid.amount + ' от ' + names[bid.by] + '. Перебей или спасуй.' : 'Ставок ещё нет. Если ' + names[turnSeat] + ' спасует, предмет достанется ' + names[nom] + ' бесплатно.'}</div>
+        ${can(turnSeat) ? html`<div className="flex flex-wrap items-center gap-2">
+          <input className="fld num" type="number" min=${bid.amount + 1} max=${st.money[turnSeat]} style=${{width:'120px'}} value=${amt} onChange=${e => setAmt(e.target.value)}/>
+          ${[1, 5, 10].map(d => html`<button key=${d} className="btn sm" onClick=${() => bump(d)}>+${d}</button>`)}
+          <button className="btn sm" onClick=${() => setAmt(String(st.money[turnSeat]))}>Ва-банк</button>
+        </div>
+        <div className="flex gap-2">
+          <button className="btn gold" disabled=${!(Number(amt) > bid.amount && Number(amt) <= st.money[turnSeat])} onClick=${() => dispatch({t:'bid', seat:turnSeat, amount:Number(amt)})}>Поставить $${amt || ''}</button>
+          <button className="btn danger" onClick=${() => dispatch({t:'pass', seat:turnSeat})}>Пас</button>
+        </div>` : null}
+      </div>
+    </div>` : null}
+    ${log.length ? html`<div className="panel p-4"><div className="panel-h mb-2">Ход торгов</div>
+      <table className="rt"><thead><tr><th>Раунд</th><th>Предмет</th><th>Достался</th><th>Цена</th></tr></thead><tbody>
+        ${log.map((l, i) => html`<tr key=${i}><td className="num">${l.round}</td><td><span className="inl"><${ItemIcon} item=${BY_ID[l.id]} size=${22}/>${BY_ID[l.id].name[nameLang]}</span></td><td>${names[l.winner]}</td><td className="num">${'$' + l.price}</td></tr>`)}
+      </tbody></table></div>` : null}
+  </div>`;
+}
+function Auction(){
+  const [cfg, setCfg] = useState({budget:100, rounds:6});
+  const [nick, setNick] = useState(() => store.get('bd_nick', ''));
+  const [code, setCode] = useState(() => store.get('bd_aroom', null));
+  const [join, setJoin] = useState('');
+  const [mode, setMode] = useState(null);       // null | 'local'
+  const [local, setLocal] = useState(null);
+  const [err, setErr] = useState(null), [busy, setBusy] = useState(false);
+  const uid = useMemo(getUid, []);
+  const [online, setOnline] = useState(undefined);
+  useEffect(() => {
+    if (!code || !fbDb) return;
+    const r = fbDb.ref('auctions/' + code + '/state');
+    const h = r.on('value', x => setOnline(x.val()), e => { setErr((e && e.message) || 'Нет связи с базой'); setOnline(null); });
+    return () => r.off('value', h);
+  }, [code]);
+  const nm = n => n.trim() || 'Игрок';
+  const dispatchOnline = a => fbDb.ref('auctions/' + code + '/state').transaction(cur => (cur ? auReduce(cur, a) : undefined)).catch(e => setErr(e.message));
+  const create = async () => {
+    setBusy(true); setErr(null);
+    try {
+      for (let i = 0; i < 6; i++){
+        const c = genCode();
+        const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => (cur === null ? auInit(cfg, {A:{uid, name:nm(nick)}}) : undefined));
+        if (res.committed){ store.set('bd_aroom', c); setCode(c); setBusy(false); return; }
+      }
+      throw new Error('Не удалось создать комнату, попробуй ещё раз');
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const joinRoom = async () => {
+    setBusy(true); setErr(null);
+    try {
+      const c = join.trim().toUpperCase(); if (c.length < 4) throw new Error('Введи код комнаты');
+      const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => {
+        if (!cur) return undefined;
+        if ((cur.seats.A && cur.seats.A.uid === uid) || (cur.seats.B && cur.seats.B.uid === uid)) return cur;
+        if (cur.seats.B) return undefined;
+        return {...cur, seats:{...cur.seats, B:{uid, name:nm(nick)}}, phase:'nominate'};
+      });
+      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      store.set('bd_aroom', c); setCode(c);
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const leave = () => { store.set('bd_aroom', null); setCode(null); setOnline(undefined); setLocal(null); setMode(null); };
+  if (mode === 'local' && local) return html`<${AuctionBoard} st=${local} controls=${['A', 'B']} dispatch=${a => setLocal(x => auReduce(x, a))} onExit=${leave}/>`;
+  if (code){
+    if (online === undefined) return html`<div className="panel p-6 text-center"><div className="spin"></div><p className="muted mt-3">Подключаемся к комнате…</p></div>`;
+    if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
+    const my = online.seats.A && online.seats.A.uid === uid ? 'A' : (online.seats.B && online.seats.B.uid === uid ? 'B' : null);
+    return html`<div className="flex flex-col gap-4">
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><button className="btn sm" onClick=${() => { copyText(code); }}>Копировать код</button><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
+      ${err ? html`<pre className="err">${err}</pre>` : null}
+      <${AuctionBoard} st=${online} controls=${my ? [my] : []} dispatch=${dispatchOnline} onExit=${leave}/>
+    </div>`;
+  }
+  return html`<div className="flex flex-col gap-5">
+    <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(30px,6vw,52px)'}}>Чёрный аукцион</h2>
+      <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Игрок А выставляет предмет, Б делает первую ставку, потом вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Потом выставляет Б.</p></div>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="panel p-5 flex flex-col gap-4">
+        <div className="panel-h">Настройки торгов</div>
+        <div><div className="flex justify-between"><span>Бюджет у каждого</span><b className="disp num">${'$' + cfg.budget}</b></div><input type="range" min="20" max="500" step="10" value=${cfg.budget} onChange=${e => setCfg({...cfg, budget:Number(e.target.value)})}/></div>
+        <div><div className="flex justify-between"><span>Предметов в торгах</span><b className="disp num">${cfg.rounds}</b></div><input type="range" min="2" max="12" step="2" value=${cfg.rounds} onChange=${e => setCfg({...cfg, rounds:Number(e.target.value)})}/></div>
+        <button className="btn gold" onClick=${() => { setLocal(auInit(cfg, {A:{name:'Игрок А'}, B:{name:'Игрок Б'}})); setMode('local'); }}>Играть на одном экране</button>
+      </div>
+      <div className="panel p-5 flex flex-col gap-3">
+        <div className="panel-h">Онлайн с другом</div>
+        <input className="fld" placeholder="Твой ник" maxLength="20" value=${nick} onChange=${e => { setNick(e.target.value); store.set('bd_nick', e.target.value); }}/>
+        <button className="btn gold" disabled=${busy || !fbDb} onClick=${create}>Создать комнату</button>
+        <div className="flex gap-2"><input className="fld" placeholder="Код комнаты" maxLength="6" value=${join} onChange=${e => setJoin(e.target.value)}/><button className="btn" disabled=${busy || !fbDb} onClick=${joinRoom}>Войти</button></div>
+        ${err ? html`<pre className="err">${err}</pre>` : null}
+      </div>
     </div>
   </div>`;
 }
@@ -1179,14 +1466,24 @@ function SlotTabs({value, onChange}){
 
 /* ---------- приложение ---------- */
 function App(){
-  const [prefs, setPrefsS] = useState(() => store.get('bd_prefs', {nameLang:'ru', descLang:'ru'}));
-  const setPrefs = p => { setPrefsS(p); store.set('bd_prefs', p); };
+  const [prefs, setPrefsS] = useState(() => ({...PREF_DEF, ...store.get('bd_prefs2', {})}));
+  const setPrefs = p => { setPrefsS(p); store.set('bd_prefs2', p); };
+  const [showSet, setShowSet] = useState(false);
+  useEffect(() => { if (prefs.musicOn) Music.play(prefs.track, prefs.vol); else Music.stop(); }, [prefs.musicOn, prefs.track]);
+  useEffect(() => { Music.vol(prefs.vol); }, [prefs.vol]);
+  useEffect(() => {
+    if (!prefs.musicOn) return;
+    const h = () => Music.play(prefs.track, prefs.vol);
+    window.addEventListener('pointerdown', h, {once:true});
+    return () => window.removeEventListener('pointerdown', h);
+  }, [prefs.musicOn, prefs.track]);
+  useEffect(() => { document.body.classList.toggle('no-anim', prefs.anim === false); }, [prefs.anim]);
   const [conn, setConn] = useState('online');
   const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
   const [names, setNames] = useState({A:'Игрок А', B:'Игрок Б'});
   const [roomCode0] = useState(() => store.get('bd_room', null));
-  const [game, setGame] = useState(() => (location.hash === '#draft' || roomCode0) ? 'draft' : null);
-  useEffect(() => { const h = () => setGame(location.hash === '#draft' ? 'draft' : null); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
+  const [game, setGame] = useState(() => HASH_GAME[location.hash] || (roomCode0 ? 'draft' : null));
+  useEffect(() => { const h = () => setGame(HASH_GAME[location.hash] || null); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
   const openGame = g => { location.hash = g ? '#' + g : ''; setGame(g); };
   const [localRun, setLocalRun] = useState(null);
   const [roomCode, setRoomCode] = useState(() => store.get('bd_room', null));
@@ -1228,6 +1525,7 @@ function App(){
   if (!game) body = html`<${Hub} onOpen=${openGame}/>`;
   else if (cat.status === 'loading') body = html`<${CatalogLoading}/>`;
   else if (cat.status === 'error') body = html`<${CatalogError} err=${cat.err} onRetry=${loadCat}/>`;
+  else if (game === 'auction') body = html`<${Auction}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
@@ -1236,9 +1534,10 @@ function App(){
 
   return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
     <div className="shell">
+      ${showSet ? html`<${SettingsModal} prefs=${prefs} setPrefs=${setPrefs} onClose=${() => setShowSet(false)}/>` : null}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <button className="brand" style=${{background:'none',border:0,cursor:'pointer',padding:0}} onClick=${() => openGame(null)} title="К выбору игры"><${Soul} size=${18}/>Deadlock Minigames${game === 'draft' ? html`<span className="muted" style=${{fontSize:'14px',fontWeight:400}}> / Слепой драфт</span>` : null}</button>
-        <${LangToggles} prefs=${prefs} setPrefs=${setPrefs}/>
+        <button className="brand" style=${{background:'none',border:0,cursor:'pointer',padding:0}} onClick=${() => openGame(null)} title="К выбору игры"><${Soul} size=${18}/>Deadlock Minigames${game ? html`<span className="muted" style=${{fontSize:'14px',fontWeight:400}}> / ${GAME_NAME[game]}</span>` : null}</button>
+        <button className="gear" onClick=${() => setShowSet(true)} aria-label="Настройки" title="Настройки"><${GearIcon}/></button>
       </div>
       ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
       ${body}
