@@ -72,83 +72,13 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .soul{color:var(--soul)}
 .soul-i{display:inline-block;vertical-align:-1px;margin-right:3px;color:var(--soul)}
 
-/* иконки предметов */
-.ico{display:block;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
-.mono{display:inline-flex;align-items:center;justify-content:center;aspect-ratio:1;font-family:var(--f-head);font-weight:700;color:var(--tc,var(--gold2));border:1px solid currentColor;transform:rotate(45deg);font-size:0}
-.mono::first-letter{font-size:0}
-.mono{position:relative}
-.mono::after{content:attr(data-l);transform:rotate(-45deg);font-size:18px;position:absolute}
-
-/* карточки */
-.card{position:relative;width:var(--cw);aspect-ratio:3/4;perspective:800px;cursor:pointer;flex:none;transition:transform .2s,filter .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
-.sz-s{--cw:78px}.sz-g{--cw:104px}.sz-t{--cw:124px}
-@media (max-width:640px){.sz-g{--cw:88px}.sz-t{--cw:94px}.sz-s{--cw:70px}}
-.card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.2,.75,.2,1)}
-.card.is-back .card-inner{transform:rotateY(180deg)}
-.face,.back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;clip-path:var(--step)}
-.face{background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 30%,#000))}
-.face-in,.back-in{position:absolute;inset:2px;clip-path:var(--step)}
-.face-in{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 10%,#1d1b17),#14120f);display:flex;flex-direction:column;align-items:center;padding:calc(var(--cw)*.08) calc(var(--cw)*.06) calc(var(--cw)*.06)}
-.face-in::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--tc)}
-.c-top{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:calc(var(--cw)*.11);color:var(--soul);font-family:var(--f-body);font-weight:500}
-.c-tier{font-family:var(--f-head);font-weight:700;color:var(--tc);font-size:calc(var(--cw)*.13)}
-.c-art{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 68%)}
-.c-art .ico{width:84%;height:100%}
-.c-art .mono{width:46%}
-.c-name{font-family:var(--f-display);font-size:calc(var(--cw)*.118);line-height:1.12;text-align:center;font-weight:500;letter-spacing:.02em;min-height:2.3em;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word;color:var(--text)}
-.sz-s .c-name{display:none}
-.c-info{position:absolute;right:calc(var(--cw)*.07);top:calc(var(--cw)*.3);width:18px;height:18px;border-radius:50%;border:1px solid var(--edge2);background:#14120f;color:var(--muted);font-size:11px;line-height:16px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
-.card:hover .c-info,.c-info:focus-visible{opacity:1}
-@media (hover:none){.c-info{opacity:.85}}
-.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--gold2),var(--goldDim))}
-.back-in{background:repeating-conic-gradient(from 0deg at 50% 62%,#1d1a15 0 6deg,#292419 6deg 12deg);display:flex;align-items:center;justify-content:center}
-.back-in span{width:calc(var(--cw)*.4);height:calc(var(--cw)*.4);transform:rotate(45deg);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:rgba(14,12,9,.85)}
-.back-in span i{transform:rotate(-45deg);font-style:normal;display:flex}
-.back-in b{position:absolute;left:9px;top:6px;font-family:var(--f-head);color:var(--gold2);font-size:calc(var(--cw)*.15)}
-.card.pickable:hover .card-inner{transform:translateY(-6px) rotateY(180deg)}
-.card.pickable{filter:drop-shadow(0 0 10px rgba(224,197,138,.45))}
-.card.pickable.is-back:hover{filter:drop-shadow(0 0 16px rgba(240,217,160,.85))}
-.card.sel{transform:translateY(-6px);filter:drop-shadow(0 0 12px rgba(240,217,160,.7))}
-.card.banned{opacity:.34;filter:grayscale(.8);cursor:not-allowed}
-.card.faded{opacity:.5;filter:saturate(.5)}
-.card.taken{filter:drop-shadow(0 0 12px rgba(143,194,160,.7))}
-.tag{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-display);letter-spacing:.08em;font-size:11px;padding:1px 8px;pointer-events:none;background:var(--gold2);color:#1a1409;z-index:2}
-.tag-banned{background:#2d2a24;color:#bdb39a;border:1px solid var(--edge2)}
-.tag-taken{background:var(--teal);color:#0f2018}
-
-/* инвентарь */
-.slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-@media (min-width:480px){.slots{grid-template-columns:repeat(4,1fr)}}
-.slot{aspect-ratio:1;position:relative;border:1px dashed var(--edge);background:rgba(255,255,255,.015);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);font-size:12px}
-.slot.full{border:1px solid var(--tc);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 26%,#1d1b17),#14120f);cursor:help;clip-path:var(--step)}
-.slot.full .ico{width:78%;height:78%;margin-bottom:6px}
-.slot.full .mono{width:40%}
-.slot.full .p{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;color:var(--tc);font-family:var(--f-body);font-weight:600}
-.slot.new{box-shadow:0 0 0 2px var(--teal),0 0 14px rgba(143,194,160,.55);animation:pop .6s ease-out}
-@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-
-/* подсказка, модалка */
-.tip{position:fixed;z-index:60;width:280px;pointer-events:none;background:#17150f;border:1px solid var(--gold);padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.65)}
-.modal-bg{position:fixed;inset:0;z-index:70;background:rgba(8,7,5,.8);display:flex;align-items:center;justify-content:center;padding:20px}
-.modal{width:min(440px,100%);background:var(--panel);border:1px solid var(--gold);box-shadow:inset 0 0 0 4px var(--bg2),inset 0 0 0 5px rgba(184,151,90,.3);padding:22px;position:relative}
-.info-ico{width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;border:1px solid var(--tc);background:radial-gradient(circle,color-mix(in srgb,var(--tc) 28%,#1d1b17),#14120f)}
-.info-ico .ico{width:46px;height:46px}.info-ico .mono{width:26px}
-.info-name{font-family:var(--f-head);font-weight:700;font-size:18px;line-height:1.15;color:var(--gold2)}
-.stat-line{display:flex;gap:10px;align-items:baseline;font-size:14px}
-.stat-line b{color:var(--gold2);font-weight:600;min-width:58px;font-variant-numeric:tabular-nums}
-.stepper{display:flex;flex-wrap:wrap}
-.step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;font-size:13px;color:var(--muted);border-bottom:2px solid var(--edge)}
-.step.on{color:var(--gold2);border-color:var(--gold2)}
-.step.done{color:var(--teal);border-color:var(--teal)}
-.pbar{display:flex;gap:3px}
-.pbar i{flex:1;height:5px;background:var(--edge)}
-.pbar i.done{background:var(--teal)}.pbar i.cur{background:var(--gold2)}
-.tierb{cursor:pointer;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);padding:8px 10px;text-align:left;min-width:112px;font-family:var(--f-body)}
-.tierb.on{border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc);background:color-mix(in srgb,var(--tc) 14%,var(--bg2))}
-.tierb:disabled{opacity:.35;cursor:not-allowed}
-.trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-head);cursor:pointer;position:relative;flex:none;background:rgba(255,255,255,.015)}
-.trayslot.f{border:1px solid var(--tc);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 24%,#1d1b17),#14120f);flex-direction:column;gap:6px}
-.trayslot.f small{position:absolute;bottom:2px;font-size:10px;color:var(--tc);font-weight:600}
+/* плитки предметов: цвет по слоту, как в магазине игры */
+:root{--s-weapon:#e58a1f;--s-spirit:#9a62d6;--s-vitality:#7fb53a}
+.ico{display:block;object-fit:cover}
+.mono{display:inline-flex;align-items:center;justify-content:center;aspect-ratio:1;position:relative;color:var(--tc,var(--gold2));border:1px solid currentColor;transform:rotate(45deg);font-size:0}
+.mono::after{content:attr(data-l);transform:rotate(-45deg);font-size:18px;font-family:var(--f-head);font-weight:700;position:absolute}
+.face-in,.slot.full,.trayslot.f{border:1px solid var(--tc);overflow:hidden}
+.trayslot.f small{position:absolute;bottom:0;right:0;font-size:10px;color:var(--soul);background:rgba(20,15,8,.82);padding:0 3px;font-weight:600}
 .winner{background:linear-gradient(90deg,transparent,rgba(224,197,138,.16),transparent),linear-gradient(180deg,var(--panel2),var(--panel))}
 table.rt{width:100%;border-collapse:collapse;font-size:14px}
 table.rt th{font-family:var(--f-display);font-weight:500;letter-spacing:.06em;font-size:12px;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--edge)}
@@ -180,7 +110,17 @@ pre.err{white-space:pre-wrap;word-break:break-all;text-align:left;font:12px/1.5 
    Цена всегда считается по тиру, чтобы экономика игры не зависела от патчей. */
 const TIER_PRICE = {1:800, 2:1600, 3:3200, 4:6400};
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
-const SLOT_LABEL = {weapon:'Оружие', armor:'Живучесть', vitality:'Живучесть', tech:'Дух', spirit:'Дух'};
+const SLOT_LABEL = {weapon:'Оружие', spirit:'Спиритизм', vitality:'Живучесть'};
+const slotKey = v => ({weapon:'weapon', armor:'vitality', vitality:'vitality', tech:'spirit', spirit:'spirit'})[String(v || '').toLowerCase()] || '';
+const slotColor = i => 'var(--s-' + (i.slot || 'none') + ', var(--gold))';
+const norm = v => String(v || '').toLowerCase().replace(/ё/g, 'е');
+// Поиск: каждое слово запроса должно встретиться в названии или в названиях характеристик предмета.
+function matchItem(item, q){
+  const words = norm(q).split(/\s+/).filter(Boolean);
+  if (!words.length) return true;
+  const hay = norm([item.name.ru, item.name.en].concat(item.stats.map(x => x.l.ru + ' ' + x.l.en)).join(' | '));
+  return words.every(w => hay.includes(w));
+}
 const API_BASE = 'https://api.deadlock-api.com/v1/assets/items';   // старый хост assets.deadlock-api.com больше не существует
 let ITEMS = [], CATALOG = {};
 const stubItem = id => ({id, name:{en:id, ru:id}, tier:1, price:TIER_PRICE[1], image:'', stats:[], desc:{en:'', ru:''}, slot:'', active:false, missing:true});
@@ -240,14 +180,19 @@ function parseCatalog(en, ru){
     if (x.shopable === false || x.disabled === true) return;
     seen.add(x.class_name);
     const r = ruBy[x.class_name] || x, se = statsOf(x.properties), sr = statsOf(r.properties);
+    const cdKey = Object.keys(se).find(k => /cooldown/i.test(k) && !/reduc|bonus|spirit/i.test(k));
+    const cd = cdKey ? parseFloat(x.properties[cdKey].value) : 0;
+    if (cdKey) delete se[cdKey];
     list.push({
       id:x.class_name, name:{en:x.name || x.class_name, ru:r.name || x.name || x.class_name}, tier, price:TIER_PRICE[tier],
       image:x.shop_image_webp || x.shop_image || x.image_webp || x.image || '',
       stats:Object.keys(se).slice(0, 5).map(k => ({l:{en:se[k].l, ru:(sr[k] || se[k]).l}, v:se[k].v})),
-      slot:x.item_slot_type || '', active:!!x.is_active_item,
+      slot:slotKey(x.item_slot_type), active:!!x.is_active_item, cd, comps:Array.isArray(x.component_items) ? x.component_items.filter(c => typeof c === 'string') : [],
       desc:{en:descOf(x.description), ru:descOf(r.description) || descOf(x.description)}
     });
   });
+  list.forEach(i => { i.comps = i.comps.filter(c => seen.has(c)); });
+  list.forEach(i => { i.up = list.filter(o => o.comps.includes(i.id)).map(o => o.id); });
   const cnt = [1, 2, 3, 4].map(t => list.filter(i => i.tier === t).length);
   if (cnt.some(c => c < 6)) throw new Error('Каталог пришёл неполным (предметов по тирам: ' + cnt.join(' / ') + '). Формат API мог измениться.');
   return list.sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en));   // одинаковый порядок у обоих игроков
@@ -324,31 +269,29 @@ function ItemIcon({item, size}){
 }
 function ItemInfo({item}){
   const {nameLang, descLang} = useContext(PrefCtx);
-  const slot = SLOT_LABEL[item.slot], text = item.desc[descLang] || item.desc.en;
-  return html`<div>
-    <div className="flex items-center gap-3">
-      <div className="info-ico" style=${{'--tc':'var(--t' + item.tier + ')'}}><${ItemIcon} item=${item}/></div>
-      <div className="min-w-0">
-        <div className="info-name">${item.name[nameLang]}</div>
-        <div className="flex flex-wrap items-center gap-2 mt-1">
-          <span className="tchip" style=${{'--tc':'var(--t' + item.tier + ')'}}>Тир ${item.tier}</span>
-          <span className="num soul" style=${{fontSize:'13px'}}><${Soul}/>${item.price}</span>
-          ${slot ? html`<span className="chip">${slot}</span>` : null}
-          ${item.active ? html`<span className="chip">Активный</span>` : null}
-        </div>
-      </div>
+  const ru = descLang === 'ru', slot = SLOT_LABEL[item.slot], text = item.desc[descLang] || item.desc.en;
+  const comps = (item.comps || []).map(id => BY_ID[id]), ups = (item.up || []).map(id => BY_ID[id]);
+  const rel = (t, list) => list.length ? html`<div className="ii-sec"><div className="ii-st">${t}</div>
+    ${list.map(o => html`<div className="inl" key=${o.id}><${ItemIcon} item=${o} size=${26}/>${o.name[nameLang]}</div>`)}</div>` : null;
+  return html`<div className="ii" style=${{'--tc':slotColor(item)}}>
+    <div className="ii-name">${item.name[nameLang]}</div>
+    <div className="ii-meta">
+      <span className="soul num"><${Soul} size=${16}/>${item.price}</span>
+      <span className="tchip" style=${{'--tc':'#fbf3e0'}}>${ROMAN[item.tier]}</span>
+      ${slot ? html`<span className="tchip" style=${{'--tc':'#fbf3e0'}}>${slot}</span>` : null}
     </div>
-    <hr className="rule my-3"/>
-    <div className="flex flex-col gap-1">
-      ${item.stats.map((s, i) => html`<div className="stat-line" key=${i}><b>${s.v}</b><span>${s.l[descLang]}</span></div>`)}
+    <div className="flex flex-col">
+      ${item.stats.map((x, i) => html`<div className="stat-line" key=${i}><b>${x.v}</b><span>${x.l[descLang]}</span></div>`)}
     </div>
-    ${text ? html`<div className="muted mt-2" style=${{fontSize:'13px'}}>${text}</div>` : null}
+    ${(text || item.active) ? html`<div className="ii-band"><span>${item.active ? (ru ? 'Активное' : 'Active') : (ru ? 'Пассивное' : 'Passive')}</span>${item.cd ? html`<span className="num">${item.cd} ${ru ? 'с.' : 's'}</span>` : null}</div>` : null}
+    ${text ? html`<div className="ii-txt">${text}</div>` : null}
+    ${(comps.length || ups.length) ? html`<div className="ii-secs">${rel(ru ? 'Компоненты:' : 'Components:', comps)}${rel(ru ? 'Улучшения:' : 'Upgrades:', ups)}</div>` : null}
   </div>`;
 }
 function TipBox({tip}){
-  const w = 280, pad = 16;
+  const w = 340, pad = 16;
   const left = Math.min(tip.x + pad, window.innerWidth - w - 8);
-  const top = tip.y + 220 > window.innerHeight ? Math.max(8, tip.y - 200) : tip.y + pad;
+  const top = tip.y + 340 > window.innerHeight ? Math.max(8, tip.y - 320) : tip.y + pad;
   return html`<div className="tip" style=${{left:Math.max(8, left)+'px', top:top+'px'}}><${ItemInfo} item=${tip.item}/></div>`;
 }
 function DetailModal({item, onClose}){
@@ -393,7 +336,7 @@ function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
   const ui = useContext(UiCtx);
   const {nameLang} = useContext(PrefCtx);
   const h = (!back && item) ? tipHandlers(ui, item) : {};
-  const tc = item ? 'var(--t' + item.tier + ')' : 'var(--gold)';
+  const tc = item ? slotColor(item) : 'var(--gold)';
   const clickable = !!onClick && state !== 'banned';
   return html`<div ...${h} className=${cx('card', 'sz-' + size, back && 'is-back', state)} style=${{'--tc':tc}}
       onClick=${clickable ? onClick : undefined} tabIndex=${clickable ? 0 : undefined}
@@ -401,8 +344,8 @@ function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
     <div className="card-inner">
       <div className="face"><div className="face-in">
         ${item ? html`
-          <div className="c-top"><span className="c-tier">${ROMAN[item.tier]}</span><span className="num"><${Soul}/>${item.price}</span></div>
           <div className="c-art"><${ItemIcon} item=${item}/></div>
+          <span className="c-tier">${ROMAN[item.tier]}</span><span className="c-price num"><${Soul}/>${item.price}</span>
           <div className="c-name">${item.name[nameLang]}</div>
           ${!back && size !== 's' ? html`<button className="c-info" aria-label="Подробнее" onClick=${e => { e.stopPropagation(); ui.openDetail(item); }}>i</button>` : null}
         ` : null}
@@ -416,7 +359,7 @@ function Slot({entry, isNew}){
   const ui = useContext(UiCtx);
   if (!entry) return html`<div className="slot">·</div>`;
   const item = BY_ID[entry.id];
-  return html`<div ...${tipHandlers(ui, item)} className=${cx('slot', 'full', isNew && 'new')} style=${{'--tc':'var(--t' + item.tier + ')'}}
+  return html`<div ...${tipHandlers(ui, item)} className=${cx('slot', 'full', isNew && 'new')} style=${{'--tc':slotColor(item)}}
       onClick=${() => ui.openDetail(item)} title=${item.name.ru}>
     <${ItemIcon} item=${item}/><span className="p num">${item.price}</span>
   </div>`;
@@ -612,7 +555,10 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
   const fixed = tierForRound(settings, round);
   const [tier, setTier] = useState(fixed);
   const [sel, setSel] = useState([]);
+  const [tab, setTab] = useState('all');
+  const [q, setQ] = useState('');
   const pool = tier ? ITEMS.filter(i => i.tier === tier) : [];
+  const shown = pool.filter(i => (tab === 'all' || i.slot === tab) && matchItem(i, q));
   const toggle = id => {
     setSel(s => s.includes(id) ? s.filter(x => x !== id) : (s.length >= HIDE_COUNT ? s : [...s, id]));
   };
@@ -643,16 +589,21 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         <div className="flex gap-2">
           ${Array.from({length:HIDE_COUNT}, (_, i) => {
             const it = sel[i] ? BY_ID[sel[i]] : null;
-            return html`<div key=${i} className=${cx('trayslot', it && 'f')} style=${it ? {'--tc':'var(--t' + it.tier + ')'} : {}} onClick=${() => it && toggle(it.id)} title=${it ? 'Убрать' : ''}>
-              ${it ? html`<${ItemIcon} item=${it} size=${38}/><small>${it.price}</small>` : (i + 1)}
+            return html`<div key=${i} className=${cx('trayslot', it && 'f')} style=${it ? {'--tc':slotColor(it)} : {}} onClick=${() => it && toggle(it.id)} title=${it ? 'Убрать' : ''}>
+              ${it ? html`<${ItemIcon} item=${it} size=${60}/><small>${it.price}</small>` : (i + 1)}
             </div>`;
           })}
         </div>
         <button className="btn gold" disabled=${sel.length !== HIDE_COUNT} onClick=${() => onSubmit(seat, tier, sel)}>Загадать</button>
         <span className="muted num" style=${{fontSize:'12px'}}>выбрано ${sel.length} из ${HIDE_COUNT}</span>
       </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <${SlotTabs} value=${tab} onChange=${setTab}/>
+        <div style=${{flex:'1 1 200px',maxWidth:'340px'}}><input className="fld" type="search" placeholder="Поиск: название или характеристика" aria-label="Поиск предметов" value=${q} onInput=${e => setQ(e.target.value)}/></div>
+      </div>
       <div className="flex flex-wrap gap-4 justify-center" style=${{paddingBottom:'10px'}}>
-        ${pool.map(it => {
+        ${!shown.length ? html`<div className="muted py-6">Ничего не найдено. Попробуй другое слово или вкладку «Все предметы».</div>` : null}
+        ${shown.map(it => {
           const banned = ownedIds.has(it.id);
           const picked = sel.includes(it.id);
           return html`<${Card} key=${it.id} item=${it} size="g" state=${banned ? 'banned' : (picked ? 'sel' : '')}
@@ -1012,6 +963,23 @@ function Footer(){
     <div lang="ru"><b>Неофициальный фанатский проект</b>Игра никак не связана с Valve Corporation и не одобрена ею. Deadlock, названия и иконки предметов и другие материалы игры принадлежат Valve Corporation, все права на них сохраняются за Valve. Проект некоммерческий. Данные о предметах загружаются из сообщества Deadlock API.</div>
     <div lang="en"><b>Unofficial fan project</b>Not affiliated with, endorsed by or sponsored by Valve Corporation. Deadlock, its item names, icons and other game assets are the property of Valve Corporation; all rights to them remain with Valve. This is a non-commercial project. Item data is loaded from the community Deadlock API.</div>
   </footer>`;
+}
+
+/* ---------- вкладки слотов ---------- */
+const TABS = [['all', 'Все предметы', '#c9c3b4'], ['weapon', 'Оружие', 'var(--s-weapon)'], ['spirit', 'Спиритизм', 'var(--s-spirit)'], ['vitality', 'Живучесть', 'var(--s-vitality)']];
+function SlotGlyph({k}){
+  const g = {
+    all: html`<g fill="currentColor">${[4, 10, 16].flatMap(y => [4, 10, 16].map(x => html`<rect key=${x + '-' + y} x=${x} y=${y} width="4" height="4"/>`))}</g>`,
+    weapon: html`<g><g fill="none" stroke="currentColor" strokeWidth="2.4"><circle cx="12" cy="12" r="6.5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></g><circle cx="12" cy="12" r="2" fill="currentColor"/></g>`,
+    spirit: html`<path fill="currentColor" d="M12 2.5l2.7 6.3 6.8.6-5.2 4.5 1.6 6.6L12 16.9 6.1 20.5l1.6-6.6L2.5 9.4l6.8-.6z"/>`,
+    vitality: html`<path fill="currentColor" d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>`
+  };
+  return html`<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">${g[k]}</svg>`;
+}
+function SlotTabs({value, onChange}){
+  return html`<div className="tabs" role="group" aria-label="Раздел предметов">
+    ${TABS.map(([k, l, c]) => html`<button key=${k} className=${cx('tab', value === k && 'on')} style=${{'--tc':c}} title=${l} aria-label=${l} aria-pressed=${value === k} onClick=${() => onChange(k)}><${SlotGlyph} k=${k}/><span className="tl">${l}</span></button>`)}
+  </div>`;
 }
 
 /* ---------- приложение ---------- */
