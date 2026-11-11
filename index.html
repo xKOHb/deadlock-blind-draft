@@ -180,8 +180,8 @@ pre.err{white-space:pre-wrap;word-break:break-all;text-align:left;font:12px/1.5 
    Цена всегда считается по тиру, чтобы экономика игры не зависела от патчей. */
 const TIER_PRICE = {1:800, 2:1600, 3:3200, 4:6400};
 const ROMAN = ['', 'I', 'II', 'III', 'IV'];
-const SLOT_LABEL = {weapon:'Оружие', armor:'Живучесть', tech:'Дух'};
-const API_BASE = 'https://assets.deadlock-api.com/v2/items';
+const SLOT_LABEL = {weapon:'Оружие', armor:'Живучесть', vitality:'Живучесть', tech:'Дух', spirit:'Дух'};
+const API_BASE = 'https://api.deadlock-api.com/v1/assets/items';   // старый хост assets.deadlock-api.com больше не существует
 let ITEMS = [], CATALOG = {};
 const stubItem = id => ({id, name:{en:id, ru:id}, tier:1, price:TIER_PRICE[1], image:'', stats:[], desc:{en:'', ru:''}, slot:'', active:false, missing:true});
 // BY_ID[id] никогда не падает: если у соперника другая версия каталога, вернётся заглушка.
@@ -199,7 +199,7 @@ async function getJson(url, ms = 15000){
   } finally { clearTimeout(t); }
 }
 async function fetchItems(lang){
-  const urls = [API_BASE + '?language=' + lang, API_BASE + '/by-type/upgrade?language=' + lang];
+  const urls = lang === 'english' ? [API_BASE + '?language=english', API_BASE] : [API_BASE + '?language=' + lang];
   const errs = [];
   for (const u of urls){
     try { const j = await getJson(u); if (Array.isArray(j) && j.length) return j; errs.push(u + ' - пустой ответ'); }
