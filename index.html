@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Слепой драфт — Deadlock: драфт предметов 1 на 1</title>
-<meta name="description" content="Слепой драфт для Deadlock: загадывай карты предметов сопернику, выбирай свои и идите биться 1 на 1.">
+<title>Deadlock Minigames</title>
+<meta name="description" content="Мини-игры для друзей по мотивам Deadlock. Сейчас доступен «Слепой драфт»: загадывай карты предметов, выбирай свои вслепую и бейтесь 1 на 1.">
 <meta name="theme-color" content="#141311">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141311'/%3E%3Cpath d='M32 6 58 32 32 58 6 32z' fill='%23e0c58a'/%3E%3Cpath d='M32 18 46 32 32 46 18 32z' fill='%23141311'/%3E%3Cpath d='M32 25 39 32 32 39 25 32z' fill='%237ec4d1'/%3E%3C/svg%3E">
 <!-- Превью ссылки (Telegram, Discord). ВАЖНО: замени YOUR-DOMAIN на адрес сайта, картинка og.png лежит рядом с index.html -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Слепой драфт">
-<meta property="og:title" content="Слепой драфт — драфт предметов Deadlock 1 на 1">
-<meta property="og:description" content="Загадывай карты сопернику, выбирай свои вслепую, потом бейтесь на выбранных предметах. Заходи по ссылке!">
+<meta property="og:site_name" content="Deadlock Minigames">
+<meta property="og:title" content="Deadlock Minigames — мини-игры для друзей">
+<meta property="og:description" content="Слепой драфт предметов и другие мини-игры по Deadlock. Заходи по ссылке!">
 <meta property="og:image" content="https://YOUR-DOMAIN/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -459,10 +459,12 @@ function ItemInfo({item}){
   </div>`;
 }
 function TipBox({tip}){
-  const w = 340, pad = 16, H = 460;
-  const left = Math.min(tip.x + pad, window.innerWidth - w - 8);
-  const top = tip.y + H > window.innerHeight ? Math.max(8, tip.y - H + 20) : tip.y + pad;
-  return html`<div className="tip" style=${{left:Math.max(8, left)+'px', top:top+'px'}}><${ItemInfo} item=${tip.item}/></div>`;
+  const w = 340, pad = 16, ref = useRef(null), [h, setH] = useState(0);
+  React.useLayoutEffect(() => { if (ref.current) setH(ref.current.offsetHeight); }, [tip.item, tip.x < 0]);
+  const left = Math.max(8, Math.min(tip.x + pad, window.innerWidth - w - 8));
+  let top = tip.y + pad;
+  if (top + h > window.innerHeight - 8) top = (tip.y - h - pad >= 8) ? tip.y - h - pad : Math.max(8, window.innerHeight - h - 8);
+  return html`<div ref=${ref} className="tip" style=${{left:left + 'px', top:top + 'px'}}><${ItemInfo} item=${tip.item}/></div>`;
 }
 function DetailModal({item, onClose}){
   return html`<div className="modal-bg" onClick=${onClose}>
@@ -759,9 +761,9 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         <div className="flex gap-2">
           ${Array.from({length:HIDE_COUNT}, (_, i) => {
             const it = sel[i] ? BY_ID[sel[i]] : null;
-            return html`<div key=${i} className=${cx('trayslot', it && 'f')} style=${it ? {'--tc':slotColor(it)} : {}} onClick=${() => it && toggle(it.id)} title=${it ? 'Убрать' : ''}>
-              ${it ? html`<${ItemIcon} item=${it} size=${60}/><small>${it.price}</small>` : (i + 1)}
-            </div>`;
+            return it
+              ? html`<${Card} key=${i} item=${it} size="s" onClick=${() => toggle(it.id)}/>`
+              : html`<div key=${i} className="trayslot" style=${{width:'78px'}}>${i + 1}</div>`;
           })}
         </div>
         <button className="btn gold" disabled=${sel.length !== HIDE_COUNT} onClick=${() => onSubmit(seat, tier, sel)}>Загадать</button>
@@ -892,7 +894,7 @@ function Results({session, d, onExit}){
   const {settings, names, moves} = session;
   const sum = {A:totalSouls(d.inv.A), B:totalSouls(d.inv.B)};
   // «Баланс»: у всех одинаковые тиры, победителя по душам нет. Сайт-помощник, настоящий бой 1 на 1 идёт в игре.
-  const winner = (settings.mode !== 'chaos' || sum.A === sum.B) ? null : (sum.A > sum.B ? 'A' : 'B');
+  const winner = null;   // победителя сайт не объявляет: настоящий бой идёт в игре
   const offered = s => Array.from({length:settings.rounds}, (_, i) => {
     const m = moves[s] && moves[s][i + 1];
     return m && m.hide ? m.hide.reduce((a, id) => a + BY_ID[id].price, 0) : 0;
@@ -925,7 +927,7 @@ function Results({session, d, onExit}){
       <div className="disp" style=${{fontSize:'clamp(26px,5vw,44px)',color:'var(--gold2)'}}>
         ${winner ? 'Победил ' + names[winner] : 'Драфт завершён'}
       </div>
-      ${winner ? null : html`<div className="muted mt-1" style=${{fontSize:'14px'}}>Предметы выбраны. Идите в игру и бейтесь 1 на 1!</div>`}
+      ${winner ? null : html`<div className="muted mt-1" style=${{fontSize:'14px'}}>Предметы выбраны. Удачи!</div>`}
       <div className="muted num mt-1">${names.A} <${Soul}/>${sum.A} · ${names.B} <${Soul}/>${sum.B}${winner ? html` · разница <${Soul}/>${Math.abs(sum.A - sum.B)}` : ''}</div>
       <div className="mt-4"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>
     </div>
@@ -1130,6 +1132,27 @@ function CatalogError({err, onRetry}){
     <div><button className="btn gold" onClick=${onRetry}>Повторить</button></div>
   </div>`;
 }
+function Hub({onOpen}){
+  const games = [
+    {id:'draft', title:'Слепой драфт', tag:'1 на 1 · онлайн или за одним экраном', desc:'Загадывай сопернику по три карты предметов, выбирай свои вслепую. Когда драфт закончится, идите биться в игру на собранных предметах.', btn:'Играть'},
+    {id:null, title:'Скоро', tag:'Вторая мини-игра', desc:'Здесь появится новая мини-игра. Следи за обновлениями.', btn:'В разработке'}
+  ];
+  return html`<div className="flex flex-col gap-6">
+    <div className="hero text-center">
+      <h1 className="hero-t" style=${{fontSize:'clamp(32px,7.5vw,64px)'}}>Deadlock Minigames</h1>
+      <p className="muted" style=${{maxWidth:'52ch',margin:'0 auto'}}>Мини-игры для друзей по мотивам Deadlock. Выбери игру.</p>
+    </div>
+    <div className="grid gap-5 md:grid-cols-2">
+      ${games.map((g, i) => html`<div key=${i} className=${cx('panel p-6 flex flex-col gap-3', g.id && 'active')} style=${{opacity:g.id ? 1 : .6}}>
+        <div style=${{color:g.id ? 'var(--gold2)' : 'var(--edge2)',fontSize:'42px',lineHeight:1}}>${g.id ? html`<${Soul} size=${44}/>` : html`<span className="disp">?</span>`}</div>
+        <div className="muted disp" style=${{fontSize:'12px'}}>${g.tag}</div>
+        <div className="panel-h" style=${{fontSize:'26px'}}>${g.title}</div>
+        <p className="muted" style=${{fontSize:'14px',flex:1}}>${g.desc}</p>
+        <div><button className=${cx('btn', g.id && 'gold')} disabled=${!g.id} onClick=${() => g.id && onOpen(g.id)}>${g.btn}</button></div>
+      </div>`)}
+    </div>
+  </div>`;
+}
 function Footer(){
   return html`<footer className="panel foot">
     <div lang="ru"><b>Неофициальный фанатский проект</b>Игра никак не связана с Valve Corporation и не одобрена ею. Deadlock, названия и иконки предметов и другие материалы игры принадлежат Valve Corporation, все права на них сохраняются за Valve. Проект некоммерческий. Данные о предметах загружаются из сообщества Deadlock API.</div>
@@ -1161,6 +1184,10 @@ function App(){
   const [conn, setConn] = useState('online');
   const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
   const [names, setNames] = useState({A:'Игрок А', B:'Игрок Б'});
+  const [roomCode0] = useState(() => store.get('bd_room', null));
+  const [game, setGame] = useState(() => (location.hash === '#draft' || roomCode0) ? 'draft' : null);
+  useEffect(() => { const h = () => setGame(location.hash === '#draft' ? 'draft' : null); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
+  const openGame = g => { location.hash = g ? '#' + g : ''; setGame(g); };
   const [localRun, setLocalRun] = useState(null);
   const [roomCode, setRoomCode] = useState(() => store.get('bd_room', null));
   const [dbh] = useState(() => ({status:fbDb ? 'ready' : 'off', db:fbDb, uid:getUid(), canWrite:true}));
@@ -1198,7 +1225,8 @@ function App(){
   };
 
   let body;
-  if (cat.status === 'loading') body = html`<${CatalogLoading}/>`;
+  if (!game) body = html`<${Hub} onOpen=${openGame}/>`;
+  else if (cat.status === 'loading') body = html`<${CatalogLoading}/>`;
   else if (cat.status === 'error') body = html`<${CatalogError} err=${cat.err} onRetry=${loadCat}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
@@ -1209,12 +1237,12 @@ function App(){
   return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
     <div className="shell">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="brand"><${Soul} size=${18}/>Слепой драфт</div>
+        <button className="brand" style=${{background:'none',border:0,cursor:'pointer',padding:0}} onClick=${() => openGame(null)} title="К выбору игры"><${Soul} size=${18}/>Deadlock Minigames${game === 'draft' ? html`<span className="muted" style=${{fontSize:'14px',fontWeight:400}}> / Слепой драфт</span>` : null}</button>
         <${LangToggles} prefs=${prefs} setPrefs=${setPrefs}/>
       </div>
       ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
       ${body}
-      <p className="muted text-center mt-8" style=${{fontSize:'12px'}}>Наведи на предмет, чтобы увидеть описание. Правая кнопка мыши или значок i открывают подробную карточку.</p>
+      <p className="muted text-center mt-8" style=${{fontSize:'12px'}}>Весь сайт сделан с помощью искусственного интеллекта, поэтому описания предметов могут не совпадать с игрой (было лень проверять каждый предмет).<br/>This whole site was made with the help of AI, so item descriptions may not match the game (I was too lazy to check every item).</p>
       <${Footer}/>
     </div>
   <//><//>`;
