@@ -167,6 +167,10 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ii-mline{display:flex;gap:8px;align-items:baseline;margin-top:6px;padding:6px 10px;background:rgba(0,0,0,.3);font-size:13px;font-family:var(--f-itext)}
 .ii-mline b{font-weight:600}
 .ii-cd{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);padding:1px 8px;font-family:var(--f-itext)}
+html{min-height:100%}body{min-height:100vh;background-attachment:fixed,fixed,fixed}
+.faq{padding:0}.faq-btn{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;cursor:pointer}
+.faq-btn:focus-visible{outline:2px solid var(--gold2);outline-offset:-4px}.faq-btn .faq-q{margin:0}
+.faq-ch{color:var(--gold2);transition:transform .2s;font-size:14px}.faq-ch.o{transform:rotate(180deg)}.faq-body{padding:0 16px 14px}
 .hub-card{transition:transform .2s,box-shadow .2s}.hub-card.live:hover{transform:translateY(-4px);box-shadow:0 0 0 1px var(--goldDim),0 10px 34px rgba(224,197,138,.22)}
 .hub-art{height:96px;display:flex;align-items:center;gap:0;color:var(--gold2)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border:1px solid var(--edge2);background:rgba(20,19,17,.6);font-family:var(--f-display);letter-spacing:.06em;font-size:12px;color:var(--gold2);text-transform:uppercase}
@@ -1153,10 +1157,11 @@ const GEN_TRACKS = [
   {id:'neon', name:'Неоновый дрейф', bpm:84, root:40, wave:'sawtooth', chord:[0,3,7,12], prog:[0,8,5,10], arp:true},
   {id:'rain', name:'Дождь над городом', bpm:54, root:38, wave:'sine', chord:[0,4,7,11], prog:[0,3,8,5], arp:true}
 ];
-const ALL_TRACKS = GEN_TRACKS.concat(FILE_TRACKS);
-const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'noir', anim:true};
+const YT_TRACK = {id:'yt', name:'Саундтрек Deadlock (YouTube)', yt:'PLk-l3guipFR5uDKFKGSV1nSubOWLIslor'};
+const ALL_TRACKS = [YT_TRACK].concat(GEN_TRACKS, FILE_TRACKS);
+const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'yt', anim:true};
 const Music = (() => {
-  let ctx = null, master = null, timer = null, cur = null, vol = .35, step = 0, next = 0, audio = null;
+  let ctx = null, master = null, timer = null, cur = null, vol = .35, step = 0, next = 0, audio = null, yt = null, ytWait = false;
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
   const ensure = () => {
     if (!ctx){
@@ -1184,18 +1189,38 @@ const Music = (() => {
       next += beat / 2; step++;
     }
   };
-  const stopAll = () => { if (timer){ clearInterval(timer); timer = null; } if (audio){ audio.pause(); audio = null; } cur = null; };
+  // Плейлист играет через официальный встроенный плеер YouTube (файлы мы не копируем и не храним).
+  const playYT = t => {
+    if (yt && yt.playVideo){ yt.setVolume(vol * 100); yt.playVideo(); return; }
+    if (ytWait) return; ytWait = true;
+    const boot = () => {
+      const d = document.createElement('div'); d.style.cssText = 'position:fixed;left:-9999px;top:0;width:220px;height:140px;overflow:hidden';
+      const inner = document.createElement('div'); d.appendChild(inner); document.body.appendChild(d);
+      yt = new window.YT.Player(inner, {width:220, height:140, playerVars:{listType:'playlist', list:t.yt, autoplay:1, loop:1, playsinline:1},
+        events:{onReady:e => { e.target.setVolume(vol * 100); e.target.playVideo(); }, onError:() => { try { yt.nextVideo(); } catch (e){} }}});
+    };
+    if (window.YT && window.YT.Player) boot();
+    else { window.onYouTubeIframeAPIReady = boot; const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); }
+  };
+  const stopAll = () => {
+    if (timer){ clearInterval(timer); timer = null; }
+    if (audio){ audio.pause(); audio = null; }
+    if (yt && yt.pauseVideo){ try { yt.pauseVideo(); } catch (e){} }
+    cur = null;
+  };
   return {
     play(id, v){
       vol = v; const t = ALL_TRACKS.find(x => x.id === id) || ALL_TRACKS[0];
-      if (cur === t && (timer || audio)){ if (ctx && ctx.state === 'suspended') ctx.resume(); return; }
+      if (cur === t && (timer || audio || (t.yt && yt))){ if (t.yt && yt && yt.playVideo) yt.playVideo(); else if (ctx && ctx.state === 'suspended') ctx.resume(); return; }
       stopAll(); cur = t;
+      if (t.yt){ playYT(t); return; }
       if (t.src){ audio = new Audio(t.src); audio.loop = true; audio.volume = vol; audio.play().catch(() => {}); return; }
       if (!ensure()) return;
       master.gain.value = vol; step = 0; next = ctx.currentTime + .1; timer = setInterval(tick, 200); tick();
     },
     stop(){ stopAll(); },
-    vol(v){ vol = v; if (master) master.gain.value = v; if (audio) audio.volume = v; }
+    vol(v){ vol = v; if (master) master.gain.value = v; if (audio) audio.volume = v; if (yt && yt.setVolume) yt.setVolume(v * 100); },
+    skip(d){ if (yt && yt.nextVideo){ try { d > 0 ? yt.nextVideo() : yt.previousVideo(); } catch (e){} } }
   };
 })();
 
@@ -1214,9 +1239,10 @@ function SettingsModal({prefs, setPrefs, onClose}){
       <div className="set-row"><span className="set-l">Музыка</span><${Seg} value=${prefs.musicOn} options=${onoff} onChange=${v => set({musicOn:v})}/></div>
       <div className="set-row"><span className="set-l">Трек</span>
         <select className="fld" style=${{width:'auto',minWidth:'180px'}} value=${prefs.track} onChange=${e => set({track:e.target.value})}>${ALL_TRACKS.map(t => html`<option key=${t.id} value=${t.id}>${t.name}</option>`)}</select></div>
+      ${prefs.musicOn && prefs.track === 'yt' ? html`<div className="set-row"><span className="set-l">Трек плейлиста</span><span className="flex gap-2"><button className="btn sm" onClick=${() => Music.skip(-1)}>◀ Назад</button><button className="btn sm" onClick=${() => Music.skip(1)}>Дальше ▶</button></span></div>` : null}
       <div className="set-row"><span className="set-l">Громкость</span><input type="range" min="0" max="1" step="0.05" value=${prefs.vol} style=${{width:'200px'}} onChange=${e => set({vol:Number(e.target.value)})}/></div>
       <div className="set-row"><span className="set-l">Анимации</span><${Seg} value=${prefs.anim !== false} options=${onoff} onChange=${v => set({anim:v})}/></div>
-      <p className="muted mt-3" style=${{fontSize:'12px'}}>Музыка создаётся прямо в браузере (спокойный чил в духе Deadlock). Настоящие саундтреки игры не используются из-за авторских прав. Если музыка не пошла, нажми в любом месте страницы: браузер не даёт играть звук до первого клика.</p>
+      <p className="muted mt-3" style=${{fontSize:'12px'}}>Саундтрек Deadlock играет через встроенный плеер YouTube (нужен интернет), остальные треки создаются прямо в браузере. Если музыка не пошла, нажми в любом месте страницы: браузер не даёт играть звук до первого клика. Если трек из плейлиста не играет, нажми «Дальше».</p>
       <div className="mt-3"><button className="btn sm danger" onClick=${() => setPrefs({...PREF_DEF})}>Сбросить настройки</button></div>
     </div>
   </div>`;
@@ -1238,11 +1264,18 @@ const FAQ = [
   ['Это официальный проект Valve?', 'Нет. Это неофициальный фанатский проект, он никак не связан с Valve Corporation и не одобрен ею.']
 ];
 function Hub({onOpen}){
+  const [open, setOpen] = useState(-1);
   const games = [
     {id:'draft', title:'Слепой драфт', tag:'1 на 1 · онлайн или на одном экране', desc:'Загадывай сопернику по три карты, выбирай свои вслепую и собери билд. Потом идите биться в игру на собранных предметах.', btn:'Играть',
-     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><rect x="14" y="22" width="44" height="60" fill="#9a62d6" transform="rotate(-12 36 52)"/><rect x="52" y="14" width="44" height="60" fill="#e58a1f"/><rect x="90" y="22" width="44" height="60" fill="#7fb53a" transform="rotate(12 112 52)"/><path d="M74 36 88 50 74 64 60 50z" fill="#141311"/></g></svg>`},
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl">
+       <g transform="rotate(-14 38 54)"><rect x="14" y="20" width="46" height="62" rx="5" fill="#9a62d6" stroke="#141311" strokeWidth="3"/><text x="37" y="61" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311" opacity=".55">?</text></g>
+       <g transform="rotate(14 112 54)"><rect x="90" y="20" width="46" height="62" rx="5" fill="#7fb53a" stroke="#141311" strokeWidth="3"/><text x="113" y="61" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311" opacity=".55">?</text></g>
+       <g><rect x="52" y="12" width="46" height="62" rx="5" fill="#e58a1f" stroke="#141311" strokeWidth="3"/><path d="M75 28 91 43 75 58 59 43z" fill="#141311"/><path d="M75 36 84 43 75 50 66 43z" fill="#7ec4d1"/></g></g></svg>`},
     {id:'auction', title:'Чёрный аукцион', tag:'1 на 1 · торги за предметы', desc:'Выставляй предмет, перебивай ставки и не дай сопернику забрать лучшее. Бюджет один, делай ставки с умом.', btn:'Играть',
-     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl" fill="none" stroke="#e0c58a" strokeWidth="5"><path d="M30 26 62 58M46 18l24 24M20 40l24 24" /><path d="M58 52 112 82" strokeWidth="9"/></g><circle cx="116" cy="34" r="18" fill="#e0c58a"/><text x="116" y="42" textAnchor="middle" fontSize="24" fontWeight="700" fill="#141311">$</text></svg>`}
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl">
+       <rect x="40" y="78" width="60" height="10" rx="2" fill="#b8975a"/>
+       <g transform="rotate(-35 66 40)"><rect x="62" y="40" width="8" height="42" rx="3" fill="#9a7a45"/><rect x="46" y="18" width="40" height="22" rx="4" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="43" y="20" width="6" height="18" rx="2" fill="#b8975a"/><rect x="83" y="20" width="6" height="18" rx="2" fill="#b8975a"/></g>
+       <g transform="translate(116 38)"><circle r="20" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><circle r="14" fill="none" stroke="#b8975a" strokeWidth="1.5"/><text y="9" textAnchor="middle" fontSize="24" fontWeight="800" fill="#141311">$</text></g></g></svg>`}
   ];
   return html`<div className="flex flex-col gap-8">
     <div className="hero text-center">
@@ -1261,8 +1294,11 @@ function Hub({onOpen}){
     </div>
     <div>
       <div className="panel-h text-center mb-3" style=${{fontSize:'24px'}}>Частые вопросы</div>
-      <div className="grid gap-4 md:grid-cols-2">
-        ${FAQ.map((f, i) => html`<div key=${i} className="panel p-4"><div className="faq-q">${f[0]}</div><div className="faq-a">${f[1]}</div></div>`)}
+      <div className="grid gap-3 md:grid-cols-2 items-start">
+        ${FAQ.map((f, i) => html`<div key=${i} className=${cx('panel faq', open === i && 'active')}>
+          <button className="faq-btn" aria-expanded=${open === i} onClick=${() => setOpen(open === i ? -1 : i)}><span className="faq-q">${f[0]}</span><span className=${cx('faq-ch', open === i && 'o')}>▾</span></button>
+          ${open === i ? html`<div className="faq-a faq-body">${f[1]}</div>` : null}
+        </div>`)}
       </div>
     </div>
   </div>`;
