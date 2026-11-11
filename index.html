@@ -5,124 +5,161 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Слепой драфт</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&display=swap">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
+/* Оккультный нуар 1930-х, арт-деко: угольные фоны, кремовый текст, тусклое золото. Рамки со ступенчатыми углами. */
 :root{
-  --bg:#080a0f; --bg2:#0d1017; --panel:#121620; --panel2:#181e2b; --edge:#283042; --edge2:#3a455c;
-  --text:#ebe8e0; --muted:#8d97ab; --gold:#e2ab3d; --gold2:#ffd57a; --goldDim:#6f5421;
-  --teal:#43c0b0; --red:#e5575c; --soul:#74b9ff;
-  --t1:#9aa8bf; --t2:#58bd83; --t3:#a982f2; --t4:#f2b240;
-  --f-display:'Oswald','Arial Narrow',sans-serif; --f-body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --bg:#141311; --bg2:#1a1815; --panel:#22201c; --panel2:#2a2722; --edge:#4a4132; --edge2:#6b5d44;
+  --text:#ece1c8; --muted:#a99e86; --gold:#b8975a; --gold2:#e0c58a; --goldDim:#6e5a34;
+  --teal:#8fc2a0; --red:#d0685c; --soul:#7ec4d1;
+  --t1:#6fb35c; --t2:#e68a2e; --t3:#a67ee6; --t4:#f0c54e;
+  --f-head:'Playfair Display',Georgia,serif; --f-display:'Oswald','Arial Narrow',sans-serif; --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --step:polygon(0 8px,4px 8px,4px 4px,8px 4px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 4px) calc(100% - 8px),calc(100% - 4px) calc(100% - 4px),calc(100% - 8px) calc(100% - 4px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 8px),0 calc(100% - 8px));
   color-scheme:dark;
 }
-html,body{background:var(--bg)}
-body{
-  margin:0; color:var(--text); font-family:var(--f-body); font-size:14px; line-height:1.45;
-  background-color:var(--bg);
-  background-image:radial-gradient(1100px 520px at 50% -120px, rgba(226,171,61,.10), transparent 70%), radial-gradient(800px 500px at 100% 100%, rgba(67,192,176,.06), transparent 70%);
-  background-attachment:fixed;
-  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
-  padding-block:16px 40px;
-}
 *{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:15px/1.5 var(--f-body);
+  background-image:radial-gradient(900px 480px at 50% -80px,rgba(184,151,90,.16),transparent 70%),
+    linear-gradient(45deg,rgba(184,151,90,.04) 25%,transparent 25% 75%,rgba(184,151,90,.04) 75%),
+    linear-gradient(45deg,rgba(184,151,90,.04) 25%,transparent 25% 75%,rgba(184,151,90,.04) 75%);
+  background-size:auto,28px 28px,28px 28px;background-position:0 0,0 0,14px 14px;background-attachment:fixed;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
 .shell{max-width:1320px;margin:0 auto}
-.disp{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase}
+.disp{font-family:var(--f-display);letter-spacing:.04em}
 .muted{color:var(--muted)}
 .num{font-variant-numeric:tabular-nums}
-.panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--edge);position:relative;
-  clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)}
-.panel.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--goldDim)}
-.panel-h{font-family:var(--f-display);letter-spacing:.09em;text-transform:uppercase;font-size:13px;color:var(--gold2)}
+.inl{display:inline-flex;align-items:center;gap:6px}
+.brand{font-family:var(--f-head);font-weight:700;font-size:20px;color:var(--gold2);display:flex;align-items:center;gap:8px}
+.hero{position:relative;isolation:isolate;padding-top:10px}
+.hero::before{content:"";position:absolute;left:50%;bottom:-10px;width:min(760px,100%);height:150%;transform:translateX(-50%);z-index:-1;
+  background:repeating-conic-gradient(from -90deg at 50% 88%,rgba(184,151,90,.17) 0 4deg,transparent 4deg 10deg);
+  -webkit-mask:radial-gradient(ellipse 60% 70% at 50% 88%,#000,transparent 75%);mask:radial-gradient(ellipse 60% 70% at 50% 88%,#000,transparent 75%)}
+.hero-t{font-family:var(--f-head);font-weight:800;font-size:clamp(42px,9vw,78px);line-height:1.02;margin:6px 0 8px;color:var(--gold2);text-shadow:0 3px 0 #000,0 0 28px rgba(184,151,90,.28)}
+
+/* панели: двойная рамка + золотые уголки */
+.panel{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--edge);--c:var(--gold);--g:linear-gradient(var(--c),var(--c))}
+.panel::before{content:"";position:absolute;inset:4px;border:1px solid rgba(184,151,90,.22);pointer-events:none}
+.panel::after{content:"";position:absolute;inset:-1px;pointer-events:none;background:
+  var(--g) 0 0/16px 2px no-repeat,var(--g) 0 0/2px 16px no-repeat,var(--g) 100% 0/16px 2px no-repeat,var(--g) 100% 0/2px 16px no-repeat,
+  var(--g) 0 100%/16px 2px no-repeat,var(--g) 0 100%/2px 16px no-repeat,var(--g) 100% 100%/16px 2px no-repeat,var(--g) 100% 100%/2px 16px no-repeat}
+.panel.active{border-color:var(--gold2);--c:var(--gold2);box-shadow:0 0 0 1px var(--goldDim),0 0 22px rgba(224,197,138,.14)}
+.panel-h{font-family:var(--f-head);font-weight:700;font-size:16px;color:var(--gold2)}
 .rule{height:1px;background:linear-gradient(90deg,transparent,var(--edge2),transparent);border:0;margin:0}
-button.btn{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:14px;padding:10px 18px;cursor:pointer;border:1px solid var(--edge2);
-  background:var(--panel2);color:var(--text);transition:filter .15s, transform .1s, border-color .15s;
-  clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
-button.btn:hover:not(:disabled){filter:brightness(1.18);border-color:var(--gold)}
+
+/* кнопки */
+button.btn{font-family:var(--f-display);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:14px;padding:10px 20px;cursor:pointer;color:var(--text);
+  border:1px solid var(--gold);background:linear-gradient(180deg,#322e27,#221f1b);box-shadow:inset 0 0 0 3px #1a1815,inset 0 0 0 4px rgba(184,151,90,.4);transition:filter .15s,transform .1s}
+button.btn:hover:not(:disabled){filter:brightness(1.2);border-color:var(--gold2)}
 button.btn:active:not(:disabled){transform:translateY(1px)}
 button.btn:disabled{opacity:.4;cursor:not-allowed}
-button.btn:focus-visible,button.seg-b:focus-visible,.card:focus-visible,.tierb:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
-button.btn.gold{background:linear-gradient(180deg,#f0be57,#c68b22);color:#1a1204;border-color:#ffd57a;font-weight:600}
-button.btn.sm{padding:6px 12px;font-size:12px}
-button.btn.danger:hover:not(:disabled){border-color:var(--red);color:#ffb3b5}
-.seg{display:inline-flex;border:1px solid var(--edge2);background:var(--bg2)}
-button.seg-b{font-family:var(--f-display);letter-spacing:.07em;text-transform:uppercase;font-size:12px;padding:6px 12px;cursor:pointer;color:var(--muted);background:transparent;border:0}
-button.seg-b.on{background:var(--gold);color:#1a1204;font-weight:600}
+button.btn.gold{background:linear-gradient(180deg,#e3c883,#a8843f);color:#1a1409;border-color:#f0d9a0;box-shadow:inset 0 0 0 3px #b8975a,inset 0 0 0 4px rgba(26,20,9,.55);font-weight:600}
+button.btn.sm{padding:6px 12px;font-size:12px;box-shadow:inset 0 0 0 2px #1a1815}
+button.btn.danger:hover:not(:disabled){border-color:var(--red);color:#f2b4ac}
+button.btn:focus-visible,button.seg-b:focus-visible,.card:focus-visible,.tierb:focus-visible,.c-info:focus-visible,input:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--gold);background:var(--bg2)}
+button.seg-b{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:12px;padding:6px 14px;cursor:pointer;color:var(--muted);background:transparent;border:0}
+button.seg-b.on{background:linear-gradient(180deg,#d9bd7e,#a8843f);color:#1a1409;font-weight:600}
 button.seg-b:not(.on):hover{color:var(--text)}
-input.fld{background:var(--bg2);border:1px solid var(--edge2);color:var(--text);padding:9px 12px;font-family:var(--f-body);font-size:14px;width:100%;outline:none}
-input.fld:focus{border-color:var(--gold)}
+input.fld{background:var(--bg2);border:1px solid var(--edge2);color:var(--text);padding:9px 12px;font-family:var(--f-body);font-size:15px;width:100%;outline:none}
+input.fld:focus{border-color:var(--gold2)}
 input[type=range]{accent-color:var(--gold);width:100%}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--edge2);font-size:12px;background:var(--bg2);color:var(--muted)}
 .chip.ok{border-color:var(--teal);color:var(--teal)}
 .chip.gold{border-color:var(--gold);color:var(--gold2)}
 .tchip{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 8px;font-family:var(--f-display);font-size:12px;letter-spacing:.05em;border:1px solid currentColor;color:var(--tc);background:rgba(255,255,255,.03)}
 .soul{color:var(--soul)}
-.card{position:relative;width:var(--cw);aspect-ratio:3/4;perspective:800px;cursor:pointer;flex:none;transition:transform .2s, filter .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
-.sz-s{--cw:78px}.sz-g{--cw:100px}.sz-t{--cw:120px}
-@media (max-width:640px){.sz-g{--cw:84px}.sz-t{--cw:92px}.sz-s{--cw:70px}}
+.soul-i{display:inline-block;vertical-align:-1px;margin-right:3px;color:var(--soul)}
+
+/* иконки предметов */
+.ico{display:block;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+.mono{display:inline-flex;align-items:center;justify-content:center;aspect-ratio:1;font-family:var(--f-head);font-weight:700;color:var(--tc,var(--gold2));border:1px solid currentColor;transform:rotate(45deg);font-size:0}
+.mono::first-letter{font-size:0}
+.mono{position:relative}
+.mono::after{content:attr(data-l);transform:rotate(-45deg);font-size:18px;position:absolute}
+
+/* карточки */
+.card{position:relative;width:var(--cw);aspect-ratio:3/4;perspective:800px;cursor:pointer;flex:none;transition:transform .2s,filter .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
+.sz-s{--cw:78px}.sz-g{--cw:104px}.sz-t{--cw:124px}
+@media (max-width:640px){.sz-g{--cw:88px}.sz-t{--cw:94px}.sz-s{--cw:70px}}
 .card-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.2,.75,.2,1)}
 .card.is-back .card-inner{transform:rotateY(180deg)}
-.face,.back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  clip-path:polygon(9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px),0 9px)}
-.face{background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 35%,#000))}
-.face-in,.back-in{position:absolute;inset:2px;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
-.face-in{background:radial-gradient(120% 80% at 50% 38%,color-mix(in srgb,var(--tc) 22%,#10141c),#0c0f15 75%);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(var(--cw)*.07) calc(var(--cw)*.05) calc(var(--cw)*.06)}
-.c-top{display:flex;justify-content:space-between;width:100%;font-size:calc(var(--cw)*.105);color:var(--tc);font-family:var(--f-display);letter-spacing:.03em}
-.c-top .pips{letter-spacing:-1px}
-.c-top i{font-style:normal;color:var(--soul);margin-right:2px}
-.c-img{font-size:calc(var(--cw)*.42);line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
-.c-name{font-size:calc(var(--cw)*.112);line-height:1.15;text-align:center;font-weight:600;min-height:2.3em;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word}
-.c-info{position:absolute;right:calc(var(--cw)*.07);bottom:calc(var(--cw)*.30);width:18px;height:18px;border-radius:50%;border:1px solid var(--edge2);background:#0c0f15;color:var(--muted);
-  font-size:11px;line-height:16px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
+.face,.back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;clip-path:var(--step)}
+.face{background:linear-gradient(160deg,var(--tc),color-mix(in srgb,var(--tc) 30%,#000))}
+.face-in,.back-in{position:absolute;inset:2px;clip-path:var(--step)}
+.face-in{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 10%,#1d1b17),#14120f);display:flex;flex-direction:column;align-items:center;padding:calc(var(--cw)*.08) calc(var(--cw)*.06) calc(var(--cw)*.06)}
+.face-in::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--tc)}
+.c-top{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:calc(var(--cw)*.11);color:var(--soul);font-family:var(--f-body);font-weight:500}
+.c-tier{font-family:var(--f-head);font-weight:700;color:var(--tc);font-size:calc(var(--cw)*.13)}
+.c-art{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 68%)}
+.c-art .ico{width:84%;height:100%}
+.c-art .mono{width:46%}
+.c-name{font-family:var(--f-display);font-size:calc(var(--cw)*.118);line-height:1.12;text-align:center;font-weight:500;letter-spacing:.02em;min-height:2.3em;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word;color:var(--text)}
+.sz-s .c-name{display:none}
+.c-info{position:absolute;right:calc(var(--cw)*.07);top:calc(var(--cw)*.3);width:18px;height:18px;border-radius:50%;border:1px solid var(--edge2);background:#14120f;color:var(--muted);font-size:11px;line-height:16px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
 .card:hover .c-info,.c-info:focus-visible{opacity:1}
 @media (hover:none){.c-info{opacity:.85}}
-.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--gold),var(--goldDim))}
-.back-in{background:repeating-linear-gradient(45deg,#10131a 0 7px,#141926 7px 14px);display:flex;align-items:center;justify-content:center}
-.back-in span{width:calc(var(--cw)*.42);height:calc(var(--cw)*.42);transform:rotate(45deg);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:calc(var(--cw)*.18);background:rgba(226,171,61,.08)}
-.back-in span i{transform:rotate(-45deg);font-style:normal}
-.back-in b{position:absolute;left:8px;top:6px;font-family:var(--f-display);color:var(--gold2);font-size:calc(var(--cw)*.14)}
+.back{transform:rotateY(180deg);background:linear-gradient(160deg,var(--gold2),var(--goldDim))}
+.back-in{background:repeating-conic-gradient(from 0deg at 50% 62%,#1d1a15 0 6deg,#292419 6deg 12deg);display:flex;align-items:center;justify-content:center}
+.back-in span{width:calc(var(--cw)*.4);height:calc(var(--cw)*.4);transform:rotate(45deg);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;background:rgba(14,12,9,.85)}
+.back-in span i{transform:rotate(-45deg);font-style:normal;display:flex}
+.back-in b{position:absolute;left:9px;top:6px;font-family:var(--f-head);color:var(--gold2);font-size:calc(var(--cw)*.15)}
 .card.pickable:hover .card-inner{transform:translateY(-6px) rotateY(180deg)}
-.card.pickable{filter:drop-shadow(0 0 10px rgba(226,171,61,.45))}
-.card.pickable.is-back:hover{filter:drop-shadow(0 0 16px rgba(255,213,122,.8))}
-.card.sel{transform:translateY(-6px);filter:drop-shadow(0 0 12px rgba(255,213,122,.7))}
-.card.banned{opacity:.34;filter:grayscale(.75);cursor:not-allowed}
+.card.pickable{filter:drop-shadow(0 0 10px rgba(224,197,138,.45))}
+.card.pickable.is-back:hover{filter:drop-shadow(0 0 16px rgba(240,217,160,.85))}
+.card.sel{transform:translateY(-6px);filter:drop-shadow(0 0 12px rgba(240,217,160,.7))}
+.card.banned{opacity:.34;filter:grayscale(.8);cursor:not-allowed}
 .card.faded{opacity:.5;filter:saturate(.5)}
-.card.taken{filter:drop-shadow(0 0 12px rgba(67,192,176,.65))}
-.tag{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-display);letter-spacing:.08em;font-size:11px;padding:1px 8px;pointer-events:none;background:var(--gold);color:#1a1204;z-index:2}
-.tag-banned{background:#2a2f3b;color:#b9c0cf;border:1px solid var(--edge2)}
-.tag-taken{background:var(--teal);color:#06201c}
+.card.taken{filter:drop-shadow(0 0 12px rgba(143,194,160,.7))}
+.tag{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-display);letter-spacing:.08em;font-size:11px;padding:1px 8px;pointer-events:none;background:var(--gold2);color:#1a1409;z-index:2}
+.tag-banned{background:#2d2a24;color:#bdb39a;border:1px solid var(--edge2)}
+.tag-taken{background:var(--teal);color:#0f2018}
+
+/* инвентарь */
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 @media (min-width:480px){.slots{grid-template-columns:repeat(4,1fr)}}
 .slot{aspect-ratio:1;position:relative;border:1px dashed var(--edge);background:rgba(255,255,255,.015);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);font-size:12px}
-.slot.full{border:1px solid var(--tc);border-style:solid;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 24%,#10141c),#0c0f15);cursor:help;
-  clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0 calc(100% - 6px),0 6px)}
-.slot.full .e{font-size:clamp(22px,3.2vw,32px);line-height:1}
-.slot.full .p{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;color:var(--tc);font-family:var(--f-display)}
-.slot.new{box-shadow:0 0 0 2px var(--teal),0 0 14px rgba(67,192,176,.55);animation:pop .6s ease-out}
+.slot.full{border:1px solid var(--tc);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 26%,#1d1b17),#14120f);cursor:help;clip-path:var(--step)}
+.slot.full .ico{width:78%;height:78%;margin-bottom:6px}
+.slot.full .mono{width:40%}
+.slot.full .p{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;color:var(--tc);font-family:var(--f-body);font-weight:600}
+.slot.new{box-shadow:0 0 0 2px var(--teal),0 0 14px rgba(143,194,160,.55);animation:pop .6s ease-out}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-.tip{position:fixed;z-index:60;width:280px;pointer-events:none;background:#0d1118;border:1px solid var(--gold);padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
-.modal-bg{position:fixed;inset:0;z-index:70;background:rgba(3,5,8,.78);display:flex;align-items:center;justify-content:center;padding:20px}
-.modal{width:min(420px,100%);background:var(--panel);border:1px solid var(--gold);padding:20px;position:relative}
-.stat-line{display:flex;gap:8px;align-items:baseline}
-.stat-line b{color:var(--teal);font-weight:600;min-width:52px;font-variant-numeric:tabular-nums}
-.stepper{display:flex;gap:0;flex-wrap:wrap}
-.step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;text-transform:uppercase;font-size:12px;color:var(--muted);border-bottom:2px solid var(--edge)}
-.step.on{color:var(--gold2);border-color:var(--gold)}
+
+/* подсказка, модалка */
+.tip{position:fixed;z-index:60;width:280px;pointer-events:none;background:#17150f;border:1px solid var(--gold);padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.65)}
+.modal-bg{position:fixed;inset:0;z-index:70;background:rgba(8,7,5,.8);display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{width:min(440px,100%);background:var(--panel);border:1px solid var(--gold);box-shadow:inset 0 0 0 4px var(--bg2),inset 0 0 0 5px rgba(184,151,90,.3);padding:22px;position:relative}
+.info-ico{width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center;border:1px solid var(--tc);background:radial-gradient(circle,color-mix(in srgb,var(--tc) 28%,#1d1b17),#14120f)}
+.info-ico .ico{width:46px;height:46px}.info-ico .mono{width:26px}
+.info-name{font-family:var(--f-head);font-weight:700;font-size:18px;line-height:1.15;color:var(--gold2)}
+.stat-line{display:flex;gap:10px;align-items:baseline;font-size:14px}
+.stat-line b{color:var(--gold2);font-weight:600;min-width:58px;font-variant-numeric:tabular-nums}
+.stepper{display:flex;flex-wrap:wrap}
+.step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;font-size:13px;color:var(--muted);border-bottom:2px solid var(--edge)}
+.step.on{color:var(--gold2);border-color:var(--gold2)}
 .step.done{color:var(--teal);border-color:var(--teal)}
 .pbar{display:flex;gap:3px}
 .pbar i{flex:1;height:5px;background:var(--edge)}
-.pbar i.done{background:var(--teal)}.pbar i.cur{background:var(--gold)}
-.tierb{cursor:pointer;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);padding:8px 10px;text-align:left;min-width:108px;font-family:var(--f-body)}
+.pbar i.done{background:var(--teal)}.pbar i.cur{background:var(--gold2)}
+.tierb{cursor:pointer;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);padding:8px 10px;text-align:left;min-width:112px;font-family:var(--f-body)}
 .tierb.on{border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc);background:color-mix(in srgb,var(--tc) 14%,var(--bg2))}
 .tierb:disabled{opacity:.35;cursor:not-allowed}
-.trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);cursor:pointer;position:relative;flex:none;background:rgba(255,255,255,.015)}
-.trayslot.f{border:1px solid var(--tc);border-style:solid;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 22%,#10141c),#0c0f15);font-size:28px;color:var(--text)}
-.trayslot.f small{position:absolute;bottom:2px;font-size:9px;color:var(--tc);font-family:var(--f-display)}
-.winner{background:linear-gradient(90deg,transparent,rgba(226,171,61,.16),transparent)}
-table.rt{width:100%;border-collapse:collapse;font-size:13px}
-table.rt th{font-family:var(--f-display);font-weight:500;letter-spacing:.07em;text-transform:uppercase;font-size:11px;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--edge)}
-table.rt td{padding:6px 8px;border-bottom:1px solid rgba(40,48,66,.6)}
-@media (prefers-reduced-motion:reduce){.card-inner,.card,.slot.new{transition:none;animation:none}}
+.trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-head);cursor:pointer;position:relative;flex:none;background:rgba(255,255,255,.015)}
+.trayslot.f{border:1px solid var(--tc);background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 24%,#1d1b17),#14120f);flex-direction:column;gap:6px}
+.trayslot.f small{position:absolute;bottom:2px;font-size:10px;color:var(--tc);font-weight:600}
+.winner{background:linear-gradient(90deg,transparent,rgba(224,197,138,.16),transparent),linear-gradient(180deg,var(--panel2),var(--panel))}
+table.rt{width:100%;border-collapse:collapse;font-size:14px}
+table.rt th{font-family:var(--f-display);font-weight:500;letter-spacing:.06em;font-size:12px;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--edge)}
+table.rt td{padding:6px 8px;border-bottom:1px solid rgba(74,65,50,.6)}
+.spin{width:34px;height:34px;margin:0 auto;border:2px solid var(--edge2);border-top-color:var(--gold2);transform:rotate(45deg);animation:rot 1.1s linear infinite}
+@keyframes rot{to{transform:rotate(405deg)}}
+pre.err{white-space:pre-wrap;word-break:break-all;text-align:left;font:12px/1.5 var(--f-body);color:var(--muted);background:var(--bg2);border:1px solid var(--edge);padding:10px;max-height:160px;overflow:auto}
+.foot{margin-top:28px;padding:16px 20px;font-size:12.5px;line-height:1.55;color:var(--muted);display:grid;gap:14px;grid-template-columns:1fr}
+@media (min-width:760px){.foot{grid-template-columns:1fr 1fr}}
+.foot b{display:block;margin-bottom:2px;font-family:var(--f-head);font-weight:700;font-size:14px;color:var(--gold2)}
+@media (prefers-reduced-motion:reduce){.card-inner,.card,.slot.new,.spin{transition:none;animation:none}}
 </style>
 </head>
 <body>
@@ -132,129 +169,101 @@ table.rt td{padding:6px 8px;border-bottom:1px solid rgba(40,48,66,.6)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script id="logic">
+/* ======================= КАТАЛОГ ПРЕДМЕТОВ (динамическая загрузка) =======================
+   Хардкода нет: при старте качаем предметы из Deadlock Assets API (сообщество датамайнеров) на английском и русском,
+   разбираем в формат игры: {id, name{en,ru}, tier, price, image(URL), stats[{l{en,ru}, v}], desc{en,ru}, slot, active}.
+   Цена всегда считается по тиру, чтобы экономика игры не зависела от патчей. */
 const TIER_PRICE = {1:800, 2:1600, 3:3200, 4:6400};
-const STAT = {
-  ammo:{en:'Ammo', ru:'Боезапас'}, wdmg:{en:'Weapon Damage', ru:'Урон оружия'}, fire_rate:{en:'Fire Rate', ru:'Скорострельность'},
-  reload:{en:'Reload Speed', ru:'Скорость перезарядки'}, headshot:{en:'Headshot Bonus', ru:'Бонусный урон в голову'},
-  hp:{en:'Health', ru:'Здоровье'}, hpregen:{en:'Health Regen', ru:'Регенерация здоровья'}, stamina:{en:'Stamina', ru:'Выносливость'},
-  move:{en:'Move Speed', ru:'Скорость передвижения'}, spirit:{en:'Spirit Power', ru:'Сила духа'}, bullet_res:{en:'Bullet Resist', ru:'Сопротивление пулям'},
-  lifesteal:{en:'Weapon Lifesteal', ru:'Вампиризм оружия'}, spirit_lifesteal:{en:'Spirit Lifesteal', ru:'Вампиризм способностей'},
-  cooldown:{en:'Cooldown Reduction', ru:'Сокращение перезарядки'}, ability_range:{en:'Ability Range', ru:'Дальность способностей'},
-  melee:{en:'Melee Damage', ru:'Урон в ближнем бою'}, slow:{en:'Slow', ru:'Замедление'}
-};
-function I(id,tier,image,en,ru,stats,noteEn,noteRu){
-  return {id, name:{en,ru}, tier, price:TIER_PRICE[tier], image, stats, note: noteEn?{en:noteEn,ru:noteRu}:null};
+const ROMAN = ['', 'I', 'II', 'III', 'IV'];
+const SLOT_LABEL = {weapon:'Оружие', armor:'Живучесть', tech:'Дух'};
+const API_BASE = 'https://assets.deadlock-api.com/v2/items';
+let ITEMS = [], CATALOG = {};
+const stubItem = id => ({id, name:{en:id, ru:id}, tier:1, price:TIER_PRICE[1], image:'', stats:[], desc:{en:'', ru:''}, slot:'', active:false, missing:true});
+// BY_ID[id] никогда не падает: если у соперника другая версия каталога, вернётся заглушка.
+const BY_ID = new Proxy({}, {get:(_, id) => typeof id === 'string' ? (CATALOG[id] || stubItem(id)) : undefined});
+function setCatalog(list){ ITEMS = list; CATALOG = Object.fromEntries(list.map(i => [i.id, i])); }
+
+async function getJson(url, ms = 15000){
+  // Без AbortController: в песочницах (превью) signal нельзя передать через postMessage.
+  let t;
+  const timeout = new Promise((_, rej) => { t = setTimeout(() => rej(new Error('таймаут')), ms); });
+  try {
+    const r = await Promise.race([fetch(url), timeout]);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return await r.json();
+  } finally { clearTimeout(t); }
 }
-
-const ITEMS = [
-  /* Weapon - Tier 1 */
-  I('w1_basic_mag',1,'🔫','Basic Magazine','Базовый магазин',[['ammo','+24%'],['wdmg','+15%']]),
-  I('w1_close_qtr',1,'🥊','Close Quarters','Ближний бой',[['wdmg','+25%']],'Bonus applies at close range.','Действует на ближней дистанции.'),
-  I('w1_headshot',1,'🎯','Headshot Booster','Усилитель хедшотов',[['headshot','+40'],['fire_rate','+5%']]),
-  I('w1_high_vel',1,'💨','High-Velocity Mag','Скоростной магазин',[['wdmg','+10%'],['fire_rate','+4%']]),
-  I('w1_hollow',1,'🩸','Hollow Point Ward','Экспансивные пули',[['wdmg','+20%'],['hp','+85']]),
-  I('w1_rapid',1,'🔄','Rapid Rounds','Быстрые патроны',[['fire_rate','+12%'],['move','+1']]),
-  I('w1_restorative',1,'🩹','Restorative Shot','Восстанавливающий выстрел',[['wdmg','+10%']],'Heals on enemy hit.','Лечит при попадании.'),
-  
-  /* Vitality - Tier 1 */
-  I('v1_extra_hp',1,'❤️','Extra Health','Доп. здоровье',[['hp','+160'],['wdmg','+5%']]),
-  I('v1_extra_regen',1,'🧪','Extra Regen','Доп. регенерация',[['hpregen','+2.8'],['ammo','+8%']]),
-  I('v1_extra_stam',1,'🏃','Extra Stamina','Доп. выносливость',[['stamina','+1'],['fire_rate','+5%']]),
-  I('v1_sprint',1,'👟','Sprint Boots','Спринтерские ботинки',[['move','+2']]),
-  I('v1_enduring',1,'🛡️','Enduring Spirit','Выносливый дух',[['hp','+75'],['spirit_lifesteal','+8%']]),
-  I('v1_healing_rite',1,'💚','Healing Rite','Обряд исцеления',[['hpregen','+2.5']],'Active: massive regen.','Активно: мощная регенерация.'),
-  I('v1_melee_life',1,'🧛','Melee Lifesteal','Вампиризм ближнего боя',[['melee','+15%']],'Melee hits heal you.','Атаки ближнего боя лечат.'),
-
-  /* Spirit - Tier 1 */
-  I('s1_ammo_scav',1,'🔋','Ammo Scavenger','Сборщик патронов',[['ammo','+15%'],['spirit','+4']]),
-  I('s1_extra_spirit',1,'👻','Extra Spirit','Доп. дух',[['spirit','+9'],['hpregen','+1']]),
-  I('s1_mystic_burst',1,'✨','Mystic Burst','Мистический взрыв',[['spirit','+6'],['wdmg','+5%']]),
-  I('s1_mystic_reach',1,'🔮','Mystic Reach','Мистический охват',[['ability_range','+16%'],['spirit','+5']]),
-  I('s1_spirit_strike',1,'👊','Spirit Strike','Духовный удар',[['melee','+12%'],['spirit','+4']]),
-
-  /* Weapon - Tier 2 */
-  I('w2_active_reload',2,'⚡','Active Reload','Активная перезарядка',[['reload','+20%'],['wdmg','+15%']]),
-  I('w2_fleetfoot',2,'💨','Fleetfoot','Быстроногий',[['move','+1.5'],['stamina','+1']]),
-  I('w2_kinetic_dash',2,'⛸️','Kinetic Dash','Кинетический рывок',[['hp','+100']],'Dash enhances next shots.','Рывок усиливает выстрелы.'),
-  I('w2_long_range',2,'🔭','Long Range','Дальний бой',[['wdmg','+20%']],'Bonus damage at distance.','Бонусный урон издалека.'),
-  I('w2_melee_charge',2,'🗡️','Melee Charge','Рывок ближнего боя',[['melee','+30%'],['hp','+100']]),
-  I('w2_mystic_shot',2,'🎇','Mystic Shot','Мистический выстрел',[['spirit','+8']]),
-  I('w2_slowing_bul',2,'🐌','Slowing Bullets','Замедляющие пули',[['slow','+16%']]),
-  I('w2_soul_shred',2,'🔥','Soul Shredder Bullets','Разрывающие дух пули',[['spirit','+6'],['wdmg','+10%']]),
-
-  /* Vitality - Tier 2 */
-  I('v2_bullet_armor',2,'🪖','Bullet Armor','Пулевая броня',[['bullet_res','+20%'],['hp','+150']]),
-  I('v2_combat_barrier',2,'🛡️','Combat Barrier','Боевой барьер',[['fire_rate','+8%']],'Shield grants weapon damage.','Щит дает урон оружия.'),
-  I('v2_enchanters',2,'🪄',"Enchanter's Barrier",'Барьер чародея',[['spirit','+8']],'Shield grants spirit power.','Щит дает силу духа.'),
-  I('v2_healbane',2,'☠️','Healbane','Проклятие исцеления',[['hp','+150']],'Reduces enemy healing.','Снижает лечение врагов.'),
-  I('v2_return_fire',2,'🔥','Return Fire','Ответный огонь',[['hp','+125'],['spirit','+7']],'Active: reflect bullet damage.','Активно: отражение пуль.'),
-  I('v2_spirit_armor',2,'🧿','Spirit Armor','Духовная броня',[['hp','+150']],'Resists spirit damage.','Защита от духовного урона.'),
-
-  /* Spirit - Tier 2 */
-  I('s2_adv_spirit',2,'🌌','Advanced Spirit','Продвинутый дух',[['spirit','+14'],['hpregen','+2']]),
-  I('s2_cold_front',2,'❄️','Cold Front','Холодный фронт',[['spirit','+5']],'Active: slow and damage.','Активно: замедление и урон.'),
-  I('s2_decay',2,'🦠','Decay','Разложение',[['hp','+100']],'Active: target takes % damage.','Активно: урон в % от здоровья.'),
-  I('s2_duration',2,'⏳','Duration Extender','Продление действия',[['spirit','+8']]),
-  I('s2_improved_cd',2,'⏱️','Improved Cooldown','Улучшенная перезарядка',[['cooldown','+16%'],['hpregen','+1.5']]),
-  I('s2_suppressor',2,'🤫','Suppressor','Подавитель',[['spirit','+6'],['hp','+75']]),
-
-  /* Weapon - Tier 3 */
-  I('w3_escalating',3,'📈','Escalating Resilience','Нарастающая стойкость',[['fire_rate','+12%'],['wdmg','+15%']]),
-  I('w3_glass_cannon',3,'💥','Glass Cannon','Стеклянная пушка',[['wdmg','+30%'],['hp','-15%']]),
-  I('w3_headhunter',3,'💀','Headhunter','Охотник за головами',[['headshot','+50'],['lifesteal','+15%']]),
-  I('w3_lucky_shot',3,'🍀','Lucky Shot','Счастливый выстрел',[['wdmg','+20%']]),
-  I('w3_point_blank',3,'🥊','Point Blank','В упор',[['wdmg','+25%'],['stamina','+1']]),
-  I('w3_toxic_bul',3,'🧪','Toxic Bullets','Токсичные пули',[['hp','+200']],'Bleed damage over time.','Кровотечение и урон.'),
-  I('w3_warp_stone',3,'🌌','Warp Stone','Камень телепортации',[['wdmg','+20%']],'Active: short teleport.','Активно: короткий телепорт.'),
-
-  /* Vitality - Tier 3 */
-  I('v3_fortitude',3,'🏰','Fortitude','Стойкость',[['hp','+300'],['hpregen','+4']]),
-  I('v3_impr_bullet',3,'🛡️','Improved Bullet Armor','Улучш. пулевая броня',[['bullet_res','+45%'],['hp','+250']]),
-  I('v3_impr_spirit',3,'🔮','Improved Spirit Armor','Улучш. духовная броня',[['hp','+250']]),
-  I('v3_lifestrike',3,'🩸','Lifestrike','Удар вампира',[['melee','+40%']]),
-  I('v3_majestic',3,'🦅','Majestic Leap','Величественный прыжок',[['hp','+200']],'Active: launch into air.','Активно: прыжок в воздух.'),
-  I('v3_veil_walker',3,'👻','Veil Walker','Странник вуали',[['hp','+200'],['move','+2']]),
-
-  /* Spirit - Tier 3 */
-  I('s3_boundless',3,'♾️','Boundless Spirit','Безграничный дух',[['spirit','+25'],['hp','+150']]),
-  I('s3_echo_shard',3,'🔁','Echo Shard','Осколок эха',[['spirit','+12']],'Active: reset ability.','Активно: сброс способности.'),
-  I('s3_impr_burst',3,'💥','Improved Burst','Улучшенный взрыв',[['spirit','+15'],['hp','+100']]),
-  I('s3_impr_reach',3,'🔭','Improved Reach','Улучшенный охват',[['ability_range','+25%'],['spirit','+12']]),
-  I('s3_knockdown',3,'🔨','Knockdown','Оглушение',[['spirit','+10']],'Active: stun target.','Активно: оглушить цель.'),
-  I('s3_superior_cd',3,'⏱️','Superior Cooldown','Превосходная перезарядка',[['cooldown','+24%'],['spirit','+12']]),
-  I('s3_torment',3,'👁️','Torment Pulse','Импульс мучений',[['hp','+150'],['spirit','+10']]),
-
-  /* Weapon - Tier 4 */
-  I('w4_crip_head',4,'😵','Crippling Headshot','Калечащий хедшот',[['wdmg','+30%'],['lifesteal','+20%']]),
-  I('w4_frenzy',4,'👹','Frenzy','Бешенство',[['fire_rate','+25%'],['hp','+300']]),
-  I('w4_siphon',4,'🧛','Siphon Bullets','Высасывающие пули',[['lifesteal','+25%'],['wdmg','+20%']]),
-  I('w4_spiritual',4,'🌊','Spiritual Overflow','Духовный избыток',[['spirit','+20'],['wdmg','+25%']]),
-  I('w4_vampiric',4,'🩸','Vampiric Burst','Вампирический взрыв',[['lifesteal','+30%'],['fire_rate','+15%']]),
-
-  /* Vitality - Tier 4 */
-  I('v4_colossus',4,'🗿','Colossus','Колосс',[['hp','+600'],['melee','+50%']],'Active: grow and resist damage.','Активно: рост и защита.'),
-  I('v4_inhibitor',4,'⛓️','Inhibitor','Ингибитор',[['hp','+250'],['wdmg','+20%']]),
-  I('v4_phantom',4,'👻','Phantom Strike','Фантомный удар',[['spirit','+15'],['move','+2']]),
-  I('v4_unstoppable',4,'🛡️','Unstoppable','Неудержимый',[['hp','+350']],'Active: CC immunity.','Активно: иммунитет к контролю.'),
-  I('v4_leech',4,'🦇','Leech','Пиявка',[['spirit_lifesteal','+30%'],['hp','+250']]),
-
-  /* Spirit - Tier 4 */
-  I('s4_curse',4,'☠️','Curse','Проклятие',[['spirit','+20']],'Active: silence and disarm.','Активно: безмолвие и бессилие.'),
-  I('s4_diviner',4,'🧿',"Diviner's Kevlar",'Кевлар прорицателя',[['spirit','+25'],['hp','+300']]),
-  I('s4_magic_carpet',4,'🪶','Magic Carpet','Ковер-самолет',[['spirit','+15'],['hp','+200']]),
-  I('s4_refresher',4,'🔄','Refresher','Освежитель',[['spirit','+15']],'Active: refresh all cooldowns.','Активно: сброс всех кулдаунов.'),
-  I('s4_mystic_reverb',4,'🎵','Mystic Reverb','Мистическое эхо',[['spirit','+25'],['ability_range','+15%']])
-];
-
-const BY_ID = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+async function fetchItems(lang){
+  const urls = [API_BASE + '?language=' + lang, API_BASE + '/by-type/upgrade?language=' + lang];
+  const errs = [];
+  for (const u of urls){
+    try { const j = await getJson(u); if (Array.isArray(j) && j.length) return j; errs.push(u + ' - пустой ответ'); }
+    catch (e){ errs.push(u + ' - ' + (e && e.name === 'AbortError' ? 'таймаут' : (e && e.message) || 'ошибка сети')); }
+  }
+  throw new Error(errs.join('\n'));
+}
+const strip = s => String(s == null ? '' : s).replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+function descOf(d){
+  if (!d) return '';
+  if (typeof d === 'string') return strip(d);
+  const seen = [];
+  [d.desc, d.passive, d.active].forEach(x => { const t = strip(x); if (t && !seen.includes(t)) seen.push(t); });
+  return seen.join(' ').slice(0, 280);
+}
+// properties: {ключ:{value, label, prefix, postfix, ...}} -> {ключ:{l, v}}
+function statsOf(props){
+  const out = {};
+  if (!props || typeof props !== 'object') return out;
+  Object.keys(props).forEach(k => {
+    const p = props[k]; if (!p || typeof p !== 'object') return;
+    const label = strip(p.label), raw = p.value, num = parseFloat(String(raw).replace(',', '.'));
+    if (!label || !isFinite(num) || num === 0 || p.disable_value) return;
+    const pre = strip(p.prefix), post = strip(p.postfix);
+    const lead = pre && !pre.includes('{') ? pre : (num > 0 && !/^[+-]/.test(String(raw)) ? '+' : '');
+    out[k] = {l:label, v:lead + String(raw) + (post.includes('{') ? '' : post)};
+  });
+  return out;
+}
+function parseCatalog(en, ru){
+  const ruBy = {}; (ru || []).forEach(x => { if (x && x.class_name) ruBy[x.class_name] = x; });
+  const seen = new Set(), list = [];
+  en.forEach(x => {
+    if (!x || !x.class_name || seen.has(x.class_name)) return;
+    const tier = Number(x.item_tier != null ? x.item_tier : x.tier);
+    if (!(tier >= 1 && tier <= 4)) return;                       // тир 5 (легендарные Street Brawl) не берём
+    if (x.type && x.type !== 'upgrade') return;
+    if (x.shopable === false || x.disabled === true) return;
+    seen.add(x.class_name);
+    const r = ruBy[x.class_name] || x, se = statsOf(x.properties), sr = statsOf(r.properties);
+    list.push({
+      id:x.class_name, name:{en:x.name || x.class_name, ru:r.name || x.name || x.class_name}, tier, price:TIER_PRICE[tier],
+      image:x.shop_image_webp || x.shop_image || x.image_webp || x.image || '',
+      stats:Object.keys(se).slice(0, 5).map(k => ({l:{en:se[k].l, ru:(sr[k] || se[k]).l}, v:se[k].v})),
+      slot:x.item_slot_type || '', active:!!x.is_active_item,
+      desc:{en:descOf(x.description), ru:descOf(r.description) || descOf(x.description)}
+    });
+  });
+  const cnt = [1, 2, 3, 4].map(t => list.filter(i => i.tier === t).length);
+  if (cnt.some(c => c < 6)) throw new Error('Каталог пришёл неполным (предметов по тирам: ' + cnt.join(' / ') + '). Формат API мог измениться.');
+  return list.sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en));   // одинаковый порядок у обоих игроков
+}
+async function loadCatalog(){
+  const en = await fetchItems('english');
+  let ru = null; try { ru = await fetchItems('russian'); } catch (e){ console.warn('Русская локализация недоступна', e); }
+  return parseCatalog(en, ru);
+}
 const MIN_ROUNDS = 4, MAX_ROUNDS = 12, SLOTS = 12, HIDE_COUNT = 3;
 const SEAT_LABEL = {A:'А', B:'Б'};
 const other = s => (s === 'A' ? 'B' : 'A');
 
+/* ======================= ЛОГИКА ИГРЫ ======================= */
+// Баланс: тир раунда общий. 'ramp' равномерно растягивает 1..4 на все раунды, 'cycle' идёт 1,2,3,4,1,2...
+// Хаос: тир каждый игрок выбирает сам, возвращаем null.
 function tierForRound(settings, r){
   if (settings.mode !== 'balance') return null;
   if (settings.order === 'cycle') return ((r - 1) % 4) + 1;
@@ -263,6 +272,8 @@ function tierForRound(settings, r){
 function ownedSet(inv, seat){ return new Set(inv[seat].map(x => x.id)); }
 function availableOfTier(tier, ownedIds){ return ITEMS.filter(i => i.tier === tier && !ownedIds.has(i.id)); }
 
+// Состояние раунда выводится из ходов. moves[seat][round] = {hide:[id,id,id], tier, pick:{idx,id}, ready}
+// hide - 3 карты, которые seat загадал сопернику. pick - карта, которую seat взял из карт соперника.
 function derive(settings, moves){
   const N = settings.rounds;
   const inv = {A:[], B:[]};
@@ -300,24 +311,38 @@ const store = {
 const PrefCtx = createContext({nameLang:'ru', descLang:'ru'});
 const UiCtx = createContext({showTip(){}, moveTip(){}, hideTip(){}, openDetail(){}});
 
+/* ---------- предметы: иконка, подсказка, детали ---------- */
+function Soul({size = 12}){
+  return html`<svg className="soul-i" width=${size} height=${size} viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .5 11 6 6 11.5 1 6z" fill="currentColor"/><path d="M6 3.2 8.8 6 6 8.8 3.2 6z" fill="#141311" opacity=".55"/></svg>`;
+}
+function ItemIcon({item, size}){
+  const [bad, setBad] = useState(false);
+  useEffect(() => setBad(false), [item.image]);
+  const st = size ? {width:size + 'px', height:size + 'px'} : null;
+  if (!item.image || bad) return html`<span className="mono" data-l=${(item.name.en || '?').charAt(0)} style=${size ? {width:(size * .6) + 'px'} : null}></span>`;
+  return html`<img className="ico" src=${item.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)} style=${st}/>`;
+}
 function ItemInfo({item}){
   const {nameLang, descLang} = useContext(PrefCtx);
+  const slot = SLOT_LABEL[item.slot], text = item.desc[descLang] || item.desc.en;
   return html`<div>
     <div className="flex items-center gap-3">
-      <div style=${{fontSize:'34px',lineHeight:1}}>${item.image}</div>
+      <div className="info-ico" style=${{'--tc':'var(--t' + item.tier + ')'}}><${ItemIcon} item=${item}/></div>
       <div className="min-w-0">
-        <div className="disp" style=${{fontSize:'17px',color:'var(--gold2)',lineHeight:1.15}}>${item.name[nameLang]}</div>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="tchip" style=${{'--tc':'var(--t'+item.tier+')'}}>Тир ${item.tier}</span>
-          <span className="num soul" style=${{fontSize:'13px'}}>◆ ${item.price}</span>
+        <div className="info-name">${item.name[nameLang]}</div>
+        <div className="flex flex-wrap items-center gap-2 mt-1">
+          <span className="tchip" style=${{'--tc':'var(--t' + item.tier + ')'}}>Тир ${item.tier}</span>
+          <span className="num soul" style=${{fontSize:'13px'}}><${Soul}/>${item.price}</span>
+          ${slot ? html`<span className="chip">${slot}</span>` : null}
+          ${item.active ? html`<span className="chip">Активный</span>` : null}
         </div>
       </div>
     </div>
     <hr className="rule my-3"/>
     <div className="flex flex-col gap-1">
-      ${item.stats.map(([k, v]) => html`<div className="stat-line" key=${k}><b>${v}</b><span>${STAT[k][descLang]}</span></div>`)}
+      ${item.stats.map((s, i) => html`<div className="stat-line" key=${i}><b>${s.v}</b><span>${s.l[descLang]}</span></div>`)}
     </div>
-    ${item.note ? html`<div className="muted mt-2" style=${{fontSize:'13px'}}>${item.note[descLang]}</div>` : null}
+    ${text ? html`<div className="muted mt-2" style=${{fontSize:'13px'}}>${text}</div>` : null}
   </div>`;
 }
 function TipBox({tip}){
@@ -362,6 +387,8 @@ function tipHandlers(ui, item){
     onContextMenu:e => { e.preventDefault(); ui.openDetail(item); }
   };
 }
+
+// state: '' | 'sel' | 'banned' | 'pickable' | 'faded' | 'taken'
 function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
   const ui = useContext(UiCtx);
   const {nameLang} = useContext(PrefCtx);
@@ -374,13 +401,13 @@ function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
     <div className="card-inner">
       <div className="face"><div className="face-in">
         ${item ? html`
-          <div className="c-top"><span className="pips">${'▮'.repeat(item.tier)}</span><span className="num"><i>◆</i>${item.price}</span></div>
-          <div className="c-img">${item.image}</div>
+          <div className="c-top"><span className="c-tier">${ROMAN[item.tier]}</span><span className="num"><${Soul}/>${item.price}</span></div>
+          <div className="c-art"><${ItemIcon} item=${item}/></div>
           <div className="c-name">${item.name[nameLang]}</div>
           ${!back && size !== 's' ? html`<button className="c-info" aria-label="Подробнее" onClick=${e => { e.stopPropagation(); ui.openDetail(item); }}>i</button>` : null}
         ` : null}
       </div></div>
-      <div className="back"><div className="back-in"><span><i>◆</i></span>${n ? html`<b>${n}</b>` : null}</div></div>
+      <div className="back"><div className="back-in"><span><i><${Soul} size=${18}/></i></span>${n ? html`<b>${n}</b>` : null}</div></div>
     </div>
     ${tag ? html`<div className=${cx('tag', state === 'banned' && 'tag-banned', state === 'taken' && 'tag-taken')}>${tag}</div>` : null}
   </div>`;
@@ -391,9 +418,11 @@ function Slot({entry, isNew}){
   const item = BY_ID[entry.id];
   return html`<div ...${tipHandlers(ui, item)} className=${cx('slot', 'full', isNew && 'new')} style=${{'--tc':'var(--t' + item.tier + ')'}}
       onClick=${() => ui.openDetail(item)} title=${item.name.ru}>
-    <span className="e">${item.image}</span><span className="p num">${item.price}</span>
+    <${ItemIcon} item=${item}/><span className="p num">${item.price}</span>
   </div>`;
 }
+
+/* ---------- общие кусочки ---------- */
 function Seg({value, onChange, options}){
   return html`<div className="seg" role="group">
     ${options.map(o => html`<button key=${o.v} className=${cx('seg-b', value === o.v && 'on')} onClick=${() => onChange(o.v)} aria-pressed=${value === o.v}>${o.l}</button>`)}
@@ -413,6 +442,8 @@ function copyText(t){
   try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); } catch(e){}
   return Promise.reject();
 }
+
+/* ---------- настройки лобби ---------- */
 function SettingsPanel({cfg, setCfg, readOnly}){
   const seq = Array.from({length:cfg.rounds}, (_, i) => tierForRound(cfg, i + 1));
   return html`<div className="flex flex-col gap-5">
@@ -444,6 +475,7 @@ function SettingsPanel({cfg, setCfg, readOnly}){
   </div>`;
 }
 
+/* ---------- сессии: локальная и онлайн ---------- */
 function useLocalSession(cfg, names){
   const [moves, setMoves] = useState({A:{}, B:{}});
   const patch = useCallback((seat, round, p) => setMoves(m => ({...m, [seat]:{...m[seat], [round]:{...(m[seat][round] || {}), ...p}}})), []);
@@ -455,6 +487,8 @@ function useLocalSession(cfg, names){
   }), [cfg, names, moves, patch]);
 }
 
+/* ======================= FIREBASE (Realtime Database, SDK 8.10.1) =======================
+   Ключи веб-приложения Firebase не секретные: доступ к данным ограничивают правила базы (см. README). */
 const firebaseConfig = {
   apiKey: "AIzaSyAyy-x79merf8y6lCemeweeJMh4VjPeqAs",
   authDomain: "deadlockminigames.firebaseapp.com",
@@ -471,6 +505,7 @@ try {
   fbDb = firebase.database();
 } catch (e) { console.error('Firebase init failed', e); }
 
+// Постоянный анонимный id игрока в этом браузере (без Firebase Auth).
 function getUid(){
   try {
     let u = localStorage.getItem('bd_uid');
@@ -479,6 +514,10 @@ function getUid(){
   } catch (e) { return 'u_' + Math.random().toString(36).slice(2, 12); }
 }
 
+/* Структура базы:
+   games/{CODE}/meta            {code, hostId, status:'lobby'|'playing', rounds, mode, order, createdAt}
+   games/{CODE}/seats/A|B       {uid, name, joinedAt}
+   games/{CODE}/moves/{A1,B3..} {seat, round, hide:[id,id,id], tier, pick:{idx,id}, ready}  */
 function useRoom(db, code){
   const [st, setSt] = useState({meta:null, seats:{}, moves:{A:{}, B:{}}, got:{meta:false, seats:false, moves:false}, error:null, slow:false});
   useEffect(() => {
@@ -529,28 +568,29 @@ async function createRoom(db, uid, name, cfg){
     const res = await db.ref('games/' + code + '/meta').transaction(cur => (
       cur === null ? {code, hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
     ));
-    if (!res.committed) continue;
+    if (!res.committed) continue;            // код уже занят, пробуем другой
     await db.ref('games/' + code + '/seats/A').set({uid, name, joinedAt:Date.now()});
     return code;
   }
-  throw new Error('Не удалось создать комнату');
+  throw new Error('Не удалось создать комнату, попробуй ещё раз');
 }
 async function joinRoom(db, uid, rawCode, name){
   const code = rawCode.trim().toUpperCase();
   if (code.length < 4) throw new Error('Введи код комнаты');
   const base = db.ref('games/' + code);
   const metaSnap = await base.child('meta').once('value');
-  if (!metaSnap.exists()) throw new Error('Комната не найдена');
+  if (!metaSnap.exists()) throw new Error('Комната не найдена. Проверь код.');
   const aSnap = await base.child('seats/A').once('value');
-  if (aSnap.exists() && aSnap.val().uid === uid) return code;
+  if (aSnap.exists() && aSnap.val().uid === uid) return code;   // это хост
   const bSnap = await base.child('seats/B').once('value');
-  if (bSnap.exists() && bSnap.val().uid === uid) return code;
-  if (metaSnap.val().status !== 'lobby') throw new Error('Игра уже идёт');
+  if (bSnap.exists() && bSnap.val().uid === uid) return code;   // уже сидим на месте Б
+  if (metaSnap.val().status !== 'lobby') throw new Error('Игра в этой комнате уже идёт');
   const res = await base.child('seats/B').transaction(cur => (cur === null ? {uid, name, joinedAt:Date.now()} : undefined));
-  if (!res.committed) throw new Error('Комната заполнена');
+  if (!res.committed) throw new Error('Комната уже заполнена');
   return code;
 }
 
+/* ---------- инвентарь ---------- */
 function Inventory({seat, name, list, active, you, curRound}){
   const total = totalSouls(list);
   return html`<div className=${cx('panel p-3', active && 'active')}>
@@ -559,7 +599,7 @@ function Inventory({seat, name, list, active, you, curRound}){
         <div className="panel-h truncate">${name}${you ? ' (ты)' : ''}</div>
         <div className="muted" style=${{fontSize:'12px'}}>Инвентарь Игрока ${SEAT_LABEL[seat]} · <span className="num">${list.length}/${SLOTS}</span></div>
       </div>
-      <div className="num soul disp" style=${{fontSize:'16px'}}>◆ ${total}</div>
+      <div className="num soul disp" style=${{fontSize:'16px'}}><${Soul}/>${total}</div>
     </div>
     <div className="slots">
       ${Array.from({length:SLOTS}, (_, i) => html`<${Slot} key=${i} entry=${list[i]} isNew=${list[i] && list[i].round === curRound}/>`)}
@@ -567,6 +607,7 @@ function Inventory({seat, name, list, active, you, curRound}){
   </div>`;
 }
 
+/* ---------- загадывание ---------- */
 function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
   const fixed = tierForRound(settings, round);
   const [tier, setTier] = useState(fixed);
@@ -591,8 +632,8 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
           const av = availableOfTier(t, ownedIds).length;
           return html`<button key=${t} className=${cx('tierb', tier === t && 'on')} style=${{'--tc':'var(--t' + t + ')'}} disabled=${av < HIDE_COUNT} onClick=${() => pickTier(t)}>
             <div className="disp" style=${{color:'var(--t' + t + ')',fontSize:'15px'}}>Тир ${t}</div>
-            <div className="num" style=${{fontSize:'12px'}}><span className="soul">◆</span> ${TIER_PRICE[t]}</div>
-            <div className="muted" style=${{fontSize:'11px'}}>доступно ${av} из 8</div>
+            <div className="num" style=${{fontSize:'12px'}}><${Soul}/> ${TIER_PRICE[t]}</div>
+            <div className="muted" style=${{fontSize:'11px'}}>доступно ${av} из ${ITEMS.filter(i => i.tier === t).length}</div>
           </button>`;
         })}
       </div>
@@ -603,7 +644,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
           ${Array.from({length:HIDE_COUNT}, (_, i) => {
             const it = sel[i] ? BY_ID[sel[i]] : null;
             return html`<div key=${i} className=${cx('trayslot', it && 'f')} style=${it ? {'--tc':'var(--t' + it.tier + ')'} : {}} onClick=${() => it && toggle(it.id)} title=${it ? 'Убрать' : ''}>
-              ${it ? html`<span>${it.image}</span><small>${it.price}</small>` : (i + 1)}
+              ${it ? html`<${ItemIcon} item=${it} size=${38}/><small>${it.price}</small>` : (i + 1)}
             </div>`;
           })}
         </div>
@@ -622,7 +663,9 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
   </div>`;
 }
 
+/* ---------- тройки карт на столе ---------- */
 function TrioRow({hider, move, pickMove, picker, names, reveal, interactive, onPick, active, phase}){
+  const {descLang} = useContext(PrefCtx);
   const hidden = move && move.hide;
   const pickedIdx = pickMove ? pickMove.idx : -1;
   const taker = names[picker];
@@ -723,6 +766,7 @@ function Stage({session, d, peek}){
   </div>`;
 }
 
+/* ---------- итоги ---------- */
 function Results({session, d, onExit}){
   const {settings, names, moves} = session;
   const sum = {A:totalSouls(d.inv.A), B:totalSouls(d.inv.B)};
@@ -738,7 +782,7 @@ function Results({session, d, onExit}){
     <div className="flex items-start justify-between gap-2">
       <div className="min-w-0">
         <div className="panel-h truncate">${names[s]}</div>
-        <div className="disp num soul" style=${{fontSize:'30px',lineHeight:1.1}}>◆ ${sum[s]}</div>
+        <div className="disp num soul" style=${{fontSize:'30px',lineHeight:1.1}}><${Soul}/>${sum[s]}</div>
       </div>
       ${winner === s ? html`<span className="chip gold">Победитель</span>` : null}
     </div>
@@ -748,8 +792,8 @@ function Results({session, d, onExit}){
     <hr className="rule"/>
     <div className="grid grid-cols-2 gap-3" style=${{fontSize:'13px'}}>
       <div><div className="muted">Средняя цена предмета</div><div className="num disp" style=${{fontSize:'18px'}}>${d.inv[s].length ? Math.round(sum[s] / d.inv[s].length) : 0}</div></div>
-      <div><div className="muted">Предложил сопернику</div><div className="num disp" style=${{fontSize:'18px'}}>◆ ${offered(s)}</div></div>
-      <div><div className="muted">Лучшая находка</div><div style=${{fontWeight:600}}>${best(s) ? best(s).image + ' ' + best(s).name[nameLang] : '-'}</div></div>
+      <div><div className="muted">Предложил сопернику</div><div className="num disp" style=${{fontSize:'18px'}}><${Soul}/>${offered(s)}</div></div>
+      <div><div className="muted">Лучшая находка</div><div style=${{fontWeight:600}}>${best(s) ? html`<span className="inl"><${ItemIcon} item=${best(s)} size=${26}/>${best(s).name[nameLang]}</span>` : '-'}</div></div>
       <div><div className="muted">Тиры 1 / 2 / 3 / 4</div><div className="num disp" style=${{fontSize:'18px'}}>${byTier(s).join(' / ')}</div></div>
     </div>
   </div>`;
@@ -759,7 +803,7 @@ function Results({session, d, onExit}){
       <div className="disp" style=${{fontSize:'clamp(26px,5vw,44px)',color:'var(--gold2)'}}>
         ${winner ? 'Победил ' + names[winner] : 'Ничья'}
       </div>
-      <div className="muted num mt-1">${names.A} ◆ ${sum.A} · ${names.B} ◆ ${sum.B}${winner ? ' · разница ◆ ' + Math.abs(sum.A - sum.B) : ''}</div>
+      <div className="muted num mt-1">${names.A} <${Soul}/>${sum.A} · ${names.B} <${Soul}/>${sum.B}${winner ? html` · разница <${Soul}/>${Math.abs(sum.A - sum.B)}` : ''}</div>
       <div className="mt-4"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>
     </div>
     <div className="grid gap-4 md:grid-cols-2">${col('A')}${col('B')}</div>
@@ -771,7 +815,7 @@ function Results({session, d, onExit}){
           <tbody>
             ${Array.from({length:settings.rounds}, (_, i) => {
               const a = moves.A[i + 1] || {}, b = moves.B[i + 1] || {};
-              const cell = m => m.pick ? BY_ID[m.pick.id].image + ' ' + BY_ID[m.pick.id].name[nameLang] : '-';
+              const cell = m => m.pick ? html`<span className="inl"><${ItemIcon} item=${BY_ID[m.pick.id]} size=${22}/>${BY_ID[m.pick.id].name[nameLang]}</span>` : '-';
               const off = m => m.hide ? html`<span className="tchip" style=${{'--tc':'var(--t' + m.tier + ')'}}>Т${m.tier}</span>` : '-';
               return html`<tr key=${i}><td className="num">${i + 1}</td><td>${cell(a)}</td><td>${cell(b)}</td><td>${off(a)}</td><td>${off(b)}</td></tr>`;
             })}
@@ -782,6 +826,7 @@ function Results({session, d, onExit}){
   </div>`;
 }
 
+/* ---------- игровое поле ---------- */
 function GameView({session, onExit}){
   const {settings, names, moves, viewerSeats} = session;
   const d = useMemo(() => derive(settings, moves), [settings, moves]);
@@ -823,6 +868,7 @@ function GameView({session, onExit}){
   </div>`;
 }
 
+/* ---------- онлайн-комната ---------- */
 function useDebouncedFn(fn, ms){
   const t = useRef(null); const f = useRef(fn); f.current = fn;
   return useCallback((...a) => { clearTimeout(t.current); t.current = setTimeout(() => f.current(...a), ms); }, [ms]);
@@ -870,7 +916,7 @@ function OnlineRoom({db, uid, code, canWrite, onLeave}){
     <div className="panel-h">Нет связи с комнатой</div><p className="muted mt-2">${s.error}</p><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
   if (!s.room.loaded) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}>
     <div className="panel-h">Подключаемся к комнате ${code}…</div>
-    ${s.room.slow ? html`<p className="muted mt-2">Ответ идёт дольше обычного.</p>` : null}
+    ${s.room.slow ? html`<p className="muted mt-2">Ответ идёт дольше обычного. Данные могут быть недоступны, пока сеть не ответит.</p>` : null}
     <button className="btn sm mt-3" onClick=${onLeave}>Отмена</button></div>`;
   if (!s.meta) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}>
     <div className="panel-h">Комната не найдена</div><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
@@ -885,6 +931,7 @@ function LocalGame({run, onExit}){
   return html`<${GameView} session=${session} onExit=${onExit}/>`;
 }
 
+/* ---------- лобби ---------- */
 function Lobby({cfg, setCfg, names, setNames, conn, setConn, dbh, onStartLocal, onCreate, onJoin, busy, error}){
   const [nick, setNick] = useState(() => store.get('bd_nick', ''));
   const [code, setCode] = useState('');
@@ -892,9 +939,9 @@ function Lobby({cfg, setCfg, names, setNames, conn, setConn, dbh, onStartLocal, 
   const online = conn === 'online';
   const off = dbh.status !== 'ready';
   return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'860px'}}>
-    <div className="text-center py-2">
+    <div className="text-center py-2 hero">
       <div className="muted disp" style=${{fontSize:'12px'}}>Мини-игра по мотивам Deadlock</div>
-      <h1 className="disp" style=${{fontSize:'clamp(40px,9vw,72px)',lineHeight:1,margin:'4px 0',color:'var(--gold2)',fontWeight:600}}>Слепой драфт</h1>
+      <h1 className="hero-t">Слепой драфт</h1>
       <p className="muted mx-auto" style=${{maxWidth:'58ch'}}>Один на один. Каждый раунд вы оба загадываете сопернику три предмета, а потом вслепую берёте по одному из тех, что загадали вам.</p>
     </div>
 
@@ -921,7 +968,7 @@ function Lobby({cfg, setCfg, names, setNames, conn, setConn, dbh, onStartLocal, 
       <div className="text-center"><button className="btn gold" style=${{fontSize:'17px',padding:'14px 34px'}} onClick=${onStartLocal}>Начать игру</button></div>
     </div>` : html`<div className="panel p-5 flex flex-col gap-4">
       <div className="panel-h">Онлайн-комната</div>
-      ${off ? html`<p className="muted">Не удалось подключиться к Firebase. Проверь интернет и настройки базы.</p>` : null}
+      ${off ? html`<p className="muted">Не удалось подключиться к Firebase. Проверь интернет и настройки базы. Локальный режим работает.</p>` : null}
       <div>
         <label className="muted" htmlFor="nick" style=${{fontSize:'12px'}}>Твой ник</label>
         <input id="nick" className="fld" maxLength="20" placeholder="Как тебя звать в игре" value=${nick} onInput=${e => setNickS(e.target.value)}/>
@@ -944,6 +991,30 @@ function Lobby({cfg, setCfg, names, setNames, conn, setConn, dbh, onStartLocal, 
   </div>`;
 }
 
+/* ---------- загрузка каталога, подвал ---------- */
+function CatalogLoading(){
+  return html`<div className="panel p-8 text-center mx-auto" style=${{maxWidth:'520px'}} role="status">
+    <div className="spin mb-5"></div>
+    <div className="panel-h">Загружаем каталог предметов</div>
+    <p className="muted mt-1" style=${{fontSize:'13px'}}>Берём актуальные данные из Deadlock API. Обычно это пара секунд.</p>
+  </div>`;
+}
+function CatalogError({err, onRetry}){
+  return html`<div className="panel p-6 text-center mx-auto flex flex-col gap-3" style=${{maxWidth:'560px'}} role="alert">
+    <div className="panel-h" style=${{color:'var(--red)'}}>Не удалось загрузить предметы</div>
+    <p className="muted">Без каталога игра не запустится. Проверь интернет, отключи блокировщики для этого сайта и повтори. Если не помогает, API временно недоступен.</p>
+    <pre className="err">${err}</pre>
+    <div><button className="btn gold" onClick=${onRetry}>Повторить</button></div>
+  </div>`;
+}
+function Footer(){
+  return html`<footer className="panel foot">
+    <div lang="ru"><b>Неофициальный фанатский проект</b>Игра никак не связана с Valve Corporation и не одобрена ею. Deadlock, названия и иконки предметов и другие материалы игры принадлежат Valve Corporation, все права на них сохраняются за Valve. Проект некоммерческий. Данные о предметах загружаются из сообщества Deadlock API.</div>
+    <div lang="en"><b>Unofficial fan project</b>Not affiliated with, endorsed by or sponsored by Valve Corporation. Deadlock, its item names, icons and other game assets are the property of Valve Corporation; all rights to them remain with Valve. This is a non-commercial project. Item data is loaded from the community Deadlock API.</div>
+  </footer>`;
+}
+
+/* ---------- приложение ---------- */
 function App(){
   const [prefs, setPrefsS] = useState(() => store.get('bd_prefs', {nameLang:'ru', descLang:'ru'}));
   const setPrefs = p => { setPrefsS(p); store.set('bd_prefs', p); };
@@ -955,6 +1026,20 @@ function App(){
   const [dbh] = useState(() => ({status:fbDb ? 'ready' : 'off', db:fbDb, uid:getUid(), canWrite:true}));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [cat, setCat] = useState({status:'loading'});
+  const loadCat = useCallback(async () => {
+    setCat({status:'loading'});
+    try {
+      const items = await loadCatalog();
+      setCatalog(items); store.set('bd_catalog', {t:Date.now(), items});
+      setCat({status:'ready', stale:false});
+    } catch (e){
+      const c = store.get('bd_catalog', null);       // API лежит, но есть копия с прошлого раза
+      if (c && Array.isArray(c.items) && c.items.length >= 24){ setCatalog(c.items); setCat({status:'ready', stale:true, t:c.t}); }
+      else setCat({status:'error', err:(e && e.message) || 'Неизвестная ошибка'});
+    }
+  }, []);
+  useEffect(() => { loadCat(); }, []);
 
   useEffect(() => { if (dbh.status === 'ready' && roomCode) setConn('online'); }, [dbh.status]);
 
@@ -973,7 +1058,9 @@ function App(){
   };
 
   let body;
-  if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
+  if (cat.status === 'loading') body = html`<${CatalogLoading}/>`;
+  else if (cat.status === 'error') body = html`<${CatalogError} err=${cat.err} onRetry=${loadCat}/>`;
+  else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
       onStartLocal=${() => setLocalRun({cfg:{...cfg}, names:{A:names.A.trim() || 'Игрок А', B:names.B.trim() || 'Игрок Б'}})}
@@ -982,11 +1069,13 @@ function App(){
   return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
     <div className="shell">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="disp" style=${{fontSize:'15px',color:'var(--gold)'}}>◆ Слепой драфт</div>
+        <div className="brand"><${Soul} size=${18}/>Слепой драфт</div>
         <${LangToggles} prefs=${prefs} setPrefs=${setPrefs}/>
       </div>
+      ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
       ${body}
       <p className="muted text-center mt-8" style=${{fontSize:'12px'}}>Наведи на предмет, чтобы увидеть описание. Правая кнопка мыши или значок i открывают подробную карточку.</p>
+      <${Footer}/>
     </div>
   <//><//>`;
 }
