@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
-/* Layout: three-column MOBA board. Inventory A | draft stage | inventory B. On phones the stage comes first and the inventories sit side by side underneath. Single dark look on purpose. */
 :root{
   --bg:#080a0f; --bg2:#0d1017; --panel:#121620; --panel2:#181e2b; --edge:#283042; --edge2:#3a455c;
   --text:#ebe8e0; --muted:#8d97ab; --gold:#e2ab3d; --gold2:#ffd57a; --goldDim:#6f5421;
@@ -31,15 +30,11 @@ body{
 .disp{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase}
 .muted{color:var(--muted)}
 .num{font-variant-numeric:tabular-nums}
-
-/* panels */
 .panel{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--edge);position:relative;
   clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)}
 .panel.active{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--goldDim)}
 .panel-h{font-family:var(--f-display);letter-spacing:.09em;text-transform:uppercase;font-size:13px;color:var(--gold2)}
 .rule{height:1px;background:linear-gradient(90deg,transparent,var(--edge2),transparent);border:0;margin:0}
-
-/* buttons */
 button.btn{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:14px;padding:10px 18px;cursor:pointer;border:1px solid var(--edge2);
   background:var(--panel2);color:var(--text);transition:filter .15s, transform .1s, border-color .15s;
   clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
@@ -50,24 +45,18 @@ button.btn:focus-visible,button.seg-b:focus-visible,.card:focus-visible,.tierb:f
 button.btn.gold{background:linear-gradient(180deg,#f0be57,#c68b22);color:#1a1204;border-color:#ffd57a;font-weight:600}
 button.btn.sm{padding:6px 12px;font-size:12px}
 button.btn.danger:hover:not(:disabled){border-color:var(--red);color:#ffb3b5}
-
-/* segmented control */
 .seg{display:inline-flex;border:1px solid var(--edge2);background:var(--bg2)}
 button.seg-b{font-family:var(--f-display);letter-spacing:.07em;text-transform:uppercase;font-size:12px;padding:6px 12px;cursor:pointer;color:var(--muted);background:transparent;border:0}
 button.seg-b.on{background:var(--gold);color:#1a1204;font-weight:600}
 button.seg-b:not(.on):hover{color:var(--text)}
-
 input.fld{background:var(--bg2);border:1px solid var(--edge2);color:var(--text);padding:9px 12px;font-family:var(--f-body);font-size:14px;width:100%;outline:none}
 input.fld:focus{border-color:var(--gold)}
 input[type=range]{accent-color:var(--gold);width:100%}
-
 .chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--edge2);font-size:12px;background:var(--bg2);color:var(--muted)}
 .chip.ok{border-color:var(--teal);color:var(--teal)}
 .chip.gold{border-color:var(--gold);color:var(--gold2)}
 .tchip{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 8px;font-family:var(--f-display);font-size:12px;letter-spacing:.05em;border:1px solid currentColor;color:var(--tc);background:rgba(255,255,255,.03)}
 .soul{color:var(--soul)}
-
-/* cards */
 .card{position:relative;width:var(--cw);aspect-ratio:3/4;perspective:800px;cursor:pointer;flex:none;transition:transform .2s, filter .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
 .sz-s{--cw:78px}.sz-g{--cw:100px}.sz-t{--cw:120px}
 @media (max-width:640px){.sz-g{--cw:84px}.sz-t{--cw:92px}.sz-s{--cw:70px}}
@@ -82,8 +71,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .c-top .pips{letter-spacing:-1px}
 .c-top i{font-style:normal;color:var(--soul);margin-right:2px}
 .c-img{font-size:calc(var(--cw)*.42);line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
-.c-name{font-size:calc(var(--cw)*.112);line-height:1.15;text-align:center;font-weight:600;min-height:2.3em;display:flex;align-items:center;justify-content:center;
-  overflow:hidden;word-break:break-word}
+.c-name{font-size:calc(var(--cw)*.112);line-height:1.15;text-align:center;font-weight:600;min-height:2.3em;display:flex;align-items:center;justify-content:center;overflow:hidden;word-break:break-word}
 .c-info{position:absolute;right:calc(var(--cw)*.07);bottom:calc(var(--cw)*.30);width:18px;height:18px;border-radius:50%;border:1px solid var(--edge2);background:#0c0f15;color:var(--muted);
   font-size:11px;line-height:16px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
 .card:hover .c-info,.c-info:focus-visible{opacity:1}
@@ -100,12 +88,9 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .card.banned{opacity:.34;filter:grayscale(.75);cursor:not-allowed}
 .card.faded{opacity:.5;filter:saturate(.5)}
 .card.taken{filter:drop-shadow(0 0 12px rgba(67,192,176,.65))}
-.tag{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-display);letter-spacing:.08em;font-size:11px;padding:1px 8px;pointer-events:none;
-  background:var(--gold);color:#1a1204;z-index:2}
+.tag{position:absolute;left:50%;bottom:-9px;transform:translateX(-50%);white-space:nowrap;font-family:var(--f-display);letter-spacing:.08em;font-size:11px;padding:1px 8px;pointer-events:none;background:var(--gold);color:#1a1204;z-index:2}
 .tag-banned{background:#2a2f3b;color:#b9c0cf;border:1px solid var(--edge2)}
 .tag-taken{background:var(--teal);color:#06201c}
-
-/* inventory */
 .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 @media (min-width:480px){.slots{grid-template-columns:repeat(4,1fr)}}
 .slot{aspect-ratio:1;position:relative;border:1px dashed var(--edge);background:rgba(255,255,255,.015);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);font-size:12px}
@@ -115,14 +100,11 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .slot.full .p{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-size:10px;color:var(--tc);font-family:var(--f-display)}
 .slot.new{box-shadow:0 0 0 2px var(--teal),0 0 14px rgba(67,192,176,.55);animation:pop .6s ease-out}
 @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
-
-/* tooltip, modal */
 .tip{position:fixed;z-index:60;width:280px;pointer-events:none;background:#0d1118;border:1px solid var(--gold);padding:12px 14px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
 .modal-bg{position:fixed;inset:0;z-index:70;background:rgba(3,5,8,.78);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{width:min(420px,100%);background:var(--panel);border:1px solid var(--gold);padding:20px;position:relative}
 .stat-line{display:flex;gap:8px;align-items:baseline}
 .stat-line b{color:var(--teal);font-weight:600;min-width:52px;font-variant-numeric:tabular-nums}
-
 .stepper{display:flex;gap:0;flex-wrap:wrap}
 .step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;text-transform:uppercase;font-size:12px;color:var(--muted);border-bottom:2px solid var(--edge)}
 .step.on{color:var(--gold2);border-color:var(--gold)}
@@ -133,8 +115,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .tierb{cursor:pointer;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);padding:8px 10px;text-align:left;min-width:108px;font-family:var(--f-body)}
 .tierb.on{border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc);background:color-mix(in srgb,var(--tc) 14%,var(--bg2))}
 .tierb:disabled{opacity:.35;cursor:not-allowed}
-.trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);cursor:pointer;position:relative;flex:none;
-  background:rgba(255,255,255,.015)}
+.trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-display);cursor:pointer;position:relative;flex:none;background:rgba(255,255,255,.015)}
 .trayslot.f{border:1px solid var(--tc);border-style:solid;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--tc) 22%,#10141c),#0c0f15);font-size:28px;color:var(--text)}
 .trayslot.f small{position:absolute;bottom:2px;font-size:9px;color:var(--tc);font-family:var(--f-display)}
 .winner{background:linear-gradient(90deg,transparent,rgba(226,171,61,.16),transparent)}
@@ -145,3 +126,871 @@ table.rt td{padding:6px 8px;border-bottom:1px solid rgba(40,48,66,.6)}
 </style>
 </head>
 <body>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+<script id="logic">
+const TIER_PRICE = {1:800, 2:1600, 3:3200, 4:6400};
+const STAT = {
+  ammo:{en:'Ammo', ru:'Боезапас'}, wdmg:{en:'Weapon Damage', ru:'Урон оружия'}, fire_rate:{en:'Fire Rate', ru:'Скорострельность'},
+  reload:{en:'Reload Speed', ru:'Скорость перезарядки'}, headshot:{en:'Headshot Bonus', ru:'Бонусный урон в голову'},
+  hp:{en:'Health', ru:'Здоровье'}, hpregen:{en:'Health Regen', ru:'Регенерация здоровья'}, stamina:{en:'Stamina', ru:'Выносливость'},
+  move:{en:'Move Speed', ru:'Скорость передвижения'}, spirit:{en:'Spirit Power', ru:'Сила духа'}, bullet_res:{en:'Bullet Resist', ru:'Сопротивление пулям'},
+  lifesteal:{en:'Weapon Lifesteal', ru:'Вампиризм оружия'}, spirit_lifesteal:{en:'Spirit Lifesteal', ru:'Вампиризм способностей'},
+  cooldown:{en:'Cooldown Reduction', ru:'Сокращение перезарядки'}, ability_range:{en:'Ability Range', ru:'Дальность способностей'},
+  melee:{en:'Melee Damage', ru:'Урон в ближнем бою'}, slow:{en:'Slow', ru:'Замедление'}
+};
+function I(id,tier,image,en,ru,stats,noteEn,noteRu){
+  return {id, name:{en,ru}, tier, price:TIER_PRICE[tier], image, stats, note: noteEn?{en:noteEn,ru:noteRu}:null};
+}
+
+const ITEMS = [
+  /* Weapon - Tier 1 */
+  I('w1_basic_mag',1,'🔫','Basic Magazine','Базовый магазин',[['ammo','+24%'],['wdmg','+15%']]),
+  I('w1_close_qtr',1,'🥊','Close Quarters','Ближний бой',[['wdmg','+25%']],'Bonus applies at close range.','Действует на ближней дистанции.'),
+  I('w1_headshot',1,'🎯','Headshot Booster','Усилитель хедшотов',[['headshot','+40'],['fire_rate','+5%']]),
+  I('w1_high_vel',1,'💨','High-Velocity Mag','Скоростной магазин',[['wdmg','+10%'],['fire_rate','+4%']]),
+  I('w1_hollow',1,'🩸','Hollow Point Ward','Экспансивные пули',[['wdmg','+20%'],['hp','+85']]),
+  I('w1_rapid',1,'🔄','Rapid Rounds','Быстрые патроны',[['fire_rate','+12%'],['move','+1']]),
+  I('w1_restorative',1,'🩹','Restorative Shot','Восстанавливающий выстрел',[['wdmg','+10%']],'Heals on enemy hit.','Лечит при попадании.'),
+  
+  /* Vitality - Tier 1 */
+  I('v1_extra_hp',1,'❤️','Extra Health','Доп. здоровье',[['hp','+160'],['wdmg','+5%']]),
+  I('v1_extra_regen',1,'🧪','Extra Regen','Доп. регенерация',[['hpregen','+2.8'],['ammo','+8%']]),
+  I('v1_extra_stam',1,'🏃','Extra Stamina','Доп. выносливость',[['stamina','+1'],['fire_rate','+5%']]),
+  I('v1_sprint',1,'👟','Sprint Boots','Спринтерские ботинки',[['move','+2']]),
+  I('v1_enduring',1,'🛡️','Enduring Spirit','Выносливый дух',[['hp','+75'],['spirit_lifesteal','+8%']]),
+  I('v1_healing_rite',1,'💚','Healing Rite','Обряд исцеления',[['hpregen','+2.5']],'Active: massive regen.','Активно: мощная регенерация.'),
+  I('v1_melee_life',1,'🧛','Melee Lifesteal','Вампиризм ближнего боя',[['melee','+15%']],'Melee hits heal you.','Атаки ближнего боя лечат.'),
+
+  /* Spirit - Tier 1 */
+  I('s1_ammo_scav',1,'🔋','Ammo Scavenger','Сборщик патронов',[['ammo','+15%'],['spirit','+4']]),
+  I('s1_extra_spirit',1,'👻','Extra Spirit','Доп. дух',[['spirit','+9'],['hpregen','+1']]),
+  I('s1_mystic_burst',1,'✨','Mystic Burst','Мистический взрыв',[['spirit','+6'],['wdmg','+5%']]),
+  I('s1_mystic_reach',1,'🔮','Mystic Reach','Мистический охват',[['ability_range','+16%'],['spirit','+5']]),
+  I('s1_spirit_strike',1,'👊','Spirit Strike','Духовный удар',[['melee','+12%'],['spirit','+4']]),
+
+  /* Weapon - Tier 2 */
+  I('w2_active_reload',2,'⚡','Active Reload','Активная перезарядка',[['reload','+20%'],['wdmg','+15%']]),
+  I('w2_fleetfoot',2,'💨','Fleetfoot','Быстроногий',[['move','+1.5'],['stamina','+1']]),
+  I('w2_kinetic_dash',2,'⛸️','Kinetic Dash','Кинетический рывок',[['hp','+100']],'Dash enhances next shots.','Рывок усиливает выстрелы.'),
+  I('w2_long_range',2,'🔭','Long Range','Дальний бой',[['wdmg','+20%']],'Bonus damage at distance.','Бонусный урон издалека.'),
+  I('w2_melee_charge',2,'🗡️','Melee Charge','Рывок ближнего боя',[['melee','+30%'],['hp','+100']]),
+  I('w2_mystic_shot',2,'🎇','Mystic Shot','Мистический выстрел',[['spirit','+8']]),
+  I('w2_slowing_bul',2,'🐌','Slowing Bullets','Замедляющие пули',[['slow','+16%']]),
+  I('w2_soul_shred',2,'🔥','Soul Shredder Bullets','Разрывающие дух пули',[['spirit','+6'],['wdmg','+10%']]),
+
+  /* Vitality - Tier 2 */
+  I('v2_bullet_armor',2,'🪖','Bullet Armor','Пулевая броня',[['bullet_res','+20%'],['hp','+150']]),
+  I('v2_combat_barrier',2,'🛡️','Combat Barrier','Боевой барьер',[['fire_rate','+8%']],'Shield grants weapon damage.','Щит дает урон оружия.'),
+  I('v2_enchanters',2,'🪄',"Enchanter's Barrier",'Барьер чародея',[['spirit','+8']],'Shield grants spirit power.','Щит дает силу духа.'),
+  I('v2_healbane',2,'☠️','Healbane','Проклятие исцеления',[['hp','+150']],'Reduces enemy healing.','Снижает лечение врагов.'),
+  I('v2_return_fire',2,'🔥','Return Fire','Ответный огонь',[['hp','+125'],['spirit','+7']],'Active: reflect bullet damage.','Активно: отражение пуль.'),
+  I('v2_spirit_armor',2,'🧿','Spirit Armor','Духовная броня',[['hp','+150']],'Resists spirit damage.','Защита от духовного урона.'),
+
+  /* Spirit - Tier 2 */
+  I('s2_adv_spirit',2,'🌌','Advanced Spirit','Продвинутый дух',[['spirit','+14'],['hpregen','+2']]),
+  I('s2_cold_front',2,'❄️','Cold Front','Холодный фронт',[['spirit','+5']],'Active: slow and damage.','Активно: замедление и урон.'),
+  I('s2_decay',2,'🦠','Decay','Разложение',[['hp','+100']],'Active: target takes % damage.','Активно: урон в % от здоровья.'),
+  I('s2_duration',2,'⏳','Duration Extender','Продление действия',[['spirit','+8']]),
+  I('s2_improved_cd',2,'⏱️','Improved Cooldown','Улучшенная перезарядка',[['cooldown','+16%'],['hpregen','+1.5']]),
+  I('s2_suppressor',2,'🤫','Suppressor','Подавитель',[['spirit','+6'],['hp','+75']]),
+
+  /* Weapon - Tier 3 */
+  I('w3_escalating',3,'📈','Escalating Resilience','Нарастающая стойкость',[['fire_rate','+12%'],['wdmg','+15%']]),
+  I('w3_glass_cannon',3,'💥','Glass Cannon','Стеклянная пушка',[['wdmg','+30%'],['hp','-15%']]),
+  I('w3_headhunter',3,'💀','Headhunter','Охотник за головами',[['headshot','+50'],['lifesteal','+15%']]),
+  I('w3_lucky_shot',3,'🍀','Lucky Shot','Счастливый выстрел',[['wdmg','+20%']]),
+  I('w3_point_blank',3,'🥊','Point Blank','В упор',[['wdmg','+25%'],['stamina','+1']]),
+  I('w3_toxic_bul',3,'🧪','Toxic Bullets','Токсичные пули',[['hp','+200']],'Bleed damage over time.','Кровотечение и урон.'),
+  I('w3_warp_stone',3,'🌌','Warp Stone','Камень телепортации',[['wdmg','+20%']],'Active: short teleport.','Активно: короткий телепорт.'),
+
+  /* Vitality - Tier 3 */
+  I('v3_fortitude',3,'🏰','Fortitude','Стойкость',[['hp','+300'],['hpregen','+4']]),
+  I('v3_impr_bullet',3,'🛡️','Improved Bullet Armor','Улучш. пулевая броня',[['bullet_res','+45%'],['hp','+250']]),
+  I('v3_impr_spirit',3,'🔮','Improved Spirit Armor','Улучш. духовная броня',[['hp','+250']]),
+  I('v3_lifestrike',3,'🩸','Lifestrike','Удар вампира',[['melee','+40%']]),
+  I('v3_majestic',3,'🦅','Majestic Leap','Величественный прыжок',[['hp','+200']],'Active: launch into air.','Активно: прыжок в воздух.'),
+  I('v3_veil_walker',3,'👻','Veil Walker','Странник вуали',[['hp','+200'],['move','+2']]),
+
+  /* Spirit - Tier 3 */
+  I('s3_boundless',3,'♾️','Boundless Spirit','Безграничный дух',[['spirit','+25'],['hp','+150']]),
+  I('s3_echo_shard',3,'🔁','Echo Shard','Осколок эха',[['spirit','+12']],'Active: reset ability.','Активно: сброс способности.'),
+  I('s3_impr_burst',3,'💥','Improved Burst','Улучшенный взрыв',[['spirit','+15'],['hp','+100']]),
+  I('s3_impr_reach',3,'🔭','Improved Reach','Улучшенный охват',[['ability_range','+25%'],['spirit','+12']]),
+  I('s3_knockdown',3,'🔨','Knockdown','Оглушение',[['spirit','+10']],'Active: stun target.','Активно: оглушить цель.'),
+  I('s3_superior_cd',3,'⏱️','Superior Cooldown','Превосходная перезарядка',[['cooldown','+24%'],['spirit','+12']]),
+  I('s3_torment',3,'👁️','Torment Pulse','Импульс мучений',[['hp','+150'],['spirit','+10']]),
+
+  /* Weapon - Tier 4 */
+  I('w4_crip_head',4,'😵','Crippling Headshot','Калечащий хедшот',[['wdmg','+30%'],['lifesteal','+20%']]),
+  I('w4_frenzy',4,'👹','Frenzy','Бешенство',[['fire_rate','+25%'],['hp','+300']]),
+  I('w4_siphon',4,'🧛','Siphon Bullets','Высасывающие пули',[['lifesteal','+25%'],['wdmg','+20%']]),
+  I('w4_spiritual',4,'🌊','Spiritual Overflow','Духовный избыток',[['spirit','+20'],['wdmg','+25%']]),
+  I('w4_vampiric',4,'🩸','Vampiric Burst','Вампирический взрыв',[['lifesteal','+30%'],['fire_rate','+15%']]),
+
+  /* Vitality - Tier 4 */
+  I('v4_colossus',4,'🗿','Colossus','Колосс',[['hp','+600'],['melee','+50%']],'Active: grow and resist damage.','Активно: рост и защита.'),
+  I('v4_inhibitor',4,'⛓️','Inhibitor','Ингибитор',[['hp','+250'],['wdmg','+20%']]),
+  I('v4_phantom',4,'👻','Phantom Strike','Фантомный удар',[['spirit','+15'],['move','+2']]),
+  I('v4_unstoppable',4,'🛡️','Unstoppable','Неудержимый',[['hp','+350']],'Active: CC immunity.','Активно: иммунитет к контролю.'),
+  I('v4_leech',4,'🦇','Leech','Пиявка',[['spirit_lifesteal','+30%'],['hp','+250']]),
+
+  /* Spirit - Tier 4 */
+  I('s4_curse',4,'☠️','Curse','Проклятие',[['spirit','+20']],'Active: silence and disarm.','Активно: безмолвие и бессилие.'),
+  I('s4_diviner',4,'🧿',"Diviner's Kevlar",'Кевлар прорицателя',[['spirit','+25'],['hp','+300']]),
+  I('s4_magic_carpet',4,'🪶','Magic Carpet','Ковер-самолет',[['spirit','+15'],['hp','+200']]),
+  I('s4_refresher',4,'🔄','Refresher','Освежитель',[['spirit','+15']],'Active: refresh all cooldowns.','Активно: сброс всех кулдаунов.'),
+  I('s4_mystic_reverb',4,'🎵','Mystic Reverb','Мистическое эхо',[['spirit','+25'],['ability_range','+15%']])
+];
+
+const BY_ID = Object.fromEntries(ITEMS.map(i => [i.id, i]));
+const MIN_ROUNDS = 4, MAX_ROUNDS = 12, SLOTS = 12, HIDE_COUNT = 3;
+const SEAT_LABEL = {A:'А', B:'Б'};
+const other = s => (s === 'A' ? 'B' : 'A');
+
+function tierForRound(settings, r){
+  if (settings.mode !== 'balance') return null;
+  if (settings.order === 'cycle') return ((r - 1) % 4) + 1;
+  return Math.ceil(r * 4 / settings.rounds);
+}
+function ownedSet(inv, seat){ return new Set(inv[seat].map(x => x.id)); }
+function availableOfTier(tier, ownedIds){ return ITEMS.filter(i => i.tier === tier && !ownedIds.has(i.id)); }
+
+function derive(settings, moves){
+  const N = settings.rounds;
+  const inv = {A:[], B:[]};
+  let round = 1, phase = 'hide', finished = false;
+  for (let r = 1; r <= N; r++){
+    const a = (moves.A && moves.A[r]) || {};
+    const b = (moves.B && moves.B[r]) || {};
+    if (a.pick) inv.A.push({id:a.pick.id, round:r});
+    if (b.pick) inv.B.push({id:b.pick.id, round:r});
+    round = r;
+    if (!(a.hide && b.hide)){ phase = 'hide'; break; }
+    if (!a.pick){ phase = 'pickA'; break; }
+    if (!b.pick){ phase = 'pickB'; break; }
+    if (!(a.ready && b.ready)){ phase = 'recap'; break; }
+    if (r === N){ finished = true; phase = 'done'; }
+  }
+  return {round, phase, inv, finished};
+}
+function totalSouls(list){ return list.reduce((s, x) => s + BY_ID[x.id].price, 0); }
+function genCode(){
+  const abc = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let c = ''; for (let i = 0; i < 5; i++) c += abc[Math.floor(Math.random() * abc.length)];
+  return c;
+}
+</script>
+
+<script id="ui">
+const {useState, useEffect, useMemo, useRef, useCallback, createContext, useContext, Fragment} = React;
+const html = htm.bind(React.createElement);
+const cx = (...a) => a.filter(Boolean).join(' ');
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+const PrefCtx = createContext({nameLang:'ru', descLang:'ru'});
+const UiCtx = createContext({showTip(){}, moveTip(){}, hideTip(){}, openDetail(){}});
+
+function ItemInfo({item}){
+  const {nameLang, descLang} = useContext(PrefCtx);
+  return html`<div>
+    <div className="flex items-center gap-3">
+      <div style=${{fontSize:'34px',lineHeight:1}}>${item.image}</div>
+      <div className="min-w-0">
+        <div className="disp" style=${{fontSize:'17px',color:'var(--gold2)',lineHeight:1.15}}>${item.name[nameLang]}</div>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="tchip" style=${{'--tc':'var(--t'+item.tier+')'}}>Тир ${item.tier}</span>
+          <span className="num soul" style=${{fontSize:'13px'}}>◆ ${item.price}</span>
+        </div>
+      </div>
+    </div>
+    <hr className="rule my-3"/>
+    <div className="flex flex-col gap-1">
+      ${item.stats.map(([k, v]) => html`<div className="stat-line" key=${k}><b>${v}</b><span>${STAT[k][descLang]}</span></div>`)}
+    </div>
+    ${item.note ? html`<div className="muted mt-2" style=${{fontSize:'13px'}}>${item.note[descLang]}</div>` : null}
+  </div>`;
+}
+function TipBox({tip}){
+  const w = 280, pad = 16;
+  const left = Math.min(tip.x + pad, window.innerWidth - w - 8);
+  const top = tip.y + 220 > window.innerHeight ? Math.max(8, tip.y - 200) : tip.y + pad;
+  return html`<div className="tip" style=${{left:Math.max(8, left)+'px', top:top+'px'}}><${ItemInfo} item=${tip.item}/></div>`;
+}
+function DetailModal({item, onClose}){
+  return html`<div className="modal-bg" onClick=${onClose}>
+    <div className="modal" onClick=${e => e.stopPropagation()} role="dialog" aria-label="Описание предмета">
+      <${ItemInfo} item=${item}/>
+      <div className="mt-4 flex justify-end"><button className="btn sm" onClick=${onClose}>Закрыть</button></div>
+    </div>
+  </div>`;
+}
+function TipHost({children}){
+  const [tip, setTip] = useState(null);
+  const [detail, setDetail] = useState(null);
+  const api = useMemo(() => ({
+    showTip:(item, e) => setTip({item, x:e.clientX, y:e.clientY}),
+    moveTip:e => setTip(t => t ? {...t, x:e.clientX, y:e.clientY} : t),
+    hideTip:() => setTip(null),
+    openDetail:item => { setTip(null); setDetail(item); }
+  }), []);
+  useEffect(() => {
+    const k = e => { if (e.key === 'Escape') setDetail(null); };
+    window.addEventListener('keydown', k);
+    return () => window.removeEventListener('keydown', k);
+  }, []);
+  return html`<${UiCtx.Provider} value=${api}>
+    ${children}
+    ${tip ? html`<${TipBox} tip=${tip}/>` : null}
+    ${detail ? html`<${DetailModal} item=${detail} onClose=${() => setDetail(null)}/>` : null}
+  <//>`;
+}
+function tipHandlers(ui, item){
+  return {
+    onMouseEnter:e => ui.showTip(item, e),
+    onMouseMove:ui.moveTip,
+    onMouseLeave:ui.hideTip,
+    onContextMenu:e => { e.preventDefault(); ui.openDetail(item); }
+  };
+}
+function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
+  const ui = useContext(UiCtx);
+  const {nameLang} = useContext(PrefCtx);
+  const h = (!back && item) ? tipHandlers(ui, item) : {};
+  const tc = item ? 'var(--t' + item.tier + ')' : 'var(--gold)';
+  const clickable = !!onClick && state !== 'banned';
+  return html`<div ...${h} className=${cx('card', 'sz-' + size, back && 'is-back', state)} style=${{'--tc':tc}}
+      onClick=${clickable ? onClick : undefined} tabIndex=${clickable ? 0 : undefined}
+      onKeyDown=${clickable ? (e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); onClick(); } }) : undefined}>
+    <div className="card-inner">
+      <div className="face"><div className="face-in">
+        ${item ? html`
+          <div className="c-top"><span className="pips">${'▮'.repeat(item.tier)}</span><span className="num"><i>◆</i>${item.price}</span></div>
+          <div className="c-img">${item.image}</div>
+          <div className="c-name">${item.name[nameLang]}</div>
+          ${!back && size !== 's' ? html`<button className="c-info" aria-label="Подробнее" onClick=${e => { e.stopPropagation(); ui.openDetail(item); }}>i</button>` : null}
+        ` : null}
+      </div></div>
+      <div className="back"><div className="back-in"><span><i>◆</i></span>${n ? html`<b>${n}</b>` : null}</div></div>
+    </div>
+    ${tag ? html`<div className=${cx('tag', state === 'banned' && 'tag-banned', state === 'taken' && 'tag-taken')}>${tag}</div>` : null}
+  </div>`;
+}
+function Slot({entry, isNew}){
+  const ui = useContext(UiCtx);
+  if (!entry) return html`<div className="slot">·</div>`;
+  const item = BY_ID[entry.id];
+  return html`<div ...${tipHandlers(ui, item)} className=${cx('slot', 'full', isNew && 'new')} style=${{'--tc':'var(--t' + item.tier + ')'}}
+      onClick=${() => ui.openDetail(item)} title=${item.name.ru}>
+    <span className="e">${item.image}</span><span className="p num">${item.price}</span>
+  </div>`;
+}
+function Seg({value, onChange, options}){
+  return html`<div className="seg" role="group">
+    ${options.map(o => html`<button key=${o.v} className=${cx('seg-b', value === o.v && 'on')} onClick=${() => onChange(o.v)} aria-pressed=${value === o.v}>${o.l}</button>`)}
+  </div>`;
+}
+function LangToggles({prefs, setPrefs}){
+  const opts = [{v:'ru', l:'RU'}, {v:'en', l:'EN'}];
+  return html`<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+    <div className="flex items-center gap-2"><span className="muted" style=${{fontSize:'12px'}}>Названия</span><${Seg} value=${prefs.nameLang} options=${opts} onChange=${v => setPrefs({...prefs, nameLang:v})}/></div>
+    <div className="flex items-center gap-2"><span className="muted" style=${{fontSize:'12px'}}>Описания</span><${Seg} value=${prefs.descLang} options=${opts} onChange=${v => setPrefs({...prefs, descLang:v})}/></div>
+  </div>`;
+}
+function TierChip({tier}){
+  return html`<span className="tchip" style=${{'--tc':'var(--t' + tier + ')'}}>Тир ${tier} · ${TIER_PRICE[tier]}</span>`;
+}
+function copyText(t){
+  try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); } catch(e){}
+  return Promise.reject();
+}
+function SettingsPanel({cfg, setCfg, readOnly}){
+  const seq = Array.from({length:cfg.rounds}, (_, i) => tierForRound(cfg, i + 1));
+  return html`<div className="flex flex-col gap-5">
+    <div>
+      <div className="flex items-baseline justify-between">
+        <label className="panel-h" htmlFor="rounds">Количество раундов</label>
+        <span className="disp num" style=${{fontSize:'28px',color:'var(--gold2)'}}>${cfg.rounds}</span>
+      </div>
+      <input id="rounds" type="range" min=${MIN_ROUNDS} max=${MAX_ROUNDS} step="1" value=${cfg.rounds} disabled=${readOnly}
+        onChange=${e => setCfg({...cfg, rounds:Number(e.target.value)})}/>
+      <div className="flex justify-between muted num" style=${{fontSize:'11px'}}>${Array.from({length:MAX_ROUNDS - MIN_ROUNDS + 1}, (_, i) => html`<span key=${i}>${MIN_ROUNDS + i}</span>`)}</div>
+    </div>
+    <div>
+      <div className="panel-h mb-2">Режим</div>
+      <${Seg} value=${cfg.mode} options=${[{v:'balance', l:'Баланс'}, {v:'chaos', l:'Хаос'}]} onChange=${v => !readOnly && setCfg({...cfg, mode:v})}/>
+      <p className="muted mt-2" style=${{fontSize:'13px',maxWidth:'60ch'}}>
+        ${cfg.mode === 'balance'
+          ? 'В каждом раунде у обоих игроков предметы одного тира, он известен заранее.'
+          : 'Каждый игрок сам выбирает тир для своих трёх карт. Соперник не знает, что ему подсунули: дорогой предмет или дешёвый.'}
+      </p>
+    </div>
+    ${cfg.mode === 'balance' ? html`<div>
+      <div className="panel-h mb-2">Порядок тиров</div>
+      <${Seg} value=${cfg.order} options=${[{v:'ramp', l:'Нарастание'}, {v:'cycle', l:'Цикл 1-4'}]} onChange=${v => !readOnly && setCfg({...cfg, order:v})}/>
+      <div className="flex flex-wrap gap-1 mt-3">
+        ${seq.map((t, i) => html`<span key=${i} className="tchip num" style=${{'--tc':'var(--t' + t + ')'}} title=${'Раунд ' + (i + 1)}>${i + 1}: Т${t}</span>`)}
+      </div>
+    </div>` : null}
+  </div>`;
+}
+
+function useLocalSession(cfg, names){
+  const [moves, setMoves] = useState({A:{}, B:{}});
+  const patch = useCallback((seat, round, p) => setMoves(m => ({...m, [seat]:{...m[seat], [round]:{...(m[seat][round] || {}), ...p}}})), []);
+  return useMemo(() => ({
+    kind:'local', settings:cfg, names, moves, viewerSeats:['A', 'B'], error:null,
+    hide:(seat, round, tier, ids) => patch(seat, round, {hide:ids, tier}),
+    pick:(seat, round, idx, id) => patch(seat, round, {pick:{idx, id}}),
+    ready:(seat, round) => patch(seat, round, {ready:true})
+  }), [cfg, names, moves, patch]);
+}
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyy-x79merf8y6lCemeweeJMh4VjPeqAs",
+  authDomain: "deadlockminigames.firebaseapp.com",
+  databaseURL: "https://deadlockminigames-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "deadlockminigames",
+  storageBucket: "deadlockminigames.firebasestorage.app",
+  messagingSenderId: "420745489915",
+  appId: "1:420745489915:web:423937b77755e014be6f5e",
+  measurementId: "G-PK0WGDVRXN"
+};
+let fbDb = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  fbDb = firebase.database();
+} catch (e) { console.error('Firebase init failed', e); }
+
+function getUid(){
+  try {
+    let u = localStorage.getItem('bd_uid');
+    if (!u){ u = 'u_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('bd_uid', u); }
+    return u;
+  } catch (e) { return 'u_' + Math.random().toString(36).slice(2, 12); }
+}
+
+function useRoom(db, code){
+  const [st, setSt] = useState({meta:null, seats:{}, moves:{A:{}, B:{}}, got:{meta:false, seats:false, moves:false}, error:null, slow:false});
+  useEffect(() => {
+    if (!db || !code) return;
+    const base = db.ref('games/' + code);
+    const err = e => setSt(s => ({...s, error:(e && e.message) || 'Ошибка связи с Firebase'}));
+    const timer = setTimeout(() => setSt(s => (s.got.meta && s.got.seats && s.got.moves) ? s : {...s, slow:true}), 10000);
+    const rMeta = base.child('meta'), rSeats = base.child('seats'), rMoves = base.child('moves');
+    const onMeta = rMeta.on('value', snap => setSt(s => ({...s, meta:snap.val(), got:{...s.got, meta:true}})), err);
+    const onSeats = rSeats.on('value', snap => setSt(s => ({...s, seats:snap.val() || {}, got:{...s.got, seats:true}})), err);
+    const onMoves = rMoves.on('value', snap => {
+      const m = {A:{}, B:{}}, v = snap.val() || {};
+      Object.keys(v).forEach(k => { const x = v[k]; if (x && m[x.seat]) m[x.seat][x.round] = x; });
+      setSt(s => ({...s, moves:m, got:{...s.got, moves:true}}));
+    }, err);
+    return () => {
+      clearTimeout(timer);
+      rMeta.off('value', onMeta); rSeats.off('value', onSeats); rMoves.off('value', onMoves);
+    };
+  }, [db, code]);
+  return {...st, loaded: st.got.meta && st.got.seats && st.got.moves};
+}
+
+function useOnlineSession(db, uid, code){
+  const room = useRoom(db, code);
+  const [wErr, setWErr] = useState(null);
+  const {meta, seats, moves} = room;
+  const mySeat = seats.A && seats.A.uid === uid ? 'A' : (seats.B && seats.B.uid === uid ? 'B' : null);
+  const fail = e => setWErr((e && e.message) || 'Не удалось записать данные');
+  const write = useCallback((seat, round, patch) => {
+    db.ref('games/' + code + '/moves/' + seat + round).update({...patch, seat, round}).catch(fail);
+  }, [db, code]);
+  const names = {A:(seats.A && seats.A.name) || 'Игрок А', B:(seats.B && seats.B.name) || 'Игрок Б'};
+  const settings = meta ? {rounds:meta.rounds, mode:meta.mode, order:meta.order} : null;
+  return {
+    kind:'online', room, meta, seats, mySeat, names, settings, moves, wErr, clearErr:() => setWErr(null),
+    viewerSeats:mySeat ? [mySeat] : [], error:room.error,
+    hide:(seat, round, tier, ids) => write(seat, round, {hide:ids, tier}),
+    pick:(seat, round, idx, id) => write(seat, round, {pick:{idx, id}}),
+    ready:(seat, round) => write(seat, round, {ready:true}),
+    updateMeta:p => db.ref('games/' + code + '/meta').update(p).catch(fail)
+  };
+}
+
+async function createRoom(db, uid, name, cfg){
+  for (let i = 0; i < 6; i++){
+    const code = genCode();
+    const res = await db.ref('games/' + code + '/meta').transaction(cur => (
+      cur === null ? {code, hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
+    ));
+    if (!res.committed) continue;
+    await db.ref('games/' + code + '/seats/A').set({uid, name, joinedAt:Date.now()});
+    return code;
+  }
+  throw new Error('Не удалось создать комнату');
+}
+async function joinRoom(db, uid, rawCode, name){
+  const code = rawCode.trim().toUpperCase();
+  if (code.length < 4) throw new Error('Введи код комнаты');
+  const base = db.ref('games/' + code);
+  const metaSnap = await base.child('meta').once('value');
+  if (!metaSnap.exists()) throw new Error('Комната не найдена');
+  const aSnap = await base.child('seats/A').once('value');
+  if (aSnap.exists() && aSnap.val().uid === uid) return code;
+  const bSnap = await base.child('seats/B').once('value');
+  if (bSnap.exists() && bSnap.val().uid === uid) return code;
+  if (metaSnap.val().status !== 'lobby') throw new Error('Игра уже идёт');
+  const res = await base.child('seats/B').transaction(cur => (cur === null ? {uid, name, joinedAt:Date.now()} : undefined));
+  if (!res.committed) throw new Error('Комната заполнена');
+  return code;
+}
+
+function Inventory({seat, name, list, active, you, curRound}){
+  const total = totalSouls(list);
+  return html`<div className=${cx('panel p-3', active && 'active')}>
+    <div className="flex items-center justify-between gap-2 mb-2">
+      <div className="min-w-0">
+        <div className="panel-h truncate">${name}${you ? ' (ты)' : ''}</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Инвентарь Игрока ${SEAT_LABEL[seat]} · <span className="num">${list.length}/${SLOTS}</span></div>
+      </div>
+      <div className="num soul disp" style=${{fontSize:'16px'}}>◆ ${total}</div>
+    </div>
+    <div className="slots">
+      ${Array.from({length:SLOTS}, (_, i) => html`<${Slot} key=${i} entry=${list[i]} isNew=${list[i] && list[i].round === curRound}/>`)}
+    </div>
+  </div>`;
+}
+
+function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
+  const fixed = tierForRound(settings, round);
+  const [tier, setTier] = useState(fixed);
+  const [sel, setSel] = useState([]);
+  const pool = tier ? ITEMS.filter(i => i.tier === tier) : [];
+  const toggle = id => {
+    setSel(s => s.includes(id) ? s.filter(x => x !== id) : (s.length >= HIDE_COUNT ? s : [...s, id]));
+  };
+  const pickTier = t => { setTier(t); setSel([]); };
+  return html`<div className="flex flex-col gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <div className="panel-h">Загадай ${HIDE_COUNT} предмета для: ${receiverName}</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть, недоступны.</div>
+      </div>
+      ${fixed ? html`<${TierChip} tier=${fixed}/>` : null}
+    </div>
+    ${!fixed ? html`<div>
+      <div className="muted mb-2" style=${{fontSize:'12px'}}>Хаос: выбери тир сам. Соперник не увидит его до конца раунда.</div>
+      <div className="flex flex-wrap gap-2">
+        ${[1, 2, 3, 4].map(t => {
+          const av = availableOfTier(t, ownedIds).length;
+          return html`<button key=${t} className=${cx('tierb', tier === t && 'on')} style=${{'--tc':'var(--t' + t + ')'}} disabled=${av < HIDE_COUNT} onClick=${() => pickTier(t)}>
+            <div className="disp" style=${{color:'var(--t' + t + ')',fontSize:'15px'}}>Тир ${t}</div>
+            <div className="num" style=${{fontSize:'12px'}}><span className="soul">◆</span> ${TIER_PRICE[t]}</div>
+            <div className="muted" style=${{fontSize:'11px'}}>доступно ${av} из 8</div>
+          </button>`;
+        })}
+      </div>
+    </div>` : null}
+    ${tier ? html`<div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex gap-2">
+          ${Array.from({length:HIDE_COUNT}, (_, i) => {
+            const it = sel[i] ? BY_ID[sel[i]] : null;
+            return html`<div key=${i} className=${cx('trayslot', it && 'f')} style=${it ? {'--tc':'var(--t' + it.tier + ')'} : {}} onClick=${() => it && toggle(it.id)} title=${it ? 'Убрать' : ''}>
+              ${it ? html`<span>${it.image}</span><small>${it.price}</small>` : (i + 1)}
+            </div>`;
+          })}
+        </div>
+        <button className="btn gold" disabled=${sel.length !== HIDE_COUNT} onClick=${() => onSubmit(seat, tier, sel)}>Загадать</button>
+        <span className="muted num" style=${{fontSize:'12px'}}>выбрано ${sel.length} из ${HIDE_COUNT}</span>
+      </div>
+      <div className="flex flex-wrap gap-4 justify-center" style=${{paddingBottom:'10px'}}>
+        ${pool.map(it => {
+          const banned = ownedIds.has(it.id);
+          const picked = sel.includes(it.id);
+          return html`<${Card} key=${it.id} item=${it} size="g" state=${banned ? 'banned' : (picked ? 'sel' : '')}
+            tag=${banned ? 'ЗАБАНЕН' : (picked ? 'ВЫБРАН' : null)} onClick=${() => toggle(it.id)}/>`;
+        })}
+      </div>
+    </div>` : null}
+  </div>`;
+}
+
+function TrioRow({hider, move, pickMove, picker, names, reveal, interactive, onPick, active, phase}){
+  const hidden = move && move.hide;
+  const pickedIdx = pickMove ? pickMove.idx : -1;
+  const taker = names[picker];
+  return html`<div className=${cx('panel p-3', active && 'active')}>
+    <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <div>
+        <div className="panel-h">Карты: ${names[hider]}</div>
+        <div className="muted" style=${{fontSize:'12px'}}>выбирает ${taker}</div>
+      </div>
+      ${active ? html`<span className="chip gold">${interactive ? 'выбери карту' : 'ожидание выбора'}</span>`
+        : (pickMove ? html`<span className="chip ok">взято</span>` : (hidden ? html`<span className="chip">загадано</span>` : html`<span className="chip">загадывает…</span>`))}
+    </div>
+    <div className="flex justify-center gap-4" style=${{paddingBottom:'12px'}}>
+      ${Array.from({length:HIDE_COUNT}, (_, i) => {
+        if (!hidden) return html`<div key=${i} className="trayslot" style=${{width:'80px'}}>${i + 1}</div>`;
+        const item = BY_ID[hidden[i]];
+        const picked = i === pickedIdx;
+        const faceUp = reveal || picked;
+        const st = picked ? 'taken' : (reveal && pickMove ? 'faded' : (interactive ? 'pickable' : ''));
+        return html`<${Card} key=${i} item=${item} back=${!faceUp} n=${i + 1} size="t" state=${st}
+          tag=${picked ? 'ВЗЯЛ ' + SEAT_LABEL[picker] : null}
+          onClick=${interactive ? (() => onPick(i)) : undefined}/>`;
+      })}
+    </div>
+  </div>`;
+}
+
+function Stage({session, d, peek}){
+  const {settings, names, moves, viewerSeats} = session;
+  const r = d.round, phase = d.phase;
+  const mv = s => (moves[s] && moves[s][r]) || {};
+  const local = viewerSeats.length === 2;
+  const [tab, setTab] = useState('A');
+  const pending = viewerSeats.filter(s => !mv(s).hide);
+  const active = pending.includes(tab) ? tab : pending[0];
+  const picker = phase === 'pickA' ? 'A' : (phase === 'pickB' ? 'B' : null);
+  const iPick = picker && viewerSeats.includes(picker);
+  const showTrios = phase !== 'hide' || mv('A').hide || mv('B').hide;
+  const isLast = r === settings.rounds;
+  const allReady = viewerSeats.length > 0 && viewerSeats.every(s => mv(s).ready);
+  const roundTier = tierForRound(settings, r);
+
+  const revealFor = h => phase === 'recap' || (local ? peek : (viewerSeats.length === 1 && viewerSeats[0] === h));
+  const trio = h => html`<${TrioRow} key=${h} hider=${h} picker=${other(h)} names=${names} phase=${phase}
+      move=${mv(h)} pickMove=${mv(other(h)).pick} reveal=${revealFor(h)}
+      active=${picker === other(h)} interactive=${iPick && picker === other(h)}
+      onPick=${idx => session.pick(picker, r, idx, mv(h).hide[idx])}/>`;
+
+  return html`<div className="flex flex-col gap-3">
+    <div className="panel p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="panel-h">
+          ${phase === 'hide' ? 'Загадывание' : phase === 'recap' ? 'Итог раунда' : 'Выбор карты'}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          ${roundTier ? html`<${TierChip} tier=${roundTier}/>` : html`<span className="chip gold">Хаос: тир выбирает каждый</span>`}
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        ${['A', 'B'].map(s => html`<span key=${s} className=${cx('chip', mv(s).hide && 'ok')}>${names[s]}: ${mv(s).hide ? 'загадал ✓' : 'загадывает…'}</span>`)}
+        ${phase !== 'hide' ? ['A', 'B'].map(s => html`<span key=${'p' + s} className=${cx('chip', mv(s).pick && 'ok')}>${names[s]}: ${mv(s).pick ? 'выбрал ✓' : 'ещё не выбрал'}</span>`) : null}
+      </div>
+    </div>
+
+    ${phase === 'hide' && pending.length > 0 ? html`<div className="panel p-4">
+      ${local && pending.length > 1 ? html`<div className="flex gap-2 mb-3">
+        ${pending.map(s => html`<button key=${s} className=${cx('btn sm', active === s && 'gold')} onClick=${() => setTab(s)}>Загадывает ${names[s]}</button>`)}
+      </div>` : null}
+      <${Composer} key=${active + '-' + r} seat=${active} round=${r} settings=${settings}
+        receiverName=${names[other(active)]} ownedIds=${ownedSet(d.inv, other(active))}
+        onSubmit=${(seat, tier, ids) => session.hide(seat, r, tier, ids)}/>
+    </div>` : null}
+
+    ${phase === 'hide' && pending.length === 0 && viewerSeats.length > 0 ? html`<div className="panel p-4 text-center">
+      <div className="panel-h">Твои карты загаданы</div>
+      <div className="muted mt-1">Ждём, пока соперник закончит загадывание.</div>
+    </div>` : null}
+
+    ${showTrios ? html`<div className="flex flex-col gap-3">${trio('A')}${trio('B')}</div>` : null}
+
+    ${picker ? html`<div className="panel p-3 text-center">
+      <div className="disp" style=${{fontSize:'17px',color:iPick ? 'var(--gold2)' : 'var(--muted)'}}>
+        ${iPick ? (local ? 'Ход: ' + names[picker] : 'Твой ход') + ': выбери одну из трёх карт' : 'Выбирает ' + names[picker] + '…'}
+      </div>
+      ${local ? html`<div className="muted" style=${{fontSize:'12px'}}>Игрок называет номер карты 1, 2 или 3. Нажми на неё, она откроется и уйдёт в его инвентарь.</div>` : null}
+    </div>` : null}
+
+    ${phase === 'recap' ? html`<div className="panel p-4 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <div className="panel-h">Раунд ${r} завершён</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Все карты раскрыты. Бирюзовым отмечено, что взяли игроки.</div>
+      </div>
+      ${viewerSeats.length === 0 ? null : html`<button className="btn gold" disabled=${allReady}
+        onClick=${() => viewerSeats.forEach(s => session.ready(s, r))}>
+        ${allReady ? 'Ждём соперника…' : (isLast ? 'К итогам' : 'Следующий раунд')}
+      </button>`}
+    </div>` : null}
+  </div>`;
+}
+
+function Results({session, d, onExit}){
+  const {settings, names, moves} = session;
+  const sum = {A:totalSouls(d.inv.A), B:totalSouls(d.inv.B)};
+  const winner = sum.A === sum.B ? null : (sum.A > sum.B ? 'A' : 'B');
+  const offered = s => Array.from({length:settings.rounds}, (_, i) => {
+    const m = moves[s] && moves[s][i + 1];
+    return m && m.hide ? m.hide.reduce((a, id) => a + BY_ID[id].price, 0) : 0;
+  }).reduce((a, b) => a + b, 0);
+  const byTier = s => [1, 2, 3, 4].map(t => d.inv[s].filter(x => BY_ID[x.id].tier === t).length);
+  const best = s => d.inv[s].map(x => BY_ID[x.id]).sort((a, b) => b.price - a.price)[0];
+  const {nameLang} = useContext(PrefCtx);
+  const col = s => html`<div key=${s} className=${cx('panel p-4 flex flex-col gap-4', winner === s && 'active')}>
+    <div className="flex items-start justify-between gap-2">
+      <div className="min-w-0">
+        <div className="panel-h truncate">${names[s]}</div>
+        <div className="disp num soul" style=${{fontSize:'30px',lineHeight:1.1}}>◆ ${sum[s]}</div>
+      </div>
+      ${winner === s ? html`<span className="chip gold">Победитель</span>` : null}
+    </div>
+    <div className="flex flex-wrap gap-3">
+      ${d.inv[s].map((x, i) => html`<${Card} key=${i} item=${BY_ID[x.id]} size="s"/>`)}
+    </div>
+    <hr className="rule"/>
+    <div className="grid grid-cols-2 gap-3" style=${{fontSize:'13px'}}>
+      <div><div className="muted">Средняя цена предмета</div><div className="num disp" style=${{fontSize:'18px'}}>${d.inv[s].length ? Math.round(sum[s] / d.inv[s].length) : 0}</div></div>
+      <div><div className="muted">Предложил сопернику</div><div className="num disp" style=${{fontSize:'18px'}}>◆ ${offered(s)}</div></div>
+      <div><div className="muted">Лучшая находка</div><div style=${{fontWeight:600}}>${best(s) ? best(s).image + ' ' + best(s).name[nameLang] : '-'}</div></div>
+      <div><div className="muted">Тиры 1 / 2 / 3 / 4</div><div className="num disp" style=${{fontSize:'18px'}}>${byTier(s).join(' / ')}</div></div>
+    </div>
+  </div>`;
+  return html`<div className="flex flex-col gap-4">
+    <div className=${cx('panel p-6 text-center', winner && 'winner')}>
+      <div className="muted disp" style=${{fontSize:'12px'}}>Итоги · ${settings.rounds} раундов · ${settings.mode === 'balance' ? 'Баланс' : 'Хаос'}</div>
+      <div className="disp" style=${{fontSize:'clamp(26px,5vw,44px)',color:'var(--gold2)'}}>
+        ${winner ? 'Победил ' + names[winner] : 'Ничья'}
+      </div>
+      <div className="muted num mt-1">${names.A} ◆ ${sum.A} · ${names.B} ◆ ${sum.B}${winner ? ' · разница ◆ ' + Math.abs(sum.A - sum.B) : ''}</div>
+      <div className="mt-4"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>
+    </div>
+    <div className="grid gap-4 md:grid-cols-2">${col('A')}${col('B')}</div>
+    <div className="panel p-4">
+      <div className="panel-h mb-2">Ход игры</div>
+      <div style=${{overflowX:'auto'}}>
+        <table className="rt">
+          <thead><tr><th>Раунд</th><th>${names.A} получил</th><th>${names.B} получил</th><th>${names.A} загадал</th><th>${names.B} загадал</th></tr></thead>
+          <tbody>
+            ${Array.from({length:settings.rounds}, (_, i) => {
+              const a = moves.A[i + 1] || {}, b = moves.B[i + 1] || {};
+              const cell = m => m.pick ? BY_ID[m.pick.id].image + ' ' + BY_ID[m.pick.id].name[nameLang] : '-';
+              const off = m => m.hide ? html`<span className="tchip" style=${{'--tc':'var(--t' + m.tier + ')'}}>Т${m.tier}</span>` : '-';
+              return html`<tr key=${i}><td className="num">${i + 1}</td><td>${cell(a)}</td><td>${cell(b)}</td><td>${off(a)}</td><td>${off(b)}</td></tr>`;
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function GameView({session, onExit}){
+  const {settings, names, moves, viewerSeats} = session;
+  const d = useMemo(() => derive(settings, moves), [settings, moves]);
+  const [peek, setPeek] = useState(false);
+  const [sure, setSure] = useState(false);
+  useEffect(() => { if (!sure) return; const t = setTimeout(() => setSure(false), 3500); return () => clearTimeout(t); }, [sure]);
+  const local = viewerSeats.length === 2;
+  if (d.finished) return html`<${Results} session=${session} d=${d} onExit=${onExit}/>`;
+  const picker = d.phase === 'pickA' ? 'A' : (d.phase === 'pickB' ? 'B' : null);
+  const hideAct = s => d.phase === 'hide' && !(moves[s] && moves[s][d.round] && moves[s][d.round].hide);
+  const steps = [['hide', 'Загадывание'], ['pickA', 'Выбор ' + SEAT_LABEL.A], ['pickB', 'Выбор ' + SEAT_LABEL.B], ['recap', 'Итог раунда']];
+  const idx = steps.findIndex(s => s[0] === d.phase);
+  return html`<div className="flex flex-col gap-3">
+    <div className="panel p-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <div className="disp" style=${{fontSize:'26px',color:'var(--gold2)'}}>Раунд <span className="num">${d.round}</span> / <span className="num">${settings.rounds}</span></div>
+          <span className="chip">${settings.mode === 'balance' ? 'Баланс' : 'Хаос'}</span>
+          ${session.kind === 'online' ? html`<span className="chip">комната ${session.meta.code}</span>` : html`<span className="chip">локально</span>`}
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          ${local ? html`<label className="chip" style=${{cursor:'pointer'}}><input type="checkbox" checked=${peek} onChange=${e => setPeek(e.target.checked)}/> показывать скрытые карты</label>` : null}
+          <button className=${cx('btn sm danger')} onClick=${() => sure ? onExit() : setSure(true)}>${sure ? 'Точно выйти?' : 'Выйти'}</button>
+        </div>
+      </div>
+      <div className="pbar mt-3">${Array.from({length:settings.rounds}, (_, i) => html`<i key=${i} className=${i + 1 < d.round ? 'done' : (i + 1 === d.round ? 'cur' : '')}></i>`)}</div>
+      <div className="stepper mt-2">
+        ${steps.map((s, i) => html`<div key=${s[0]} className=${cx('step', i === idx && 'on', i < idx && 'done')}>${s[1]}</div>`)}
+      </div>
+    </div>
+    ${session.wErr ? html`<div className="panel p-3" style=${{borderColor:'var(--red)'}}>${session.wErr} <button className="btn sm ml-2" onClick=${session.clearErr}>Скрыть</button></div>` : null}
+    <div className="grid gap-3 grid-cols-2 lg:grid-cols-[minmax(230px,1fr)_minmax(0,1.9fr)_minmax(230px,1fr)] items-start">
+      <div className="col-span-2 lg:col-span-1 lg:order-2" style=${{minWidth:0}}><${Stage} session=${session} d=${d} peek=${peek}/></div>
+      <div className="lg:order-1" style=${{minWidth:0}}><${Inventory} seat="A" name=${names.A} list=${d.inv.A} curRound=${d.round}
+        active=${picker === 'A' || hideAct('A')} you=${!local && viewerSeats[0] === 'A'}/></div>
+      <div className="lg:order-3" style=${{minWidth:0}}><${Inventory} seat="B" name=${names.B} list=${d.inv.B} curRound=${d.round}
+        active=${picker === 'B' || hideAct('B')} you=${!local && viewerSeats[0] === 'B'}/></div>
+    </div>
+  </div>`;
+}
+
+function useDebouncedFn(fn, ms){
+  const t = useRef(null); const f = useRef(fn); f.current = fn;
+  return useCallback((...a) => { clearTimeout(t.current); t.current = setTimeout(() => f.current(...a), ms); }, [ms]);
+}
+function RoomLobby({session, onLeave, canWrite}){
+  const {meta, seats, mySeat} = session;
+  const isHost = mySeat === 'A';
+  const [cfg, setCfg] = useState({rounds:meta.rounds, mode:meta.mode, order:meta.order});
+  const [copied, setCopied] = useState(false);
+  const save = useDebouncedFn(c => session.updateMeta(c), 350);
+  const view = isHost ? cfg : {rounds:meta.rounds, mode:meta.mode, order:meta.order};
+  const change = c => { setCfg(c); save(c); };
+  const bIn = !!(seats.B && seats.B.uid);
+  return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'760px'}}>
+    <div className="panel p-5 text-center">
+      <div className="muted disp" style=${{fontSize:'12px'}}>Код комнаты</div>
+      <div className="disp num" style=${{fontSize:'clamp(40px,10vw,64px)',color:'var(--gold2)',letterSpacing:'.2em'}}>${meta.code}</div>
+      <div className="flex justify-center gap-2 mt-2">
+        <button className="btn sm" onClick=${() => copyText(meta.code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {})}>${copied ? 'Скопировано' : 'Скопировать код'}</button>
+        <button className="btn sm danger" onClick=${onLeave}>Выйти</button>
+      </div>
+      <p className="muted mt-3" style=${{fontSize:'13px'}}>Отправь код другу. Он открывает этот же сайт, выбирает «Онлайн» и вводит код.</p>
+    </div>
+    <div className="panel p-4 flex flex-wrap gap-3 justify-between items-center">
+      <span className=${cx('chip', 'ok')}>Игрок А: ${(seats.A && seats.A.name) || '...'} ✓</span>
+      <span className=${cx('chip', bIn && 'ok')}>Игрок Б: ${bIn ? seats.B.name + ' ✓' : 'ждём подключения…'}</span>
+    </div>
+    <div className="panel p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="panel-h">Настройки игры</div>
+        ${!isHost ? html`<span className="chip">настраивает хост</span>` : null}
+      </div>
+      <${SettingsPanel} cfg=${view} setCfg=${change} readOnly=${!isHost}/>
+    </div>
+    ${isHost ? html`<div className="text-center">
+      <button className="btn gold" style=${{fontSize:'17px',padding:'14px 34px'}} disabled=${!bIn || canWrite === false}
+        onClick=${() => session.updateMeta({status:'playing', ...cfg})}>Начать игру</button>
+      ${!bIn ? html`<div className="muted mt-2" style=${{fontSize:'12px'}}>Кнопка включится, когда подключится Игрок Б.</div>` : null}
+    </div>` : html`<div className="text-center muted">Ждём, пока хост начнёт игру…</div>`}
+  </div>`;
+}
+function OnlineRoom({db, uid, code, canWrite, onLeave}){
+  const s = useOnlineSession(db, uid, code);
+  if (s.error) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}>
+    <div className="panel-h">Нет связи с комнатой</div><p className="muted mt-2">${s.error}</p><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
+  if (!s.room.loaded) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}>
+    <div className="panel-h">Подключаемся к комнате ${code}…</div>
+    ${s.room.slow ? html`<p className="muted mt-2">Ответ идёт дольше обычного.</p>` : null}
+    <button className="btn sm mt-3" onClick=${onLeave}>Отмена</button></div>`;
+  if (!s.meta) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}>
+    <div className="panel-h">Комната не найдена</div><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
+  if (s.meta.status === 'lobby'){
+    if (!s.mySeat) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}><div className="panel-h">Ты не в этой комнате</div><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
+    return html`<${RoomLobby} session=${s} onLeave=${onLeave} canWrite=${canWrite}/>`;
+  }
+  return html`<${GameView} session=${s} onExit=${onLeave}/>`;
+}
+function LocalGame({run, onExit}){
+  const session = useLocalSession(run.cfg, run.names);
+  return html`<${GameView} session=${session} onExit=${onExit}/>`;
+}
+
+function Lobby({cfg, setCfg, names, setNames, conn, setConn, dbh, onStartLocal, onCreate, onJoin, busy, error}){
+  const [nick, setNick] = useState(() => store.get('bd_nick', ''));
+  const [code, setCode] = useState('');
+  const setNickS = v => { setNick(v); store.set('bd_nick', v); };
+  const online = conn === 'online';
+  const off = dbh.status !== 'ready';
+  return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'860px'}}>
+    <div className="text-center py-2">
+      <div className="muted disp" style=${{fontSize:'12px'}}>Мини-игра по мотивам Deadlock</div>
+      <h1 className="disp" style=${{fontSize:'clamp(40px,9vw,72px)',lineHeight:1,margin:'4px 0',color:'var(--gold2)',fontWeight:600}}>Слепой драфт</h1>
+      <p className="muted mx-auto" style=${{maxWidth:'58ch'}}>Один на один. Каждый раунд вы оба загадываете сопернику три предмета, а потом вслепую берёте по одному из тех, что загадали вам.</p>
+    </div>
+
+    <div className="panel p-5">
+      <div className="panel-h mb-3">Как играем</div>
+      <${Seg} value=${conn} onChange=${setConn} options=${[{v:'online', l:'Онлайн · два компьютера'}, {v:'local', l:'Локально · организатор'}]}/>
+      <p className="muted mt-2" style=${{fontSize:'13px',maxWidth:'62ch'}}>
+        ${online ? 'Каждый игрок заходит со своего устройства по коду комнаты и видит только свои действия.'
+                 : 'Один экран. Организатор вводит ходы за обоих игроков, например из личных сообщений, и сам открывает карты.'}
+      </p>
+    </div>
+
+    <div className="panel p-5">
+      <div className="panel-h mb-4">Настройки лобби</div>
+      <${SettingsPanel} cfg=${cfg} setCfg=${setCfg}/>
+    </div>
+
+    ${!online ? html`<div className="panel p-5 flex flex-col gap-4">
+      <div className="panel-h">Игроки</div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div><label className="muted" htmlFor="nA" style=${{fontSize:'12px'}}>Игрок А</label><input id="nA" className="fld" maxLength="20" value=${names.A} onInput=${e => setNames({...names, A:e.target.value})}/></div>
+        <div><label className="muted" htmlFor="nB" style=${{fontSize:'12px'}}>Игрок Б</label><input id="nB" className="fld" maxLength="20" value=${names.B} onInput=${e => setNames({...names, B:e.target.value})}/></div>
+      </div>
+      <div className="text-center"><button className="btn gold" style=${{fontSize:'17px',padding:'14px 34px'}} onClick=${onStartLocal}>Начать игру</button></div>
+    </div>` : html`<div className="panel p-5 flex flex-col gap-4">
+      <div className="panel-h">Онлайн-комната</div>
+      ${off ? html`<p className="muted">Не удалось подключиться к Firebase. Проверь интернет и настройки базы.</p>` : null}
+      <div>
+        <label className="muted" htmlFor="nick" style=${{fontSize:'12px'}}>Твой ник</label>
+        <input id="nick" className="fld" maxLength="20" placeholder="Как тебя звать в игре" value=${nick} onInput=${e => setNickS(e.target.value)}/>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-2">
+          <div className="muted" style=${{fontSize:'12px'}}>Ты хост: настройки выше берутся для новой комнаты</div>
+          <button className="btn gold" disabled=${off || busy} onClick=${() => onCreate(nick.trim() || 'Игрок А')}>Создать комнату</button>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="muted" style=${{fontSize:'12px'}}>Есть код от друга?</div>
+          <div className="flex gap-2">
+            <input className="fld disp" style=${{letterSpacing:'.25em',textAlign:'center'}} maxLength="5" placeholder="КОД" aria-label="Код комнаты" value=${code} onInput=${e => setCode(e.target.value.toUpperCase())}/>
+            <button className="btn" disabled=${off || busy || code.length < 4} onClick=${() => onJoin(code, nick.trim() || 'Игрок Б')}>Войти</button>
+          </div>
+        </div>
+      </div>
+      ${error ? html`<div style=${{color:'var(--red)'}}>${error}</div>` : null}
+    </div>`}
+  </div>`;
+}
+
+function App(){
+  const [prefs, setPrefsS] = useState(() => store.get('bd_prefs', {nameLang:'ru', descLang:'ru'}));
+  const setPrefs = p => { setPrefsS(p); store.set('bd_prefs', p); };
+  const [conn, setConn] = useState('online');
+  const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
+  const [names, setNames] = useState({A:'Игрок А', B:'Игрок Б'});
+  const [localRun, setLocalRun] = useState(null);
+  const [roomCode, setRoomCode] = useState(() => store.get('bd_room', null));
+  const [dbh] = useState(() => ({status:fbDb ? 'ready' : 'off', db:fbDb, uid:getUid(), canWrite:true}));
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => { if (dbh.status === 'ready' && roomCode) setConn('online'); }, [dbh.status]);
+
+  const leaveRoom = () => { store.set('bd_room', null); setRoomCode(null); setError(null); };
+  const create = async name => {
+    setBusy(true); setError(null);
+    try { const c = await createRoom(dbh.db, dbh.uid, name, cfg); store.set('bd_room', c); setRoomCode(c); }
+    catch(e){ setError((e && e.message) || 'Не удалось создать комнату'); }
+    setBusy(false);
+  };
+  const join = async (code, name) => {
+    setBusy(true); setError(null);
+    try { const c = await joinRoom(dbh.db, dbh.uid, code, name); store.set('bd_room', c); setRoomCode(c); }
+    catch(e){ setError((e && e.message) || 'Не удалось войти в комнату'); }
+    setBusy(false);
+  };
+
+  let body;
+  if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
+  else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
+  else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
+      onStartLocal=${() => setLocalRun({cfg:{...cfg}, names:{A:names.A.trim() || 'Игрок А', B:names.B.trim() || 'Игрок Б'}})}
+      onCreate=${create} onJoin=${join} busy=${busy} error=${error}/>`;
+
+  return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
+    <div className="shell">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="disp" style=${{fontSize:'15px',color:'var(--gold)'}}>◆ Слепой драфт</div>
+        <${LangToggles} prefs=${prefs} setPrefs=${setPrefs}/>
+      </div>
+      ${body}
+      <p className="muted text-center mt-8" style=${{fontSize:'12px'}}>Наведи на предмет, чтобы увидеть описание. Правая кнопка мыши или значок i открывают подробную карточку.</p>
+    </div>
+  <//><//>`;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
