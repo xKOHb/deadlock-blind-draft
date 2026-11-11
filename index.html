@@ -3,9 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Слепой драфт</title>
+<title>Слепой драфт — Deadlock: драфт предметов 1 на 1</title>
+<meta name="description" content="Слепой драфт для Deadlock: загадывай карты предметов сопернику, выбирай свои и идите биться 1 на 1.">
+<meta name="theme-color" content="#141311">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141311'/%3E%3Cpath d='M32 6 58 32 32 58 6 32z' fill='%23e0c58a'/%3E%3Cpath d='M32 18 46 32 32 46 18 32z' fill='%23141311'/%3E%3Cpath d='M32 25 39 32 32 39 25 32z' fill='%237ec4d1'/%3E%3C/svg%3E">
+<!-- Превью ссылки (Telegram, Discord). ВАЖНО: замени YOUR-DOMAIN на адрес сайта, картинка og.png лежит рядом с index.html -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Слепой драфт">
+<meta property="og:title" content="Слепой драфт — драфт предметов Deadlock 1 на 1">
+<meta property="og:description" content="Загадывай карты сопернику, выбирай свои вслепую, потом бейтесь на выбранных предметах. Заходи по ссылке!">
+<meta property="og:image" content="https://YOUR-DOMAIN/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://YOUR-DOMAIN/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&family=Russo+One&family=Rubik:wght@400;500;600&display=swap">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
 /* Оккультный нуар 1930-х, арт-деко: угольные фоны, кремовый текст, тусклое золото. Рамки со ступенчатыми углами. */
@@ -14,7 +28,7 @@
   --text:#ece1c8; --muted:#a99e86; --gold:#b8975a; --gold2:#e0c58a; --goldDim:#6e5a34;
   --teal:#8fc2a0; --red:#d0685c; --soul:#7ec4d1;
   --t1:#6fb35c; --t2:#e68a2e; --t3:#a67ee6; --t4:#f0c54e;
-  --f-head:'Playfair Display',Georgia,serif; --f-display:'Oswald','Arial Narrow',sans-serif; --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-head:'Playfair Display',Georgia,serif; --f-display:'Oswald','Arial Narrow',sans-serif; --f-ihead:'Russo One','Oswald',Arial,sans-serif; --f-itext:'Rubik','Barlow',system-ui,sans-serif; --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
   --step:polygon(0 8px,4px 8px,4px 4px,8px 4px,8px 0,calc(100% - 8px) 0,calc(100% - 8px) 4px,calc(100% - 4px) 4px,calc(100% - 4px) 8px,100% 8px,100% calc(100% - 8px),calc(100% - 4px) calc(100% - 8px),calc(100% - 4px) calc(100% - 4px),calc(100% - 8px) calc(100% - 4px),calc(100% - 8px) 100%,8px 100%,8px calc(100% - 4px),4px calc(100% - 4px),4px calc(100% - 8px),0 calc(100% - 8px));
   color-scheme:dark;
 }
@@ -68,7 +82,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:2px 10px;border:1px solid var(--edge2);font-size:12px;background:var(--bg2);color:var(--muted)}
 .chip.ok{border-color:var(--teal);color:var(--teal)}
 .chip.gold{border-color:var(--gold);color:var(--gold2)}
-.tchip{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 8px;font-family:var(--f-display);font-size:12px;letter-spacing:.05em;border:1px solid currentColor;color:var(--tc);background:rgba(255,255,255,.03)}
+.tchip{font-variant-numeric:lining-nums;display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;padding:0 8px;font-family:var(--f-display);font-size:12px;letter-spacing:.05em;border:1px solid currentColor;color:var(--tc);background:rgba(255,255,255,.03)}
 .soul{color:var(--soul)}
 .soul-i{display:inline-block;vertical-align:-1px;margin-right:3px;color:var(--soul)}
 
@@ -77,7 +91,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ico{display:block;object-fit:cover}
 .mono{display:inline-flex;align-items:center;justify-content:center;aspect-ratio:1;position:relative;color:var(--tc,var(--gold2));border:1px solid currentColor;transform:rotate(45deg);font-size:0}
 .mono::after{content:attr(data-l);transform:rotate(-45deg);font-size:18px;font-family:var(--f-head);font-weight:700;position:absolute}
-.face-in,.slot.full,.trayslot.f{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 30%,#f4e9d0),color-mix(in srgb,var(--tc) 58%,#d9c79b))}
+.face-in,.slot.full,.trayslot.f{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 10%,#f6efde),color-mix(in srgb,var(--tc) 22%,#e9dfc6))}
 .card{position:relative;width:var(--cw);aspect-ratio:3/4;perspective:800px;cursor:pointer;flex:none;transition:transform .2s,filter .2s,opacity .2s;-webkit-tap-highlight-color:transparent}
 .sz-s{--cw:78px}.sz-g{--cw:104px}.sz-t{--cw:124px}
 @media (max-width:640px){.sz-g{--cw:88px}.sz-t{--cw:94px}.sz-s{--cw:70px}}
@@ -89,9 +103,9 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .c-art{position:absolute;inset:0 0 30% 0;overflow:hidden}
 .c-art .ico,.slot.full .ico,.trayslot.f .ico{width:100%;height:100%;mix-blend-mode:multiply}
 .c-art .mono{width:42%;margin:20% auto 0;display:flex}
-.c-tier{position:absolute;top:0;right:0;width:34%;aspect-ratio:1;background:var(--tc);clip-path:polygon(0 0,100% 0,100% 100%);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.65);display:flex;justify-content:flex-end;padding:calc(var(--cw)*.015) calc(var(--cw)*.035);font:700 calc(var(--cw)*.095)/1 var(--f-body)}
+.c-tier{position:absolute;top:0;right:0;width:40%;aspect-ratio:1;background:var(--tc);clip-path:polygon(0 0,100% 0,100% 100%);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);display:flex;justify-content:flex-end;align-items:flex-start;padding:calc(var(--cw)*.025) calc(var(--cw)*.04) 0 0;font:800 max(9px,calc(var(--cw)*.125))/1 var(--f-head);letter-spacing:.02em}
 .c-price{position:absolute;left:3px;top:3px;font-size:calc(var(--cw)*.1);font-weight:600;color:var(--soul);background:rgba(20,15,8,.82);padding:0 4px;line-height:1.45}
-.c-name{position:absolute;left:0;right:0;bottom:0;height:30%;padding:0 4px;font-family:var(--f-display);font-size:calc(var(--cw)*.115);line-height:1.1;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;color:#1b140a;overflow:hidden;word-break:break-word}
+.c-name{position:absolute;left:0;right:0;bottom:0;height:30%;padding:0 4px;font-family:var(--f-itext);font-size:calc(var(--cw)*.105);line-height:1.1;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;color:#1b140a;overflow:hidden;word-break:break-word}
 .sz-s .c-name{display:none}.sz-s .c-art{bottom:0}
 .c-info{position:absolute;right:calc(var(--cw)*.05);top:calc(var(--cw)*.36);width:18px;height:18px;border-radius:50%;border:1px solid var(--edge2);background:#14120f;color:var(--muted);font-size:11px;line-height:16px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s;z-index:2}
 .card:hover .c-info,.c-info:focus-visible{opacity:1}
@@ -105,6 +119,8 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .card.pickable{filter:drop-shadow(0 0 10px rgba(224,197,138,.45))}
 .card.pickable.is-back:hover{filter:drop-shadow(0 0 16px rgba(240,217,160,.85))}
 .card.sel{transform:translateY(-6px);filter:drop-shadow(0 0 12px rgba(240,217,160,.7))}
+.card:not(.banned):hover{scale:1.07;z-index:5;filter:drop-shadow(0 0 3px rgba(255,236,170,.95)) drop-shadow(0 0 14px rgba(240,217,160,.75))}
+.slot.full{transition:scale .15s,filter .15s}.slot.full:hover{scale:1.1;z-index:5;filter:drop-shadow(0 0 3px rgba(255,236,170,.95)) drop-shadow(0 0 10px rgba(240,217,160,.7))}
 .card.banned{opacity:.34;filter:grayscale(.8);cursor:not-allowed}
 .card.faded{opacity:.5;filter:saturate(.5)}
 .card.taken{filter:drop-shadow(0 0 12px rgba(143,194,160,.7))}
@@ -133,17 +149,24 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .modal-bg{position:fixed;inset:0;z-index:70;background:rgba(8,7,5,.8);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal{width:min(380px,100%);filter:drop-shadow(0 12px 30px rgba(0,0,0,.7))}
 .ii{background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 62%,#18130b),color-mix(in srgb,var(--tc) 40%,#120e08));border:1px solid var(--tc);clip-path:var(--step);padding:14px 16px 16px;color:#fbf3e0}
-.ii-name{font-family:var(--f-head);font-weight:800;font-size:24px;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.45)}
+.ii-name{font-family:var(--f-ihead);font-weight:400;font-size:23px;line-height:1.15;letter-spacing:.01em;text-shadow:0 2px 0 rgba(0,0,0,.45)}
 .ii-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 10px;font-size:17px;font-weight:600}
 .ii-meta .soul{color:#8fe3e8}
 .stat-line{display:flex;gap:8px;align-items:baseline;line-height:1.5}
 .stat-line b{font-size:17px;font-weight:700;min-width:64px;font-variant-numeric:tabular-nums}
-.stat-line span{font-size:14px}
+.stat-line span{font-size:14px;font-family:var(--f-itext)}
+.stat-line b{font-family:var(--f-itext)}
 .ii-band{display:flex;justify-content:space-between;align-items:center;margin:10px -16px 8px;padding:5px 16px;background:rgba(0,0,0,.45);font-family:var(--f-display);font-size:14px;letter-spacing:.04em}
-.ii-txt{font-size:13.5px;line-height:1.5;color:#efe6d0}
+.ii-txt{font-family:var(--f-itext);font-size:13.5px;line-height:1.5;color:#efe6d0}
 .ii-secs{margin:12px -16px -16px;background:rgba(0,0,0,.32)}
-.ii-sec{padding:6px 16px 8px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.ii-sec{padding:6px 16px 8px;display:flex;flex-direction:column;gap:4px;font-size:13px;font-family:var(--f-itext)}
 .ii-st{font-family:var(--f-display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#d9cfb6}
+.ii-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:6px;margin-top:10px}
+.ii-tile{background:rgba(0,0,0,.3);padding:6px 4px;text-align:center;font-family:var(--f-itext)}
+.ii-tile b{display:block;font-size:15px;font-weight:600}.ii-tile span{display:block;font-size:11px;line-height:1.2;opacity:.9}
+.ii-mline{display:flex;gap:8px;align-items:baseline;margin-top:6px;padding:6px 10px;background:rgba(0,0,0,.3);font-size:13px;font-family:var(--f-itext)}
+.ii-mline b{font-weight:600}
+.ii-cd{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);padding:1px 8px;font-family:var(--f-itext)}
 .stepper{display:flex;flex-wrap:wrap}
 .step{flex:1;min-width:92px;text-align:center;padding:6px 4px;font-family:var(--f-display);letter-spacing:.07em;font-size:13px;color:var(--muted);border-bottom:2px solid var(--edge)}
 .step.on{color:var(--gold2);border-color:var(--gold2)}
@@ -196,7 +219,7 @@ const norm = v => String(v || '').toLowerCase().replace(/ё/g, 'е');
 function matchItem(item, q){
   const words = norm(q).split(/\s+/).filter(Boolean);
   if (!words.length) return true;
-  const hay = norm([item.name.ru, item.name.en].concat(item.stats.map(x => x.l.ru + ' ' + x.l.en)).join(' | '));
+  const hay = norm([item.name.ru, item.name.en].concat((item.innate || item.stats).map(x => x.l.ru + ' ' + x.l.en)).join(' | '));
   return words.every(w => hay.includes(w));
 }
 const API_BASE = 'https://api.deadlock-api.com/v1/assets/items';   // старый хост assets.deadlock-api.com больше не существует
@@ -231,7 +254,7 @@ function descOf(d){
   if (typeof d === 'string') return strip(d);
   const seen = [];
   [d.desc, d.passive, d.active].forEach(x => { const t = strip(x); if (t && !seen.includes(t)) seen.push(t); });
-  return seen.join(' ').slice(0, 280);
+  return seen.join(' ').slice(0, 700);
 }
 // properties: {ключ:{value, label, prefix, postfix, ...}} -> {ключ:{l, v}}
 function statsOf(props){
@@ -247,6 +270,60 @@ function statsOf(props){
   });
   return out;
 }
+// единицы: API иногда отдаёт "mm" вместо "m/s"; для русского переводим единицы
+const fmtV = (v, ru) => { v = String(v).replace(/mm$/, 'm/s'); return ru ? v.replace(/m\/s$/, ' м/с').replace(/(\d)\s*s$/, '$1 с') : v; };
+// Данные из tooltip_sections (то, что рисует сама игра): постоянные статы, пассивные/активные блоки, плитки, длительность, окно применения, перезарядка.
+function propEntry(pe, pr, k){
+  const a = pe && pe[k]; if (!a) return null;
+  const e = statsOf({[k]:a})[k]; if (!e) return null;
+  const b = (pr && pr[k]) ? (statsOf({[k]:pr[k]})[k] || e) : e;
+  return {l:{en:e.l, ru:b.l}, v:e.v, key:k};
+}
+function sectionsOf(x, r){
+  try {
+    const sec = Array.isArray(x.tooltip_sections) ? x.tooltip_sections : [];
+    if (!sec.length) return null;
+    const rsec = Array.isArray(r.tooltip_sections) ? r.tooltip_sections : [];
+    const innate = [], blocks = [], pe = x.properties, pr = r.properties || {};
+    sec.forEach((s, si) => (s.section_attributes || []).forEach((at, ai) => {
+      const ra = ((rsec[si] || {}).section_attributes || [])[ai] || {};
+      const get = list => (list || []).map(k => propEntry(pe, pr, k)).filter(Boolean);
+      const type = String(s.section_type || '').toLowerCase();
+      const props = get(at.properties), imp = get(at.important_properties), elev = get(at.elevated_properties);
+      if (type === 'innate' || (type !== 'active' && type !== 'passive')){ props.concat(elev).forEach(e => innate.push(e)); return; }
+      const all = props.concat(imp, elev), cdE = all.find(e => /cooldown/i.test(e.key) && !/reduc|bonus/i.test(e.key));
+      const tiles = elev.filter(e => e !== cdE), tk = new Set(tiles.map(e => e.key));
+      const meta = imp.concat(props).filter(e => e !== cdE && !tk.has(e.key));
+      blocks.push({type, cd:cdE ? parseFloat(pe[cdE.key].value) : 0, tiles, meta, own:true});
+    }));
+    if (!innate.length && !blocks.length) return null;
+    return {innate, blocks};
+  } catch (e){ return null; }
+}
+// Ручные правки по скриншотам игры (по англ. названию). Перекрывают данные API.
+const T = (en, ru, v) => ({l:{en, ru}, v});
+const ITEM_FIX = {
+  'Active Reload': {
+    innate:[T('Max Ammo', 'Макс. боезапас', '+20%')],
+    blocks:[{type:'passive', cd:12,
+      text:{en:'Pressing R at the indicated moment during reload instantly completes it and grants bonus fire rate, bullet lifesteal and movement speed.',
+            ru:'Нажав R в указанный момент перезарядки, вы мгновенно завершите её и получите бонус к скорострельности, краже здоровья пулями и скорости передвижения.'},
+      tiles:[T('Fire Rate', 'Скорострельность', '+25%'), T('Bullet Lifesteal', 'Кража здоровья пулями', '+16%'), T('Move Speed', 'Скорость передвижения', '+0.75m/s')],
+      meta:[T('Duration', 'Длительность', '7s')]}]
+  },
+  'Extra Spirit': {
+    innate:[T('Spirit Power', 'ед. к спиритической мощи', '+10')],
+    blocks:[]
+  },
+  'Arcane Surge': {
+    innate:[T('Stamina', 'Выносливость', '+1'), T('Stamina Recovery', 'Восстановление выносливости', '+12%')],
+    blocks:[{type:'passive', cd:0,
+      text:{en:'After performing a dash jump, the next ability you use within 7s gets bonus range, duration and spirit power.',
+            ru:'После совершения рывка с прыжком следующее умение, которое вы используете в течение 7 сек., будет иметь бонусную дальность, длительность и спиритическую мощь.'},
+      tiles:[T('Ability Range', 'Дальность умения', '+12%'), T('Ability Duration', 'к длительности умений', '+15%'), T('Spirit Power', 'ед. к спиритической мощи', '+20')],
+      meta:[T('Window', 'Окно применения', '7s')]}]
+  }
+};
 function parseCatalog(en, ru){
   const ruBy = {}; (ru || []).forEach(x => { if (x && x.class_name) ruBy[x.class_name] = x; });
   const seen = new Set(), list = [];
@@ -268,6 +345,13 @@ function parseCatalog(en, ru){
       slot:slotKey(x.item_slot_type), active:!!x.is_active_item, cd, comps:Array.isArray(x.component_items) ? x.component_items.filter(c => typeof c === 'string') : [],
       desc:{en:descOf(x.description), ru:descOf(r.description) || descOf(x.description)}
     });
+    const it = list[list.length - 1], sc = sectionsOf(x, r), fx = ITEM_FIX[it.name.en];
+    if (sc){
+      it.innate = sc.innate;
+      const dd = k => ({en:strip((x.description || {})[k]), ru:strip((r.description || {})[k]) || strip((x.description || {})[k])});
+      it.blocks = sc.blocks.map(b => ({...b, text:dd(b.type)}));
+    }
+    if (fx){ it.innate = fx.innate; it.blocks = fx.blocks; }
   });
   list.forEach(i => { i.comps = i.comps.filter(c => seen.has(c)); });
   list.forEach(i => { i.up = list.filter(o => o.comps.includes(i.id)).map(o => o.id); });
@@ -348,6 +432,7 @@ function ItemIcon({item, size}){
 function ItemInfo({item}){
   const {nameLang, descLang} = useContext(PrefCtx);
   const ru = descLang === 'ru', slot = SLOT_LABEL[item.slot], text = item.desc[descLang] || item.desc.en;
+  const blocks = item.blocks || ((text || item.active) ? [{type:item.active ? 'active' : 'passive', cd:item.cd, text:item.desc, tiles:[], meta:[]}] : []);
   const comps = (item.comps || []).map(id => BY_ID[id]), ups = (item.up || []).map(id => BY_ID[id]);
   const rel = (t, list) => list.length ? html`<div className="ii-sec"><div className="ii-st">${t}</div>
     ${list.map(o => html`<div className="inl" key=${o.id}><${ItemIcon} item=${o} size=${26}/>${o.name[nameLang]}</div>`)}</div>` : null;
@@ -359,17 +444,24 @@ function ItemInfo({item}){
       ${slot ? html`<span className="tchip" style=${{'--tc':'#fbf3e0'}}>${slot}</span>` : null}
     </div>
     <div className="flex flex-col">
-      ${item.stats.map((x, i) => html`<div className="stat-line" key=${i}><b>${x.v}</b><span>${x.l[descLang]}</span></div>`)}
+      ${(item.innate || item.stats).map((x, i) => html`<div className="stat-line" key=${i}><b>${fmtV(x.v, ru)}</b><span>${x.l[descLang] || x.l.en}</span></div>`)}
     </div>
-    ${(text || item.active) ? html`<div className="ii-band"><span>${item.active ? (ru ? 'Активное' : 'Active') : (ru ? 'Пассивное' : 'Passive')}</span>${item.cd ? html`<span className="num">${item.cd} ${ru ? 'с.' : 's'}</span>` : null}</div>` : null}
-    ${text ? html`<div className="ii-txt">${text}</div>` : null}
+    ${blocks.map((bl, i) => {
+      const txt = bl.text ? (bl.text[descLang] || bl.text.en) : '';
+      return html`<${Fragment} key=${i}>
+        ${(txt || bl.type === 'active' || bl.cd) ? html`<div className="ii-band"><span>${bl.type === 'active' ? (ru ? 'Активное' : 'Active') : (ru ? 'Пассивное' : 'Passive')}</span>${bl.cd ? html`<span className="ii-cd num">${fmtV(bl.cd + 's', ru)}</span>` : null}</div>` : null}
+        ${txt ? html`<div className="ii-txt">${txt}</div>` : null}
+        ${bl.tiles && bl.tiles.length ? html`<div className="ii-tiles">${bl.tiles.map((t, j) => html`<div className="ii-tile" key=${j}><b>${fmtV(t.v, ru)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}</div>` : null}
+        ${(bl.meta || []).map((t, j) => html`<div className="ii-mline" key=${j}><b>${fmtV(t.v, ru)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}
+      <//>`;
+    })}
     ${(comps.length || ups.length) ? html`<div className="ii-secs">${rel(ru ? 'Компоненты:' : 'Components:', comps)}${rel(ru ? 'Улучшения:' : 'Upgrades:', ups)}</div>` : null}
   </div>`;
 }
 function TipBox({tip}){
-  const w = 340, pad = 16;
+  const w = 340, pad = 16, H = 460;
   const left = Math.min(tip.x + pad, window.innerWidth - w - 8);
-  const top = tip.y + 340 > window.innerHeight ? Math.max(8, tip.y - 320) : tip.y + pad;
+  const top = tip.y + H > window.innerHeight ? Math.max(8, tip.y - H + 20) : tip.y + pad;
   return html`<div className="tip" style=${{left:Math.max(8, left)+'px', top:top+'px'}}><${ItemInfo} item=${tip.item}/></div>`;
 }
 function DetailModal({item, onClose}){
@@ -799,7 +891,8 @@ function Stage({session, d, peek}){
 function Results({session, d, onExit}){
   const {settings, names, moves} = session;
   const sum = {A:totalSouls(d.inv.A), B:totalSouls(d.inv.B)};
-  const winner = sum.A === sum.B ? null : (sum.A > sum.B ? 'A' : 'B');
+  // «Баланс»: у всех одинаковые тиры, победителя по душам нет. Сайт-помощник, настоящий бой 1 на 1 идёт в игре.
+  const winner = (settings.mode !== 'chaos' || sum.A === sum.B) ? null : (sum.A > sum.B ? 'A' : 'B');
   const offered = s => Array.from({length:settings.rounds}, (_, i) => {
     const m = moves[s] && moves[s][i + 1];
     return m && m.hide ? m.hide.reduce((a, id) => a + BY_ID[id].price, 0) : 0;
@@ -830,8 +923,9 @@ function Results({session, d, onExit}){
     <div className=${cx('panel p-6 text-center', winner && 'winner')}>
       <div className="muted disp" style=${{fontSize:'12px'}}>Итоги · ${settings.rounds} раундов · ${settings.mode === 'balance' ? 'Баланс' : 'Хаос'}</div>
       <div className="disp" style=${{fontSize:'clamp(26px,5vw,44px)',color:'var(--gold2)'}}>
-        ${winner ? 'Победил ' + names[winner] : 'Ничья'}
+        ${winner ? 'Победил ' + names[winner] : 'Драфт завершён'}
       </div>
+      ${winner ? null : html`<div className="muted mt-1" style=${{fontSize:'14px'}}>Предметы выбраны. Идите в игру и бейтесь 1 на 1!</div>`}
       <div className="muted num mt-1">${names.A} <${Soul}/>${sum.A} · ${names.B} <${Soul}/>${sum.B}${winner ? html` · разница <${Soul}/>${Math.abs(sum.A - sum.B)}` : ''}</div>
       <div className="mt-4"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>
     </div>
@@ -1077,10 +1171,10 @@ function App(){
     setCat({status:'loading'});
     try {
       const items = await loadCatalog();
-      setCatalog(items); store.set('bd_catalog', {t:Date.now(), items});
+      setCatalog(items); store.set('bd_catalog', {v:2, t:Date.now(), items});
       setCat({status:'ready', stale:false});
     } catch (e){
-      const c = store.get('bd_catalog', null);       // API лежит, но есть копия с прошлого раза
+      const c0 = store.get('bd_catalog', null), c = c0 && c0.v === 2 ? c0 : null;       // API лежит, но есть копия с прошлого раза
       if (c && Array.isArray(c.items) && c.items.length >= 24){ setCatalog(c.items); setCat({status:'ready', stale:true, t:c.t}); }
       else setCat({status:'error', err:(e && e.message) || 'Неизвестная ошибка'});
     }
