@@ -190,6 +190,24 @@ html[data-theme="violet"] body{background-image:radial-gradient(900px 480px at 5
 .theme-b i{width:12px;height:12px;transform:rotate(45deg);display:inline-block}.theme-b.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,104px);gap:16px 8px;justify-content:center}
 @media (max-width:640px){.cgrid{grid-template-columns:repeat(auto-fill,88px);gap:16px 6px}}
+/* сборки героев: сборка-закладка, обязательное и необязательное (синий фон, как в игре) */
+.bhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;z-index:1}
+.bhead:hover{background:rgba(var(--acc),.08)}
+.bhead:focus-visible{outline:2px solid var(--gold2);outline-offset:-4px}
+.bchev{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--gold);color:var(--gold2);transition:transform .2s;flex:none;font-size:16px}
+.bchev.o{transform:rotate(180deg)}
+.btitle{font-family:var(--f-head);font-weight:700;font-size:19px;color:var(--gold2);line-height:1.2}
+.bid{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 10px;border:1px solid var(--edge2);background:var(--bg2);cursor:default}
+.bid b{font-size:21px;color:var(--gold2);letter-spacing:.08em;user-select:all}
+.bbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--edge);position:relative;z-index:1}
+.sec-h{display:flex;align-items:center;gap:10px;font-family:var(--f-display);letter-spacing:.1em;text-transform:uppercase;font-size:14px;font-weight:600;color:var(--gold2)}
+.sec-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--edge2),transparent)}
+.sec-h.opt{color:#8fb4e6}.sec-h.opt::after{background:linear-gradient(90deg,#4a6f9e,transparent)}
+.stg{border:1px solid var(--edge2);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));padding:10px 12px;max-width:100%}
+.stg.opt{border-color:#4a6f9e;background:linear-gradient(180deg,rgba(74,120,190,.28),rgba(52,86,140,.14))}
+.stg-n{font-family:var(--f-head);font-weight:700;font-size:16px;color:var(--gold2);margin-bottom:2px}
+.stg.opt .stg-n{color:#a9c8f2}
+.stg-note{font-size:15.5px;font-weight:700;line-height:1.45;color:var(--text);white-space:pre-line;margin:2px 0 10px;max-width:72ch}
 .wide{width:min(1600px,calc(100vw - 32px));margin-left:calc(50% - min(800px,50vw - 16px))}
 .wheel-w{position:relative;width:78px;height:78px;flex:none}.wheel-p{position:absolute;left:50%;top:-8px;transform:translateX(-50%);border:7px solid transparent;border-top:13px solid var(--gold2);z-index:2}
 .wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(#e58a1f 0 180deg,#5aa8d6 180deg 360deg);border:3px solid var(--edge2);transform:rotate(var(--end));animation:wspin 2s cubic-bezier(.15,.7,.2,1)}
@@ -1520,7 +1538,7 @@ const FAQ = [
   ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
   ['Как поменять язык названий или включить музыку?', 'Нажми на шестерёнку справа вверху. По умолчанию названия предметов на английском, а описания на русском.'],
   ['Что будет, если мне достанется улучшение предмета, который у меня уже есть?', 'Как в игре, исходный предмет «съедается». Он пропадает, а вместо него появляется другой предмет того же тира и типа. Как его подобрать, игроки решают голосованием (случайно, сам или соперник), при разных голосах решает рулетка 50/50.'],
-  ['Как поделиться сборкой или скопировать её?', 'Под каждой сборкой есть кнопки «Поделиться ссылкой» (друг откроет сайт сразу на нужном герое и этой сборке) и «Скопировать списком» (удобно скинуть в чат). Сборки можно отфильтровать по типу (спирит, оружие, гибрид) и по сложности.'],
+  ['Как найти сборку в игре?', 'Открой сборку героя на сайте (нажми на её название), скопируй ID кнопкой «Копировать» и вставь его в игре: сборка найдётся. Кнопка «Поделиться ссылкой» внутри сборки даёт ссылку, по которой друг сразу откроет нужную сборку.'],
   ['Что такое «Сборка недели»?', 'Сборка, которую автор сайта выбрал вручную. Она показывается наверху раздела «Сборки героев».'],
   ['Где посмотреть сборки героев?', 'В разделе «Сборки героев» на главной странице: нажми на героя и увидишь его сборки с датой публикации. Если сборке больше трёх месяцев, возможно, она уже не актуальна после патчей.'],
   ['Сколько активных предметов можно взять?', 'Как в игре, не больше четырёх. Когда у игрока уже четыре активных предмета, остальные активные для него закрыты (на карточках они подписаны «Активное»).'],
@@ -1529,7 +1547,7 @@ const FAQ = [
 ];
 /* ======================= СБОРКИ ГЕРОЕВ ======================= */
 // Сборки лежат в файле builds.json рядом с index.html (герой по английскому названию, предметы по английским названиям).
-// Поля сборки: id (нужен для ссылки #builds-id), hero, title, author, date, updated (необязательно), patch, desc, tags (['spirit','hard']), weekly (true у сборки недели), stages.
+// Поля сборки: id (нужен для ссылки #builds-id), gameId (ID сборки в игре), hero, title, author, date, updated (необязательно), patch, weekly (true у сборки недели), stages:[{name, note, optional, items}].
 // Герои берутся из heroes-en.min.json / heroes-ru.min.json (если есть) или из Deadlock API.
 const HERO_API = 'https://api.deadlock-api.com/v1/assets/heroes';
 async function firstJson(urls){ for (const u of urls){ try { const j = await getJson(u, 20000); if (Array.isArray(j) && j.length) return j; } catch (e){} } return null; }
@@ -1540,59 +1558,74 @@ const heroImg = h => {
 };
 const normN = x => String(x || '').trim().toLowerCase();
 const daysAgo = d => { const t = Date.parse(d); return isFinite(t) ? Math.max(0, Math.floor((Date.now() - t) / 86400000)) : null; };
-// Теги сборок: тип (спирит / оружие / гибрид) и сложность (лёгкая / средняя / сложная). В builds.json можно писать и по-английски, и по-русски.
-const BTYPES = {spirit:['Спирит', 'var(--s-spirit)'], weapon:['Оружие', 'var(--s-weapon)'], hybrid:['Гибрид', 'var(--gold2)']};
-const BDIFF = {easy:'Лёгкая', mid:'Средняя', hard:'Сложная'};
-const TAG_ALIAS = {'спирит':'spirit', 'дух':'spirit', 'оружие':'weapon', 'гибрид':'hybrid', 'лёгкая':'easy', 'легкая':'easy', 'простая':'easy', 'средняя':'mid', 'medium':'mid', 'сложная':'hard'};
-const tagKey = t => { const k = normN(t); return TAG_ALIAS[k] || k; };
-const bTags = b => (Array.isArray(b.tags) ? b.tags : []).map(tagKey);
-const bType = b => bTags(b).find(t => BTYPES[t]) || '', bDiff = b => bTags(b).find(t => BDIFF[t]) || '';
+// Сопоставление героев: «The Doorman» = «Doorman», регистр, пробелы и знаки не важны.
+const hkey = x => normN(x).replace(/^the\s+/, '').replace(/[^a-z0-9а-яё]/g, '');
+const sameHero = (a, b) => hkey(a) === hkey(b);
 const bStamp = b => b.updated || b.date;
 const buildLink = id => location.href.split('#')[0] + '#builds-' + encodeURIComponent(id);
 function HeroTile({h, n, on, onClick, nameLang}){
   const [bad, setBad] = useState(false);
   return html`<button className=${cx('htile', on && 'on', !n && 'dim')} onClick=${onClick} title=${h.name[nameLang]}>
-    ${h.img && !bad ? html`<img src=${h.img} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : html`<div className="hph">${h.name.en.charAt(0)}</div>`}
+    ${h.img && !bad ? html`<img src=${h.img} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : html`<div className="hph">${h.name.en.replace(/^the\s+/i, '').charAt(0)}</div>`}
     <span style=${{lineHeight:1.15,textAlign:'center'}}>${h.name[nameLang]}</span>${n ? html`<i>${n}</i>` : null}</button>`;
 }
+// Сборка = закладка: свёрнуто показывает название, ID и дату, по клику раскрывается. Внутри сначала обязательное, потом необязательное (на синем фоне, как в игре).
 function BuildCard({b, heroName, weekly, focus, anchor}){
-  const {nameLang} = useContext(PrefCtx);
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState(''), [open, setOpen] = useState(!!focus);
+  useEffect(() => { if (focus) setOpen(true); }, [focus]);
   useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(''), 2500); return () => clearTimeout(t); }, [msg]);
   const sk = s => normN(s).replace(/[^a-z0-9а-яё]/g, '');   // без пробелов, апострофов и знаков: «Enchanter's Emblem» найдётся при любом апострофе
-  const days = daysAgo(bStamp(b)), find = nm => { const k = sk(nm); return ITEMS.find(i => sk(i.name.en) === k || sk(i.name.ru) === k); };
-  const all = (b.stages || []).filter(st => !st.optional).flatMap(st => st.items || []).map(find).filter(Boolean), total = all.reduce((a, i) => a + i.price, 0);
+  const find = nm => { const k = sk(nm); return ITEMS.find(i => sk(i.name.en) === k || sk(i.name.ru) === k); };
+  const stages = (b.stages || []).filter(st => (st.items || []).length || st.note);
+  const must = stages.filter(st => !st.optional), opt = stages.filter(st => st.optional);
+  const total = must.flatMap(st => st.items || []).map(find).filter(Boolean).reduce((a, i) => a + i.price, 0);
+  const days = daysAgo(bStamp(b));
   const fresh = days == null ? null : (days <= 30 ? ['Свежая', 'var(--teal)'] : (days <= 90 ? ['Была актуальна', 'var(--gold2)'] : ['Возможно устарела', '#e07a7a']));
   const dt = isFinite(Date.parse(b.date)) ? new Date(b.date).toLocaleDateString('ru-RU') : '—';
   const up = b.updated && isFinite(Date.parse(b.updated)) ? new Date(b.updated).toLocaleDateString('ru-RU') : '';
-  const ty = BTYPES[bType(b)], df = BDIFF[bDiff(b)];
-  const known = new Set(Object.keys(BTYPES).concat(Object.keys(BDIFF))), extra = (Array.isArray(b.tags) ? b.tags : []).filter(t => !known.has(tagKey(t)));
   const doCopy = (t, ok) => copyText(t).then(() => setMsg(ok), () => setMsg('Не удалось скопировать'));
-  const asText = () => (heroName ? heroName + ' - ' : '') + (b.title || 'Сборка') + [ty && ty[0], df && 'сложность: ' + df.toLowerCase()].filter(Boolean).map(x => ' · ' + x).join('') + '\n'
-    + (b.gameId ? 'ID сборки в игре: ' + b.gameId + '\n' : '') + (b.desc ? b.desc + '\n' : '')
-    + (b.stages || []).map(st => st.name + (st.optional ? ' (необязательно)' : '') + ': ' + (st.items || []).map(nm => { const it = find(nm); return it ? it.name[nameLang] : nm; }).join(', ')).join('\n') + (b.id ? '\n' + buildLink(b.id) : '');
-  return html`<div id=${anchor && b.id ? 'build-' + b.id : undefined} className=${cx('panel p-4 flex flex-col gap-3', (weekly || focus) && 'active')}>
-    <div className="flex flex-wrap items-center justify-between gap-2">
-      <div>${weekly ? html`<div className="chip gold mb-1">★ Сборка недели</div>` : null}<div className="panel-h" style=${{fontSize:'20px'}}>${heroName ? heroName + ': ' : ''}${b.title || 'Сборка'}</div>
-        <div className="muted" style=${{fontSize:'13px'}}>${b.author ? 'Автор: ' + b.author + ' · ' : ''}Опубликовано: <b>${dt}</b>${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${up ? ' · обновлена ' + up : ''}${b.patch ? ' · патч ' + b.patch : ''}</div></div>
-      <div className="flex flex-wrap gap-2">${b.example ? html`<span className="chip">Пример</span>` : null}${ty ? html`<span className="chip" style=${{color:ty[1],borderColor:ty[1]}}>${ty[0]}</span>` : null}${df ? html`<span className="chip">Сложность: ${df.toLowerCase()}</span>` : null}${extra.map((t, i) => html`<span key=${i} className="chip">${t}</span>`)}${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}${total ? html`<span className="chip num"><${Soul}/> ${total}</span>` : null}</div>
+  const toggle = () => setOpen(o => !o);
+  const box = (st, i) => html`<div key=${i} className=${cx('stg', st.optional && 'opt')}>
+    ${st.name ? html`<div className="stg-n">${st.name}</div>` : null}
+    ${st.note ? html`<div className="stg-note">${st.note}</div>` : null}
+    ${(st.items || []).length ? html`<div className="flex flex-wrap gap-3">${st.items.map((nm, j) => { const it = find(nm); return it ? html`<${Card} key=${j} item=${it} size="g"/>` : html`<span key=${j} className="chip" title="Предмет не найден в каталоге">${nm} ?</span>`; })}</div>` : null}</div>`;
+  return html`<div id=${anchor && b.id ? 'build-' + b.id : undefined} className=${cx('panel', (weekly || focus || open) && 'active')}>
+    <div className="bhead" role="button" tabIndex=${0} aria-expanded=${open} onClick=${toggle} onKeyDown=${e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); } }}>
+      <span className=${cx('bchev', open && 'o')} aria-hidden="true">▾</span>
+      <div style=${{flex:1,minWidth:'220px'}}>
+        ${weekly ? html`<div className="chip gold mb-1">★ Сборка недели</div>` : null}
+        <div className="btitle">${heroName ? heroName + ': ' : ''}${b.title || 'Сборка'}</div>
+        <div className="muted flex flex-wrap items-center gap-x-3 gap-y-1" style=${{fontSize:'13px',marginTop:'3px'}}>
+          ${b.author ? html`<span>Автор: <b>${b.author}</b></span>` : null}
+          <span>${dt}${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${up ? ', обновлена ' + up : ''}</span>
+          ${b.patch ? html`<span>патч ${b.patch}</span>` : null}
+          ${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}
+          ${total ? html`<span className="chip num" title="Цена обязательных предметов"><${Soul}/> ${total}</span>` : null}
+        </div>
+      </div>
+      ${b.gameId ? html`<div className="bid" onClick=${e => e.stopPropagation()} onKeyDown=${e => e.stopPropagation()}>
+        <span className="muted" style=${{fontSize:'12px',lineHeight:1.1}}>ID сборки<br/>(вставь в игре)</span>
+        <b className="disp num">${b.gameId}</b>
+        <button className="btn sm" onClick=${() => doCopy(String(b.gameId), 'ID скопирован')}>Копировать</button>
+        ${msg ? html`<span className="chip ok">${msg}</span>` : null}
+      </div>` : null}
     </div>
-    ${b.desc ? html`<p className="muted" style=${{fontSize:'14px'}}>${b.desc}</p>` : null}
-    ${b.gameId ? html`<div className="flex flex-wrap items-center gap-2"><span className="muted" style=${{fontSize:'13px'}}>ID сборки в игре:</span><b className="disp num" style=${{fontSize:'18px',color:'var(--gold2)',letterSpacing:'.08em'}}>${b.gameId}</b><button className="btn sm" onClick=${() => doCopy(String(b.gameId), 'ID скопирован')}>Копировать ID</button><span className="muted" style=${{fontSize:'12px'}}>Скопируй и вставь в игре, там найдётся эта сборка.</span></div>` : null}
-    ${(b.stages || []).map((st, i) => html`<div key=${i}><div className="flex flex-wrap items-baseline gap-2" style=${{marginBottom:'4px'}}><span className="faq-q" style=${{fontSize:'15px',marginBottom:0}}>${st.name}</span>${st.optional ? html`<span className="chip">необязательно</span>` : null}</div>
-      ${st.note ? html`<p className="muted" style=${{fontSize:'13px',marginBottom:'6px',whiteSpace:'pre-line'}}>${st.note}</p>` : null}
-      <div className="flex flex-wrap gap-3">${(st.items || []).map((nm, j) => { const it = find(nm); return it ? html`<${Card} key=${j} item=${it} size="g"/>` : html`<span key=${j} className="chip" title="Предмет не найден в каталоге">${nm} ?</span>`; })}</div></div>`)}
-    <div className="flex flex-wrap items-center gap-2">
-      ${b.id ? html`<button className="btn sm" onClick=${() => doCopy(buildLink(b.id), 'Ссылка скопирована')}>Поделиться ссылкой</button>` : null}
-      <button className="btn sm" onClick=${() => doCopy(asText(), 'Список скопирован')}>Скопировать списком</button>
-      ${msg ? html`<span className="chip ok">${msg}</span>` : null}
-    </div>
+    ${open ? html`<div className="bbody">
+      ${must.length ? html`<div className="flex flex-col gap-3"><div className="sec-h"><span>Обязательно</span></div><div className="flex flex-wrap gap-3 items-start">${must.map(box)}</div></div>` : null}
+      ${opt.length ? html`<div className="flex flex-col gap-3"><div className="sec-h opt"><span>Необязательно, по ситуации</span></div><div className="flex flex-wrap gap-3 items-start">${opt.map(box)}</div></div>` : null}
+      ${!stages.length ? html`<div className="muted">Предметы в этой сборке пока не добавлены. Скопируй ID и открой сборку в игре.</div>` : null}
+      <div className="flex flex-wrap items-center gap-2">
+        ${b.id ? html`<button className="btn sm" onClick=${() => doCopy(buildLink(b.id), 'Ссылка скопирована')}>Поделиться ссылкой</button>` : null}
+        ${!b.gameId && msg ? html`<span className="chip ok">${msg}</span>` : null}
+        ${b.gameId && msg ? html`<span className="chip ok">${msg}</span>` : null}
+      </div>
+    </div>` : null}
   </div>`;
 }
 function Builds(){
   const {nameLang} = useContext(PrefCtx);
   const [st, setSt] = useState({loading:true, heroes:[], builds:[]});
-  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(false), [fType, setFType] = useState(''), [fDiff, setFDiff] = useState('');
+  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(true);
   const [hash, setHash] = useState(location.hash);
   useEffect(() => { const h = () => setHash(location.hash); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
   const hm = /^#builds-(.+)$/.exec(hash); let focusId = ''; try { focusId = hm ? decodeURIComponent(hm[1]) : ''; } catch (e){ focusId = hm ? hm[1] : ''; }
@@ -1604,46 +1637,41 @@ function Builds(){
       const hr = await firstJson(['heroes-ru.min.json', 'heroes-ru.json', HERO_API + '?language=russian']);
       const ruBy = {}; (hr || []).forEach(h => { ruBy[h.id] = h.name; });
       let heroes = (he || []).filter(h => h && h.name && !h.disabled && h.player_selectable !== false).map(h => ({key:h.name, name:{en:h.name, ru:ruBy[h.id] || h.name}, img:heroImg(h)}));
-      if (!heroes.length){ const seen = {}; builds.forEach(b => { if (b.hero && !seen[normN(b.hero)]){ seen[normN(b.hero)] = 1; heroes.push({key:b.hero, name:{en:b.hero, ru:b.hero}, img:''}); } }); }
-      heroes.sort((x, y) => x.name.en.localeCompare(y.name.en));
+      // Если героя из builds.json нет в списке API (другое имя, скрыт и т.п.), добавляем его плиткой без картинки: сборки не пропадают.
+      builds.forEach(b => { if (b.hero && !heroes.some(h => sameHero(h.key, b.hero))) heroes.push({key:b.hero, name:{en:b.hero, ru:b.hero}, img:''}); });
+      heroes.sort((x, y) => hkey(x.name.en).localeCompare(hkey(y.name.en)));
       if (on) setSt({loading:false, heroes, builds});
     })();
     return () => { on = false; };
   }, []);
-  // Ссылка #builds-ID: сразу открываем героя этой сборки и прокручиваем к ней.
+  // Ссылка #builds-ID: сразу открываем героя этой сборки, раскрываем её и прокручиваем.
   useEffect(() => {
     if (st.loading || !focusId) return;
     const b = st.builds.find(x => String(x.id) === focusId); if (!b) return;
-    const h = st.heroes.find(x => normN(x.key) === normN(b.hero)); if (h) setSel(h.key);
+    const h = st.heroes.find(x => sameHero(x.key, b.hero)); if (h) setSel(h.key);
     const t = setTimeout(() => { const el = document.getElementById('build-' + focusId); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 150);
     return () => clearTimeout(t);
   }, [st.loading, focusId]);
-  const pass = b => (!fType || bType(b) === fType) && (!fDiff || bDiff(b) === fDiff);
-  const heroNm = b => { const h = st.heroes.find(x => normN(x.key) === normN(b.hero)); return h ? h.name[nameLang] : b.hero; };
-  const cnt = h => st.builds.filter(b => normN(b.hero) === normN(h.key) && pass(b)).length;
-  const filtered = !!(fType || fDiff);
-  const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && ((!onlyB && !filtered) || cnt(h)));
-  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => normN(b.hero) === normN(hero.key) && pass(b)).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0)) : [];
+  const heroNm = b => { const h = st.heroes.find(x => sameHero(x.key, b.hero)); return h ? h.name[nameLang] : b.hero; };
+  const cnt = h => st.builds.filter(b => sameHero(b.hero, h.key)).length;
+  const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && (!onlyB || cnt(h)));
+  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => sameHero(b.hero, hero.key)).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0)) : [];
   const weekly = st.builds.filter(b => b.weekly === true).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0))[0];
   return html`<div className="flex flex-col gap-5">
     <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Сборки героев</h2>
-      <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Выбери героя и посмотри сборки. У каждой указана дата публикации, чтобы понимать, не устарела ли она после патчей.</p></div>
+      <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Выбери героя, открой сборку и скопируй её ID: вставь его в игре, и сборка найдётся. Дата показывает, не устарела ли она после патчей.</p></div>
     ${weekly ? html`<${BuildCard} b=${weekly} heroName=${heroNm(weekly)} weekly=${true}/>` : null}
     <div className="panel p-4 flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
-        <${Seg} value=${onlyB} options=${[{v:false, l:'Все герои'}, {v:true, l:'Только со сборками'}]} onChange=${setOnlyB}/>
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <${Seg} value=${fType} options=${[{v:'', l:'Любой тип'}].concat(Object.keys(BTYPES).map(k => ({v:k, l:BTYPES[k][0]})))} onChange=${setFType}/>
-        <${Seg} value=${fDiff} options=${[{v:'', l:'Любая сложность'}].concat(Object.keys(BDIFF).map(k => ({v:k, l:BDIFF[k]})))} onChange=${setFDiff}/>
+        <${Seg} value=${onlyB} options=${[{v:true, l:'Только со сборками'}, {v:false, l:'Все герои'}]} onChange=${setOnlyB}/>
       </div>
       ${st.loading ? html`<div className="muted">Загружаем героев…</div>` : null}
       ${!st.loading && !st.heroes.length ? html`<div className="muted">Список героев не загрузился. Обнови страницу или проверь интернет.</div>` : null}
       <div className="flex flex-wrap gap-2">${list.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${cnt(h)} on=${sel === h.key} nameLang=${nameLang} onClick=${() => setSel(sel === h.key ? null : h.key)}/>`)}</div>
     </div>
-    ${hero ? html`<div className="flex flex-col gap-4"><div className="panel-h" style=${{fontSize:'22px'}}>${hero.name[nameLang]}</div>
-      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b} anchor=${true} focus=${!!focusId && String(b.id) === focusId}/>`) : html`<div className="panel p-4 muted">${filtered ? 'С такими тегами у этого героя сборок нет.' : 'Для этого героя сборок пока нет.'}</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
+    ${hero ? html`<div className="flex flex-col gap-3"><div className="panel-h" style=${{fontSize:'22px'}}>${hero.name[nameLang]} <span className="muted" style=${{fontSize:'14px',fontWeight:400}}>· сборок: ${hb.length}</span></div>
+      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b} anchor=${true} focus=${!!focusId && String(b.id) === focusId}/>`) : html`<div className="panel p-4 muted">Для этого героя сборок пока нет.</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
     <p className="muted text-center" style=${{fontSize:'12px'}}>Оценки и отзывы появятся позже.</p>
   </div>`;
 }
