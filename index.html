@@ -171,6 +171,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ii-mline b{font-weight:600}
 .ii-cd{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);padding:1px 8px;font-family:var(--f-itext)}
 html{min-height:100%}body{min-height:100vh;background-attachment:fixed,fixed,fixed}
+.gu-opt{all:unset;box-sizing:border-box;display:block;width:100%;padding:12px 14px;cursor:pointer;background:var(--bg2);border:1px solid var(--edge2);color:var(--text);font-family:var(--f-body);font-size:15px;text-align:center}.gu-opt:hover{border-color:var(--gold2)}.gu-opt:focus-visible{outline:2px solid var(--gold2)}.gu-opt.ok{border-color:var(--teal);background:rgba(80,160,140,.2)}.gu-opt.bad{border-color:#e07a7a;background:rgba(224,122,122,.16)}.gu-opt.me{box-shadow:inset 0 0 0 2px var(--gold2)}.gu-sil{filter:brightness(0) blur(1.5px);opacity:.85;transition:filter .4s,opacity .4s}
 .faq{padding:0}.faq-btn{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;min-height:48px}
 .faq-btn:focus-visible{outline:2px solid var(--gold2);outline-offset:-4px}.faq-btn .faq-q{margin:0}
 .faq-ch{color:var(--gold2);transition:transform .2s;font-size:14px}.faq-ch.o{transform:rotate(180deg)}.faq-body{padding:0 16px 14px}
@@ -262,6 +263,7 @@ pre.err{white-space:pre-wrap;word-break:break-all;text-align:left;font:12px/1.5 
 <body>
 
 <div id="root"></div>
+<noscript><p style="text-align:center;margin:60px 20px;color:#ccc;font-family:sans-serif">Для работы сайта нужен включённый JavaScript.</p></noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
@@ -1524,13 +1526,15 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
+const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : (/^#guess(-|$)/.test(h) ? 'guess' : null));
+const hashRoomG = () => { const m = /^#guess-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
 const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
-const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', builds:'Сборки героев'};
+const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', guess:'Угадай предмет', builds:'Сборки героев'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
   ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
   ['Как играть со слепым драфтом?', 'Каждый раунд вы загадываете сопернику три предмета, а он вслепую выбирает один из них. Так у обоих набирается билд. Потом идёте в игру и бьётесь 1 на 1 на этих предметах.'],
+  ['Как играть в «Угадай предмет»?', 'Показывается силуэт или характеристики предмета, нужно выбрать верное название из четырёх. Верный ответ даёт очко, а кто ответил верно первым, получает ещё одно. Можно играть онлайн с другом или одному.'],
   ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются. Если выигранный предмет конфликтует со сборкой (например, это улучшение того, что уже куплено), начинается спор о замене, как в драфте.'],
   ['Как сыграть с другом по сети?', 'Создай комнату и отправь другу код из пяти символов. Он вводит его на сайте и садится на второе место. Если друг рядом, можно играть вдвоём на одном экране.'],
   ['Кто побеждает в итоге?', 'Сайт победителя не объявляет. Он собирает билды, а выясняете вы это уже в игре: кто победил в бою 1 на 1, тот и молодец.'],
@@ -1690,6 +1694,8 @@ function Hub({onOpen}){
        <rect x="40" y="78" width="60" height="10" rx="2" fill="#b8975a"/>
        <g transform="rotate(-35 66 40)"><rect x="62" y="40" width="8" height="42" rx="3" fill="#9a7a45"/><rect x="46" y="18" width="40" height="22" rx="4" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="43" y="20" width="6" height="18" rx="2" fill="#b8975a"/><rect x="83" y="20" width="6" height="18" rx="2" fill="#b8975a"/></g>
        <g transform="translate(116 38)"><circle r="20" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><circle r="14" fill="none" stroke="#b8975a" strokeWidth="1.5"/><text y="9" textAnchor="middle" fontSize="24" fontWeight="800" fill="#141311">$</text></g></g></svg>`}
+    ,{id:'guess', title:'Угадай предмет', tag:'1 на 1 · онлайн или одному', desc:'Угадывай предметы по тёмному силуэту или по характеристикам. Кто ответил верно первым, получает бонусное очко.', btn:'Играть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><rect x="22" y="14" width="58" height="66" rx="6" fill="#2a2620" stroke="#b8975a" strokeWidth="3"/><path d="M51 30 68 47 51 64 34 47z" fill="#141311"/><text x="51" y="55" textAnchor="middle" fontSize="26" fontWeight="800" fill="#e0c58a">?</text><rect x="92" y="22" width="40" height="9" rx="2" fill="#7fb53a"/><rect x="92" y="40" width="40" height="9" rx="2" fill="#9a62d6"/><rect x="92" y="58" width="40" height="9" rx="2" fill="#e58a1f"/></g></svg>`}
   ];
   const buildsArt = html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="40" cy="36" r="22" fill="#5f93b8" stroke="#141311" strokeWidth="3"/><circle cx="40" cy="30" r="8" fill="#141311" opacity=".55"/><path d="M24 54q16-14 32 0" fill="#141311" opacity=".55"/>
        <rect x="76" y="14" width="26" height="26" rx="3" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="14" width="26" height="26" rx="3" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><rect x="76" y="46" width="26" height="26" rx="3" fill="#7fb53a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="46" width="26" height="26" rx="3" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/></g></svg>`;
@@ -2012,6 +2018,175 @@ function Auction(){
     </div>
   </div>`;
 }
+/* ======================= УГАДАЙ ПРЕДМЕТ ======================= */
+// Состояние комнаты (Firebase: guess/{CODE}/state): {cfg:{rounds,kind}, ver, seed, solo, seats:{A,B}, phase:'lobby'|'play'|'reveal'|'done', round, qs:[{id,kind,opts:[id]}], ans:{A:{id,n},B:{id,n}}, score:{A,B}}.
+// Вопросы создаёт хост при старте (qs лежит в комнате, поэтому у обоих игроков они одинаковые). Правила в одной чистой функции guReduce:
+// верный ответ +1 очко, кто ответил верно первым (порядок n по транзакциям Firebase) получает ещё +1. В режиме «одному» бонуса нет.
+const GU_PATH = 'guess';
+function guRng(seed){ let a = hash32(seed); return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const guStats = it => it.innate || it.stats || [];
+function guMake(cfg, seed){
+  const rnd = guRng(seed), shuf = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const x = b[i]; b[i] = b[j]; b[j] = x; } return b; };
+  const pool = ITEMS.filter(i => i && !i.missing && i.name && i.name.en);
+  const ok = (i, k) => k === 'icon' ? !!i.image : guStats(i).length >= 2;
+  const qs = [];
+  for (const it of shuf(pool)){
+    if (qs.length >= cfg.rounds) break;
+    const want = cfg.kind === 'both' ? (qs.length % 2 ? 'stats' : 'icon') : cfg.kind, other = want === 'icon' ? 'stats' : 'icon';
+    const k = ok(it, want) ? want : (cfg.kind === 'both' && ok(it, other) ? other : null);
+    if (!k) continue;
+    const same = pool.filter(x => x.id !== it.id && x.slot === it.slot), near = same.filter(x => x.tier === it.tier);
+    const d = shuf(near.length >= 3 ? near : same).slice(0, 3);
+    shuf(pool).forEach(x => { if (d.length < 3 && x.id !== it.id && !d.includes(x)) d.push(x); });
+    qs.push({id:it.id, kind:k, opts:shuf([it].concat(d)).map(x => x.id)});
+  }
+  return qs;
+}
+function guInit(cfg, seats, solo = false){
+  const seed = Math.random().toString(36).slice(2, 10);
+  return {cfg, ver:CAT_VER, seed, solo, seats, phase:(solo || seats.B) ? 'play' : 'lobby', round:1, qs:guMake(cfg, seed), ans:{}, score:{A:0, B:0}};
+}
+function guReduce(st, a){
+  const s = JSON.parse(JSON.stringify(st)); s.ans = s.ans || {}; s.score = s.score || {A:0, B:0};
+  const need = s.solo ? ['A'] : ['A', 'B'], q = s.qs[s.round - 1];
+  if (a.t === 'answer' && s.phase === 'play' && a.round === s.round && need.includes(a.seat) && !s.ans[a.seat] && q.opts.includes(a.id)){
+    s.ans[a.seat] = {id:a.id, n:Object.keys(s.ans).length + 1};
+    if (need.every(x => s.ans[x])){
+      const right = need.filter(x => s.ans[x].id === q.id).sort((x, y) => s.ans[x].n - s.ans[y].n);
+      right.forEach(x => { s.score[x] += 1; });
+      if (!s.solo && right.length) s.score[right[0]] += 1;
+      s.phase = 'reveal';
+    }
+  } else if (a.t === 'next' && s.phase === 'reveal' && a.round === s.round && need.includes(a.seat)){
+    if (s.round >= s.qs.length) s.phase = 'done'; else { s.round += 1; s.ans = {}; s.phase = 'play'; }
+  } else if (a.t === 'rematch' && s.phase === 'done'){
+    return guInit(s.cfg, s.seats, s.solo);
+  }
+  return s;
+}
+function GuessBoard({st, controls, dispatch, onExit}){
+  const {nameLang, descLang} = useContext(PrefCtx);
+  const ru = descLang === 'ru', me = controls[0], ans = st.ans || {}, sc = st.score || {A:0, B:0};
+  const nm = x => (st.seats[x] && st.seats[x].name) || 'Игрок';
+  const q = st.qs[st.round - 1], it = q ? BY_ID[q.id] : null, reveal = st.phase === 'reveal';
+  const scoreBar = html`<div className="panel p-3 flex flex-wrap items-center justify-between gap-3">
+    <span className="muted disp" style=${{fontSize:'13px'}}>${st.phase === 'done' ? 'Игра окончена' : 'Вопрос ' + st.round + ' из ' + st.qs.length}</span>
+    <div className="flex flex-wrap gap-3">${(st.solo ? ['A'] : ['A', 'B']).map(x => html`<span key=${x} className="chip" style=${me === x ? {borderColor:'var(--gold2)',color:'var(--gold2)'} : null}>${nm(x)}: <b className="num">${sc[x]}</b></span>`)}</div>
+  </div>`;
+  if (st.phase === 'lobby') return html`<div className="panel p-6 text-center flex flex-col gap-3"><div className="spin" style=${{margin:'0 auto'}}></div><p>Ждём второго игрока. Отправь ему код комнаты или ссылку.</p><div><button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+  if (st.phase === 'done'){
+    const a = sc.A, b = sc.B;
+    return html`<div className="flex flex-col gap-4">${scoreBar}<div className="panel p-6 text-center flex flex-col gap-3">
+      <div className="panel-h">Раунды закончились</div>
+      <p className="muted">${st.solo ? 'Твой результат: ' + a + ' из ' + st.qs.length : nm('A') + ': ' + a + ' · ' + nm('B') + ': ' + b}</p>
+      <div className="flex flex-wrap justify-center gap-2">${controls.length ? html`<button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Ещё раз</button>` : null}<button className="btn" onClick=${onExit}>Выйти</button></div></div></div>`;
+  }
+  if (!it) return html`<div className="panel p-6 text-center">Не удалось подобрать вопросы. Обнови страницу.<div className="mt-3"><button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+  const mine = ans[me], stat = guStats(it);
+  const vOf = x => (typeof x.v === 'string' ? fmtV(x.v, ru) : (x.v[descLang] || x.v.en));
+  const clue = q.kind === 'icon'
+    ? html`<div className=${reveal ? '' : 'gu-sil'} style=${{display:'inline-block'}}><${ItemIcon} item=${it} size=${130}/></div>`
+    : html`<div className="flex flex-col" style=${{maxWidth:'420px',margin:'0 auto',textAlign:'left'}}>${stat.map((x, i) => html`<div className="stat-line" key=${i}><b>${vOf(x)}</b><span>${x.l[descLang] || x.l.en}</span></div>`)}</div>`;
+  const waiting = mine && !reveal;
+  return html`<div className="flex flex-col gap-4">${scoreBar}
+    <div className="panel p-5 text-center flex flex-col gap-3 items-center">
+      <div className="muted" style=${{fontSize:'13px'}}>${q.kind === 'icon' ? 'Что это за предмет? Видно только силуэт.' : 'Что это за предмет? Угадай по характеристикам.'}</div>
+      <div className="flex flex-wrap justify-center gap-2"><span className="chip">${SLOT_LABEL[it.slot] || 'Предмет'}</span><span className="chip">Тир ${it.tier}</span></div>
+      ${clue}
+      ${reveal ? html`<div className="panel-h" style=${{fontSize:'20px'}}>${it.name[nameLang]}</div>` : null}
+    </div>
+    <div className="grid gap-3 sm:grid-cols-2">${q.opts.map(id => {
+      const mark = reveal ? (id === q.id ? 'ok' : (st.seats && ['A', 'B'].some(x => ans[x] && ans[x].id === id) ? 'bad' : '')) : '';
+      return html`<button key=${id} className=${cx('gu-opt', mark, mine && mine.id === id && 'me')} onClick=${() => { if (!mine && !reveal && me) dispatch({t:'answer', seat:me, id, round:st.round}); }}>${BY_ID[id].name[nameLang]}</button>`;
+    })}</div>
+    ${waiting && !st.solo ? html`<div className="muted text-center">Ответ принят. Ждём соперника…</div>` : null}
+    ${reveal ? html`<div className="panel p-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap gap-3">${(st.solo ? ['A'] : ['A', 'B']).map(x => { const r = ans[x] && ans[x].id === q.id; return html`<span key=${x} className=${cx('chip', r && 'ok')}>${nm(x)}: ${r ? 'верно' : 'мимо'}${r && !st.solo && ans[x].n === Math.min(...['A', 'B'].filter(y => ans[y] && ans[y].id === q.id).map(y => ans[y].n)) ? ' · первым +1' : ''}</span>`; })}</div>
+      ${controls.length ? html`<button className="btn gold" onClick=${() => dispatch({t:'next', seat:me, round:st.round})}>${st.round >= st.qs.length ? 'Итоги' : 'Дальше'}</button>` : null}
+    </div>` : null}
+    <div><button className="btn sm" onClick=${onExit}>Выйти</button></div>
+  </div>`;
+}
+function Guess(){
+  const [cfg, setCfg] = useState({rounds:10, kind:'both'});
+  const [nick, setNick] = useState(() => store.get('bd_nick', ''));
+  const [code, setCode] = useState(() => hashRoomG() ? null : store.get('bd_groom', null));
+  const [join, setJoin] = useState(hashRoomG);
+  const [local, setLocal] = useState(null), [err, setErr] = useState(null), [busy, setBusy] = useState(false);
+  const uid = useMemo(getUid, []);
+  const [online, setOnline] = useState(undefined);
+  useEffect(() => {
+    if (!code || !fbDb) return;
+    const r = fbDb.ref(GU_PATH + '/' + code + '/state');
+    const h = r.on('value', x => setOnline(x.val()), e => { setErr((e && e.message) || 'Нет связи с базой'); setOnline(null); });
+    return () => r.off('value', h);
+  }, [code]);
+  const nm = n => n.trim() || 'Игрок';
+  const dispatchOnline = a => fbDb.ref(GU_PATH + '/' + code + '/state').transaction(cur => (cur ? guReduce(cur, a) : undefined)).catch(e => setErr(e.message));
+  const create = async () => {
+    setBusy(true); setErr(null);
+    try {
+      for (let i = 0; i < 6; i++){
+        const c = genCode();
+        const res = await fbDb.ref(GU_PATH + '/' + c + '/state').transaction(cur => (cur === null ? guInit(cfg, {A:{uid, name:nm(nick)}}) : undefined));
+        if (res.committed){ store.set('bd_groom', c); setCode(c); setBusy(false); return; }
+      }
+      throw new Error('Не удалось создать комнату, попробуй ещё раз');
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const joinRoom = async () => {
+    setBusy(true); setErr(null);
+    try {
+      const c = join.trim().toUpperCase(); if (c.length < 4) throw new Error('Введи код комнаты');
+      const pre = (await fbDb.ref(GU_PATH + '/' + c + '/state/ver').once('value')).val();
+      if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов. Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
+      const res = await fbDb.ref(GU_PATH + '/' + c + '/state').transaction(cur => {
+        if (!cur) return undefined;
+        const sa = cur.seats || {};
+        if ((sa.A && sa.A.uid === uid) || (sa.B && sa.B.uid === uid)) return cur;
+        if (sa.B || cur.solo) return undefined;
+        return {...cur, seats:{...sa, B:{uid, name:nm(nick)}}, phase:'play'};
+      });
+      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      store.set('bd_groom', c); setCode(c);
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const leave = () => { store.set('bd_groom', null); setCode(null); setOnline(undefined); setLocal(null); };
+  if (local) return html`<${GuessBoard} st=${local} controls=${['A']} dispatch=${a => setLocal(x => guReduce(x, {...a, seat:'A'}))} onExit=${leave}/>`;
+  if (code){
+    if (online === undefined) return html`<div className="panel p-6 text-center"><div className="spin"></div><p className="muted mt-3">Подключаемся к комнате…</p></div>`;
+    if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
+    const sa = online.seats || {}, my = sa.A && sa.A.uid === uid ? 'A' : (sa.B && sa.B.uid === uid ? 'B' : null);
+    const link = location.origin + location.pathname + '#guess-' + code;
+    return html`<div className="flex flex-col gap-4">
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><button className="btn sm" onClick=${() => copyText(code)}>Копировать код</button><button className="btn sm" onClick=${() => copyText(link)}>Копировать ссылку</button></span></div>
+      ${err ? html`<pre className="err">${err}</pre>` : null}
+      <${GuessBoard} st=${online} controls=${my ? [my] : []} dispatch=${a => dispatchOnline({...a, seat:my})} onExit=${leave}/>
+    </div>`;
+  }
+  return html`<div className="flex flex-col gap-5">
+    <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(30px,6vw,52px)'}}>Угадай предмет</h2>
+      <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Вам показывают силуэт или характеристики предмета, нужно выбрать верное название из четырёх. Верный ответ даёт очко, а кто ответил верно первым, получает ещё одно.</p></div>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="panel p-5 flex flex-col gap-4">
+        <div className="panel-h">Настройки</div>
+        <div><div className="flex justify-between"><span>Вопросов</span><b className="disp num">${cfg.rounds}</b></div><input type="range" min="5" max="20" step="5" value=${cfg.rounds} onChange=${e => setCfg({...cfg, rounds:Number(e.target.value)})}/></div>
+        <div className="flex justify-between items-center gap-2"><span>Подсказки</span><${Seg} value=${cfg.kind} options=${[{v:'both', l:'Обе'}, {v:'icon', l:'Силуэт'}, {v:'stats', l:'Статы'}]} onChange=${v => setCfg({...cfg, kind:v})}/></div>
+        <button className="btn gold" onClick=${() => setLocal(guInit(cfg, {A:{name:nm(nick)}}, true))}>Играть одному</button>
+      </div>
+      <div className="panel p-5 flex flex-col gap-3">
+        <div className="panel-h">Онлайн с другом</div>
+        ${hashRoomG() ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Тебя пригласили в комнату ${hashRoomG()}. Введи ник и нажми «Войти».</div>` : null}
+        <input className="fld" placeholder="Твой ник" maxLength="20" value=${nick} onChange=${e => { setNick(e.target.value); store.set('bd_nick', e.target.value); }}/>
+        <button className="btn gold" disabled=${busy || !fbDb} onClick=${create}>Создать комнату</button>
+        <div className="flex gap-2"><input className="fld" placeholder="Код комнаты" maxLength="6" value=${join} onChange=${e => setJoin(e.target.value)}/><button className="btn" disabled=${busy || !fbDb} onClick=${joinRoom}>Войти</button></div>
+        ${err ? html`<pre className="err">${err}</pre>` : null}
+      </div>
+    </div>
+  </div>`;
+}
 function Footer(){
   return html`<footer className="panel foot">
     <div lang="ru"><b>Неофициальный фанатский проект</b>Игра никак не связана с Valve Corporation и не одобрена ею. Deadlock, названия и иконки предметов и другие материалы игры принадлежат Valve Corporation, все права на них сохраняются за Valve. Проект некоммерческий. Данные о предметах загружаются из сообщества Deadlock API.</div>
@@ -2102,6 +2277,7 @@ function App(){
   else if (cat.status === 'error') body = html`<${CatalogError} err=${cat.err} onRetry=${loadCat}/>`;
   else if (game === 'builds') body = html`<${Builds}/>`;
   else if (game === 'auction') body = html`<${Auction}/>`;
+  else if (game === 'guess') body = html`<${Guess}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
@@ -2123,7 +2299,21 @@ function App(){
     </div>
   <//><//>`;
 }
-ReactDOM.createRoot(document.getElementById('root')).render(html`<${App}/>`);
+// Если где-то в коде случится ошибка, вместо белого экрана покажем понятное сообщение с кнопкой «Перезагрузить».
+class ErrorBoundary extends React.Component {
+  constructor(p){ super(p); this.state = {err:null}; }
+  static getDerivedStateFromError(err){ return {err}; }
+  componentDidCatch(err){ try { console.error(err); } catch (e){} }
+  render(){
+    if (!this.state.err) return this.props.children;
+    return html`<div className="panel" style=${{maxWidth:'520px',margin:'60px auto',padding:'24px',textAlign:'center'}}>
+      <div className="panel-h" style=${{fontSize:'22px'}}>Что-то пошло не так</div>
+      <p className="muted" style=${{margin:'10px 0 16px'}}>Сайт наткнулся на ошибку. Обычно помогает перезагрузка. Если повторяется, напиши автору, что делал перед этим.</p>
+      <button className="btn gold" onClick=${() => location.reload()}>Перезагрузить</button>
+    </div>`;
+  }
+}
+ReactDOM.createRoot(document.getElementById('root')).render(html`<${ErrorBoundary}><${App}/><//>`);
 </script>
 </body>
 </html>
