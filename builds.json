@@ -24,6 +24,12 @@
           "Healing Booster"
         ]
       }
-    ]
+    ],
+    "tags": [
+      "spirit",
+      "easy"
+    ],
+    "weekly": true,
+    "updated": "2026-11-12"
   }
 ]

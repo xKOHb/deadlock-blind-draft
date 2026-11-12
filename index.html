@@ -462,10 +462,16 @@ function conflictsFor(ids, p){
   return out.filter(v => { const k = v.id + (v.isPick ? 'p' : 'o'); if (seen.has(k)) return false; seen.add(k); return true; });
 }
 // Замена: тот же тир (то есть та же цена) и тот же тип (активный/пассивный), без новых конфликтов.
-function eligibleRepl(afterIds, victimId, forcePassive){
-  const v = BY_ID[victimId], bl = blockedSet(afterIds), act = forcePassive ? false : !!v.active;
-  let list = ITEMS.filter(i => i.tier === v.tier && !!i.active === act && !bl.has(i.id) && i.id !== victimId);
-  if (!list.length) list = ITEMS.filter(i => i.tier === v.tier && !bl.has(i.id) && i.id !== victimId);
+// Предупреждение «этот предмет вызовет спор» (до выбора): что пропадёт у игрока с инвентарём ids, если он возьмёт id.
+function conflictWarn(ids, id, lang){
+  const vs = conflictsFor(ids, id); if (!vs.length) return '';
+  const nm = x => '«' + BY_ID[x].name[lang] + '»';
+  return nm(id) + ' вызовет спор: ' + vs.map(v => v.isPick ? (v.limit ? 'уже 4 активных предмета, этот пропадёт' : 'этот предмет пропадёт (входит в уже имеющийся или делит с ним компонент)') : nm(v.id) + ' поглотится улучшением').join('; ') + '. Вместо потерянного предмета выбирается замена того же тира и типа.';
+}
+function eligibleRepl(afterIds, victimId, forcePassive, extra){   // extra: Set id, которые брать нельзя (в аукционе это уже проданные предметы)
+  const v = BY_ID[victimId], bl = blockedSet(afterIds), act = forcePassive ? false : !!v.active, ok = i => !(extra && extra.has(i.id));
+  let list = ITEMS.filter(i => i.tier === v.tier && !!i.active === act && !bl.has(i.id) && i.id !== victimId && ok(i));
+  if (!list.length) list = ITEMS.filter(i => i.tier === v.tier && !bl.has(i.id) && i.id !== victimId && ok(i));
   return list;
 }
 function derive(settings, moves){
@@ -878,7 +884,8 @@ function Inventory({seat, name, list, active, you, curRound}){
 }
 
 /* ---------- загадывание ---------- */
-function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
+function Composer({seat, round, settings, receiverName, ownedIds, haveIds, onSubmit}){
+  const {nameLang} = useContext(PrefCtx);
   const fixed = tierForRound(settings, round);
   const [tier, setTier] = useState(fixed);
   const [sel, setSel] = useState([]);
@@ -894,7 +901,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <div className="panel-h">Загадай ${HIDE_COUNT} предмета для: ${receiverName}</div>
-        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Недоступны только предметы, которые у него уже есть. Если выбранный предмет конфликтует с его сборкой (например, это улучшение того, что у него уже есть), начнётся спор о замене.</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Недоступны только предметы, которые у него уже есть. Если выбранный предмет конфликтует с его сборкой (например, это улучшение того, что у него уже есть), начнётся спор о замене. Такие карточки помечены «СПОР».</div>
       </div>
       ${fixed ? html`<${TierChip} tier=${fixed}/>` : null}
     </div>
@@ -926,6 +933,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         <button className="btn gold" disabled=${sel.length !== HIDE_COUNT} onClick=${() => onSubmit(seat, tier, sel)}>Загадать</button>
         <span className="muted num" style=${{fontSize:'12px'}}>выбрано ${sel.length} из ${HIDE_COUNT}</span>
       </div>
+      ${sel.map(id => { const w = conflictWarn(haveIds || [], id, nameLang); return w ? html`<div key=${id} className="chip gold" style=${{whiteSpace:'normal'}}>⚠ ${w}</div>` : null; })}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <${SlotTabs} value=${tab} onChange=${setTab}/>
         <div style=${{flex:'1 1 200px',maxWidth:'340px'}}><input className="fld" type="search" placeholder="Поиск: название или характеристика" aria-label="Поиск предметов" value=${q} onInput=${e => setQ(e.target.value)}/></div>
@@ -934,9 +942,9 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         ${!shown.length ? html`<div className="muted py-6">Ничего не найдено. Попробуй другое слово или вкладку «Все предметы».</div>` : null}
         ${shown.map(it => {
           const banned = ownedIds.has(it.id);
-          const picked = sel.includes(it.id);
+          const picked = sel.includes(it.id), dsp = !banned && conflictsFor(haveIds || [], it.id).length > 0;
           return html`<${Card} key=${it.id} item=${it} size="g" state=${banned ? 'banned' : (picked ? 'sel' : '')}
-            tag=${banned ? 'НЕДОСТУПЕН' : (picked ? 'ВЫБРАН' : null)} onClick=${() => toggle(it.id)}/>`;
+            tag=${banned ? 'НЕДОСТУПЕН' : (picked ? 'ВЫБРАН' : (dsp ? 'СПОР' : null))} onClick=${() => toggle(it.id)}/>`;
         })}
       </div>
     </div>` : null}
@@ -1053,7 +1061,7 @@ function Stage({session, d, peek}){
         ${pending.map(s => html`<button key=${s} className=${cx('btn sm', active === s && 'gold')} onClick=${() => setTab(s)}>Загадывает ${names[s]}</button>`)}
       </div>` : null}
       <${Composer} key=${active + '-' + r} seat=${active} round=${r} settings=${settings}
-        receiverName=${names[other(active)]} ownedIds=${ownedSet(d.inv, other(active))}
+        receiverName=${names[other(active)]} ownedIds=${ownedSet(d.inv, other(active))} haveIds=${d.inv[other(active)].map(x => x.id)}
         onSubmit=${(seat, tier, ids) => session.hide(seat, r, tier, ids)}/>
     </div>` : null}
 
@@ -1461,7 +1469,7 @@ function RulesModal({onClose}){
       ${H('Чёрный аукцион')}
       ${P('Игрок выставляет предмет, соперник ставит первым, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета; победитель платит свою последнюю ставку. Если никто не ставил, предмет бесплатно достаётся выставившему. Потом выставляет второй игрок. Если включён таймер, по его окончании игрок автоматически пасует.')}
       ${H('Правила сборок (как в игре)')}
-      ${P('В игре у каждого предмета один экземпляр, а улучшение съедает свои компоненты. Если в драфте тебе достался предмет, который это нарушает (улучшение того, что у тебя есть, или второе улучшение одного предмета), начинается спор: лишний предмет пропадает, а вместо него игрок получает другой предмет того же тира и типа (активный или пассивный). Как подобрать замену, решают голосованием: случайно, выбирает потерявший или выбирает соперник. Если голоса разошлись, решает рулетка 50/50. В аукционе такие предметы закрыты.')}
+      ${P('В игре у каждого предмета один экземпляр, а улучшение съедает свои компоненты. Если в драфте тебе достался предмет, который это нарушает (улучшение того, что у тебя есть, или второе улучшение одного предмета), начинается спор: лишний предмет пропадает, а вместо него игрок получает другой предмет того же тира и типа (активный или пассивный). Как подобрать замену, решают голосованием: случайно, выбирает потерявший или выбирает соперник. Если голоса разошлись, решает рулетка 50/50. В аукционе всё работает так же: если выигранный предмет вызывает конфликт, начинается такой же спор (голосование, рулетка, замена того же тира и типа, которой ещё не было в торгах).')}
       ${P('Активных предметов не больше четырёх. Лишний активный предмет заменяется на пассивный того же тира (тем же спором).')}
       ${P('Предметы с пометкой «Усиление» усиливают выбранное умение. Что усиливать, решаете сами, как при покупке в игре. Ультимейт усилить нельзя, а на часть умений (например, с дополнительными зарядами) усиление не действует.')}
       ${P('В драфте деньги считаются по цене тира (800, 1600, 3200, 6400), а не по реальной стоимости сборки с компонентами.')}
@@ -1497,20 +1505,22 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const gameFromHash = h => h === '#draft' ? 'draft' : h === '#builds' ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
+const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
 const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
 const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', builds:'Сборки героев'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
   ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
   ['Как играть со слепым драфтом?', 'Каждый раунд вы загадываете сопернику три предмета, а он вслепую выбирает один из них. Так у обоих набирается билд. Потом идёте в игру и бьётесь 1 на 1 на этих предметах.'],
-  ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются.'],
+  ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются. Если выигранный предмет конфликтует со сборкой (например, это улучшение того, что уже куплено), начинается спор о замене, как в драфте.'],
   ['Как сыграть с другом по сети?', 'Создай комнату и отправь другу код из пяти символов. Он вводит его на сайте и садится на второе место. Если друг рядом, можно играть вдвоём на одном экране.'],
   ['Кто побеждает в итоге?', 'Сайт победителя не объявляет. Он собирает билды, а выясняете вы это уже в игре: кто победил в бою 1 на 1, тот и молодец.'],
   ['Описание предмета не совпадает с игрой. Почему?', 'Данные берутся из сообщества Deadlock API, а сайт сделан с помощью ИИ, поэтому часть описаний могла остаться неточной. Мы их постепенно поправляем.'],
   ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
   ['Как поменять язык названий или включить музыку?', 'Нажми на шестерёнку справа вверху. По умолчанию названия предметов на английском, а описания на русском.'],
   ['Что будет, если мне достанется улучшение предмета, который у меня уже есть?', 'Как в игре, исходный предмет «съедается». Он пропадает, а вместо него появляется другой предмет того же тира и типа. Как его подобрать, игроки решают голосованием (случайно, сам или соперник), при разных голосах решает рулетка 50/50.'],
+  ['Как поделиться сборкой или скопировать её?', 'Под каждой сборкой есть кнопки «Поделиться ссылкой» (друг откроет сайт сразу на нужном герое и этой сборке) и «Скопировать списком» (удобно скинуть в чат). Сборки можно отфильтровать по типу (спирит, оружие, гибрид) и по сложности.'],
+  ['Что такое «Сборка недели»?', 'Сборка, которую автор сайта выбрал вручную. Она показывается наверху раздела «Сборки героев».'],
   ['Где посмотреть сборки героев?', 'В разделе «Сборки героев» на главной странице: нажми на героя и увидишь его сборки с датой публикации. Если сборке больше трёх месяцев, возможно, она уже не актуальна после патчей.'],
   ['Сколько активных предметов можно взять?', 'Как в игре, не больше четырёх. Когда у игрока уже четыре активных предмета, остальные активные для него закрыты (на карточках они подписаны «Активное»).'],
   ['Что значит «Усиление» у предмета?', 'Такой предмет усиливает выбранное тобой умение. Какое именно, вы с другом решаете сами, как в игре при покупке (нельзя усилить ультимейт, а на некоторые умения усиление вообще не действует, например на дополнительные заряды).'],
@@ -1518,6 +1528,7 @@ const FAQ = [
 ];
 /* ======================= СБОРКИ ГЕРОЕВ ======================= */
 // Сборки лежат в файле builds.json рядом с index.html (герой по английскому названию, предметы по английским названиям).
+// Поля сборки: id (нужен для ссылки #builds-id), hero, title, author, date, updated (необязательно), patch, desc, tags (['spirit','hard']), weekly (true у сборки недели), stages.
 // Герои берутся из heroes-en.min.json / heroes-ru.min.json (если есть) или из Deadlock API.
 const HERO_API = 'https://api.deadlock-api.com/v1/assets/heroes';
 async function firstJson(urls){ for (const u of urls){ try { const j = await getJson(u, 20000); if (Array.isArray(j) && j.length) return j; } catch (e){} } return null; }
@@ -1528,33 +1539,58 @@ const heroImg = h => {
 };
 const normN = x => String(x || '').trim().toLowerCase();
 const daysAgo = d => { const t = Date.parse(d); return isFinite(t) ? Math.max(0, Math.floor((Date.now() - t) / 86400000)) : null; };
+// Теги сборок: тип (спирит / оружие / гибрид) и сложность (лёгкая / средняя / сложная). В builds.json можно писать и по-английски, и по-русски.
+const BTYPES = {spirit:['Спирит', 'var(--s-spirit)'], weapon:['Оружие', 'var(--s-weapon)'], hybrid:['Гибрид', 'var(--gold2)']};
+const BDIFF = {easy:'Лёгкая', mid:'Средняя', hard:'Сложная'};
+const TAG_ALIAS = {'спирит':'spirit', 'дух':'spirit', 'оружие':'weapon', 'гибрид':'hybrid', 'лёгкая':'easy', 'легкая':'easy', 'простая':'easy', 'средняя':'mid', 'medium':'mid', 'сложная':'hard'};
+const tagKey = t => { const k = normN(t); return TAG_ALIAS[k] || k; };
+const bTags = b => (Array.isArray(b.tags) ? b.tags : []).map(tagKey);
+const bType = b => bTags(b).find(t => BTYPES[t]) || '', bDiff = b => bTags(b).find(t => BDIFF[t]) || '';
+const bStamp = b => b.updated || b.date;
+const buildLink = id => location.href.split('#')[0] + '#builds-' + encodeURIComponent(id);
 function HeroTile({h, n, on, onClick, nameLang}){
   const [bad, setBad] = useState(false);
   return html`<button className=${cx('htile', on && 'on', !n && 'dim')} onClick=${onClick} title=${h.name[nameLang]}>
     ${h.img && !bad ? html`<img src=${h.img} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : html`<div className="hph">${h.name.en.charAt(0)}</div>`}
     <span style=${{lineHeight:1.15,textAlign:'center'}}>${h.name[nameLang]}</span>${n ? html`<i>${n}</i>` : null}</button>`;
 }
-function BuildCard({b}){
+function BuildCard({b, heroName, weekly, focus, anchor}){
   const {nameLang} = useContext(PrefCtx);
-  const days = daysAgo(b.date), find = nm => { const k = normN(nm); return ITEMS.find(i => normN(i.name.en) === k || normN(i.name.ru) === k); };
+  const [msg, setMsg] = useState('');
+  useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(''), 2500); return () => clearTimeout(t); }, [msg]);
+  const days = daysAgo(bStamp(b)), find = nm => { const k = normN(nm); return ITEMS.find(i => normN(i.name.en) === k || normN(i.name.ru) === k); };
   const all = (b.stages || []).flatMap(st => st.items || []).map(find).filter(Boolean), total = all.reduce((a, i) => a + i.price, 0);
   const fresh = days == null ? null : (days <= 30 ? ['Свежая', 'var(--teal)'] : (days <= 90 ? ['Была актуальна', 'var(--gold2)'] : ['Возможно устарела', '#e07a7a']));
   const dt = isFinite(Date.parse(b.date)) ? new Date(b.date).toLocaleDateString('ru-RU') : '—';
-  return html`<div className="panel p-4 flex flex-col gap-3">
+  const up = b.updated && isFinite(Date.parse(b.updated)) ? new Date(b.updated).toLocaleDateString('ru-RU') : '';
+  const ty = BTYPES[bType(b)], df = BDIFF[bDiff(b)];
+  const known = new Set(Object.keys(BTYPES).concat(Object.keys(BDIFF))), extra = (Array.isArray(b.tags) ? b.tags : []).filter(t => !known.has(tagKey(t)));
+  const doCopy = (t, ok) => copyText(t).then(() => setMsg(ok), () => setMsg('Не удалось скопировать'));
+  const asText = () => (heroName ? heroName + ' - ' : '') + (b.title || 'Сборка') + [ty && ty[0], df && 'сложность: ' + df.toLowerCase()].filter(Boolean).map(x => ' · ' + x).join('') + '\n'
+    + (b.stages || []).map(st => st.name + ': ' + (st.items || []).map(nm => { const it = find(nm); return it ? it.name[nameLang] : nm; }).join(', ')).join('\n') + (b.id ? '\n' + buildLink(b.id) : '');
+  return html`<div id=${anchor && b.id ? 'build-' + b.id : undefined} className=${cx('panel p-4 flex flex-col gap-3', (weekly || focus) && 'active')}>
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <div><div className="panel-h" style=${{fontSize:'20px'}}>${b.title || 'Сборка'}</div>
-        <div className="muted" style=${{fontSize:'13px'}}>${b.author ? 'Автор: ' + b.author + ' · ' : ''}Опубликовано: <b>${dt}</b>${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${b.patch ? ' · патч ' + b.patch : ''}</div></div>
-      <div className="flex flex-wrap gap-2">${b.example ? html`<span className="chip">Пример</span>` : null}${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}${total ? html`<span className="chip num"><${Soul}/> ${total}</span>` : null}</div>
+      <div>${weekly ? html`<div className="chip gold mb-1">★ Сборка недели</div>` : null}<div className="panel-h" style=${{fontSize:'20px'}}>${heroName ? heroName + ': ' : ''}${b.title || 'Сборка'}</div>
+        <div className="muted" style=${{fontSize:'13px'}}>${b.author ? 'Автор: ' + b.author + ' · ' : ''}Опубликовано: <b>${dt}</b>${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${up ? ' · обновлена ' + up : ''}${b.patch ? ' · патч ' + b.patch : ''}</div></div>
+      <div className="flex flex-wrap gap-2">${b.example ? html`<span className="chip">Пример</span>` : null}${ty ? html`<span className="chip" style=${{color:ty[1],borderColor:ty[1]}}>${ty[0]}</span>` : null}${df ? html`<span className="chip">Сложность: ${df.toLowerCase()}</span>` : null}${extra.map((t, i) => html`<span key=${i} className="chip">${t}</span>`)}${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}${total ? html`<span className="chip num"><${Soul}/> ${total}</span>` : null}</div>
     </div>
     ${b.desc ? html`<p className="muted" style=${{fontSize:'14px'}}>${b.desc}</p>` : null}
     ${(b.stages || []).map((st, i) => html`<div key=${i}><div className="faq-q" style=${{fontSize:'15px'}}>${st.name}</div>
       <div className="flex flex-wrap gap-3">${(st.items || []).map((nm, j) => { const it = find(nm); return it ? html`<${Card} key=${j} item=${it} size="g"/>` : html`<span key=${j} className="chip" title="Предмет не найден в каталоге">${nm} ?</span>`; })}</div></div>`)}
+    <div className="flex flex-wrap items-center gap-2">
+      ${b.id ? html`<button className="btn sm" onClick=${() => doCopy(buildLink(b.id), 'Ссылка скопирована')}>Поделиться ссылкой</button>` : null}
+      <button className="btn sm" onClick=${() => doCopy(asText(), 'Список скопирован')}>Скопировать списком</button>
+      ${msg ? html`<span className="chip ok">${msg}</span>` : null}
+    </div>
   </div>`;
 }
 function Builds(){
   const {nameLang} = useContext(PrefCtx);
   const [st, setSt] = useState({loading:true, heroes:[], builds:[]});
-  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(false);
+  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(false), [fType, setFType] = useState(''), [fDiff, setFDiff] = useState('');
+  const [hash, setHash] = useState(location.hash);
+  useEffect(() => { const h = () => setHash(location.hash); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
+  const hm = /^#builds-(.+)$/.exec(hash); let focusId = ''; try { focusId = hm ? decodeURIComponent(hm[1]) : ''; } catch (e){ focusId = hm ? hm[1] : ''; }
   useEffect(() => {
     let on = true;
     (async () => {
@@ -1569,23 +1605,40 @@ function Builds(){
     })();
     return () => { on = false; };
   }, []);
-  const cnt = h => st.builds.filter(b => normN(b.hero) === normN(h.key)).length;
-  const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && (!onlyB || cnt(h)));
-  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => normN(b.hero) === normN(hero.key)).sort((x, y) => (Date.parse(y.date) || 0) - (Date.parse(x.date) || 0)) : [];
+  // Ссылка #builds-ID: сразу открываем героя этой сборки и прокручиваем к ней.
+  useEffect(() => {
+    if (st.loading || !focusId) return;
+    const b = st.builds.find(x => String(x.id) === focusId); if (!b) return;
+    const h = st.heroes.find(x => normN(x.key) === normN(b.hero)); if (h) setSel(h.key);
+    const t = setTimeout(() => { const el = document.getElementById('build-' + focusId); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 150);
+    return () => clearTimeout(t);
+  }, [st.loading, focusId]);
+  const pass = b => (!fType || bType(b) === fType) && (!fDiff || bDiff(b) === fDiff);
+  const heroNm = b => { const h = st.heroes.find(x => normN(x.key) === normN(b.hero)); return h ? h.name[nameLang] : b.hero; };
+  const cnt = h => st.builds.filter(b => normN(b.hero) === normN(h.key) && pass(b)).length;
+  const filtered = !!(fType || fDiff);
+  const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && ((!onlyB && !filtered) || cnt(h)));
+  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => normN(b.hero) === normN(hero.key) && pass(b)).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0)) : [];
+  const weekly = st.builds.filter(b => b.weekly === true).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0))[0];
   return html`<div className="flex flex-col gap-5">
     <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Сборки героев</h2>
       <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Выбери героя и посмотри сборки. У каждой указана дата публикации, чтобы понимать, не устарела ли она после патчей.</p></div>
+    ${weekly ? html`<${BuildCard} b=${weekly} heroName=${heroNm(weekly)} weekly=${true}/>` : null}
     <div className="panel p-4 flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
         <${Seg} value=${onlyB} options=${[{v:false, l:'Все герои'}, {v:true, l:'Только со сборками'}]} onChange=${setOnlyB}/>
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <${Seg} value=${fType} options=${[{v:'', l:'Любой тип'}].concat(Object.keys(BTYPES).map(k => ({v:k, l:BTYPES[k][0]})))} onChange=${setFType}/>
+        <${Seg} value=${fDiff} options=${[{v:'', l:'Любая сложность'}].concat(Object.keys(BDIFF).map(k => ({v:k, l:BDIFF[k]})))} onChange=${setFDiff}/>
       </div>
       ${st.loading ? html`<div className="muted">Загружаем героев…</div>` : null}
       ${!st.loading && !st.heroes.length ? html`<div className="muted">Список героев не загрузился. Обнови страницу или проверь интернет.</div>` : null}
       <div className="flex flex-wrap gap-2">${list.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${cnt(h)} on=${sel === h.key} nameLang=${nameLang} onClick=${() => setSel(sel === h.key ? null : h.key)}/>`)}</div>
     </div>
     ${hero ? html`<div className="flex flex-col gap-4"><div className="panel-h" style=${{fontSize:'22px'}}>${hero.name[nameLang]}</div>
-      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b}/>`) : html`<div className="panel p-4 muted">Для этого героя сборок пока нет.</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
+      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b} anchor=${true} focus=${!!focusId && String(b.id) === focusId}/>`) : html`<div className="panel p-4 muted">${filtered ? 'С такими тегами у этого героя сборок нет.' : 'Для этого героя сборок пока нет.'}</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
     <p className="muted text-center" style=${{fontSize:'12px'}}>Оценки и отзывы появятся позже.</p>
   </div>`;
 }
@@ -1636,38 +1689,88 @@ function Hub({onOpen}){
 /* ======================= АУКЦИОН ======================= */
 const otherSeat = x => (x === 'A' ? 'B' : 'A');
 function auInit(cfg, seats, first = 'A'){
-  return {cfg, ver:CAT_VER, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, first, nominator:first, item:'', turn:'', deadline:0, bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
+  return {cfg, ver:CAT_VER, seed:Math.random().toString(36).slice(2, 10), seats, phase:seats.B ? 'nominate' : 'lobby', round:1, first, nominator:first, item:'', turn:'', deadline:0, bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
+}
+// Все предметы, которые уже ушли с торгов (куплены, поглощены улучшением или стали заменой): второй раз их выставить нельзя.
+function auUsed(st){
+  const u = new Set(); ['A', 'B'].forEach(x => ((st.won && st.won[x]) || []).forEach(w => u.add(w.id))); (st.log || []).forEach(l => u.add(l.id)); return u;
+}
+// Спор в аукционе: те же правила, что в драфте (conflictsFor, голосование R/O/X, рулетка, eligibleRepl), только предметы уникальны на двоих.
+// st.dp = {owner, item, price, round, before:[id], victims, votes:{A,B}, repl:{key:id}}. Чистая функция: и интерфейс, и транзакция считают одинаково.
+function auPlan(st){
+  const dp = st.dp; if (!dp) return null;
+  const votes = dp.votes || {}, repl = dp.repl || {}, seed = String(st.seed || 'x'), owner = dp.owner, used = auUsed(st), vict = dp.victims || [];
+  let method = null, coin = null, waitVote = false;
+  if (!(votes.A && votes.B)) waitVote = true;
+  else if (votes.A === votes.B) method = votes.A;
+  else { coin = hash32(seed + ':coin:' + dp.round) % 2; method = coin ? votes.B : votes.A; }
+  let cur = (dp.before || []).slice(); const pend = [], resolved = [];
+  if (!vict.some(v => v.isPick)) cur.push(dp.item);
+  vict.slice().sort((x, y) => (x.isPick - y.isPick) || String(x.id).localeCompare(String(y.id))).forEach(v => {
+    if (!v.isPick) cur = cur.filter(x => x !== v.id);
+    if (waitVote) return;
+    const elig = eligibleRepl(cur, v.id, !!v.limit, used), chooser = method === 'R' ? null : (method === 'O' ? owner : otherSeat(owner)), key = owner + '_' + v.id;
+    let rep = null, missing = false;
+    if (!elig.length) rep = null;
+    else if (method === 'R') rep = elig[hash32(seed + ':' + dp.round + ':' + key) % elig.length].id;
+    else { const pid = repl[key]; if (pid && elig.some(e => e.id === pid)) rep = pid; else missing = true; }
+    if (missing) pend.push({owner, victim:v.id, chooser, key, eligible:elig.map(e => e.id)});
+    else { if (rep) cur.push(rep); resolved.push({owner, victim:v.id, isPick:v.isPick, limit:!!v.limit, replacement:rep, method, chooser, coin}); }
+  });
+  return {waitVote, method, coin, pend, resolved, cur};
 }
 // Одна функция правил: работает и на одном экране, и в онлайне (транзакция Firebase).
 function auReduce(st, a){
   if (!st) return st;
   const s = {...st, money:{...st.money}, won:{A:[...((st.won && st.won.A) || [])], B:[...((st.won && st.won.B) || [])]}, log:[...(st.log || [])]};
   const bid = st.bid || {amount:0, by:''}, tm = (st.cfg && st.cfg.timer) || 0;
-  const settle = () => {
-    const winner = bid.by || s.nominator, price = bid.by ? bid.amount : 0;
-    s.won[winner].push({id:s.item, price, round:s.round}); s.money[winner] -= price;
-    s.log.push({round:s.round, id:s.item, winner, price});
+  const advance = () => {
     if (s.round >= s.cfg.rounds) s.phase = 'done'; else { s.round++; s.nominator = otherSeat(s.nominator); s.phase = 'nominate'; }
-    s.item = ''; s.turn = ''; s.deadline = 0; s.bid = {amount:0, by:''}; return s;
+    s.item = ''; s.turn = ''; s.deadline = 0; s.bid = {amount:0, by:''}; s.dp = null; return s;
+  };
+  const settle = () => {
+    const winner = bid.by || s.nominator, price = bid.by ? bid.amount : 0, before = s.won[winner].map(w => w.id);
+    s.won[winner].push({id:s.item, price, round:s.round}); s.money[winner] -= price;
+    s.log.push({round:s.round, id:s.item, winner, price}); s.rep = null;
+    const vict = conflictsFor(before, s.item);
+    if (vict.length){ s.phase = 'dispute'; s.turn = ''; s.deadline = 0; s.bid = {amount:0, by:''}; s.dp = {owner:winner, item:s.item, price, round:s.round, before, victims:vict, votes:{}, repl:{}}; return s; }
+    return advance();
+  };
+  const finish = () => {
+    const pl = auPlan(s); if (!pl || pl.waitVote || pl.pend.length) return s;
+    const dp = s.dp, owner = dp.owner, old = s.won[owner], from = {};
+    pl.resolved.forEach(x => { if (x.replacement){ from[x.replacement] = x.victim; s.log.push({round:dp.round, id:x.replacement, winner:owner, price:0, from:x.victim}); } });
+    s.won[owner] = pl.cur.map(id => old.find(w => w.id === id) || (id === dp.item ? {id, price:dp.price, round:dp.round} : {id, price:0, round:dp.round, from:from[id] || ''}));
+    s.rep = pl.resolved.map(x => ({owner:x.owner, victim:x.victim, replacement:x.replacement || '', method:x.method, isPick:!!x.isPick}));
+    return advance();
   };
   if (a.t === 'rematch'){ return st.phase === 'done' ? auInit(st.cfg, st.seats, otherSeat(st.first || 'A')) : st; }
   if (a.t === 'nominate'){
     if (s.phase !== 'nominate' || a.seat !== s.nominator) return st;
-    if (s.won.A.concat(s.won.B).some(w => w.id === a.id)) return st;
-    if (blockedSet(s.won[a.seat].map(w => w.id)).has(a.id)) return st;   // выставлять можно только то, что сам можешь взять
-    s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
+    if (auUsed(s).has(a.id)) return st;
+    s.rep = null; s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
   }
   if (a.t === 'bid'){
     const n = Math.floor(Number(a.amount));
     if (s.phase !== 'bid' || a.seat !== s.turn || !(n > bid.amount) || n > s.money[a.seat]) return st;
-    if (blockedSet(s.won[a.seat].map(w => w.id)).has(s.item)) return st;   // предмет конфликтует со сборкой: только пас
     s.bid = {amount:n, by:a.seat}; s.turn = otherSeat(a.seat); s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
   }
   if (a.t === 'pass'){ if (s.phase !== 'bid' || a.seat !== s.turn) return st; return settle(); }
   if (a.t === 'timeout'){ if (s.phase !== 'bid' || !s.deadline || !(a.now >= s.deadline)) return st; return settle(); }
+  if (a.t === 'vote'){
+    if (s.phase !== 'dispute' || !s.dp || !['A', 'B'].includes(a.seat) || !['R', 'O', 'X'].includes(a.v)) return st;
+    if (s.dp.votes && s.dp.votes[a.seat]) return st;
+    s.dp = {...s.dp, votes:{...(s.dp.votes || {}), [a.seat]:a.v}}; return finish();
+  }
+  if (a.t === 'choose'){
+    if (s.phase !== 'dispute' || !s.dp) return st;
+    const pl = auPlan(s), p = pl && pl.pend.find(x => x.key === a.key);
+    if (!p || p.chooser !== a.seat || !p.eligible.includes(a.id)) return st;
+    s.dp = {...s.dp, repl:{...(s.dp.repl || {}), [a.key]:a.id}}; return finish();
+  }
   return st;
 }
-function ItemPicker({taken, blocked, selected, onPick}){
+function ItemPicker({taken, blocked, selected, onPick, have}){
   const [slot, setSlot] = useState('all'), [tier, setTier] = useState(0), [q, setQ] = useState('');
   const list = ITEMS.filter(i => (slot === 'all' || i.slot === slot) && (!tier || i.tier === tier) && matchItem(i, q));
   return html`<div className="flex flex-col gap-3">
@@ -1677,8 +1780,40 @@ function ItemPicker({taken, blocked, selected, onPick}){
       <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск предмета" value=${q} onChange=${e => setQ(e.target.value)}/>
     </div>
     <div className="cgrid">
-      ${list.map(i => html`<${Card} key=${i.id} item=${i} size="g" state=${taken.has(i.id) || (blocked && blocked.has(i.id)) ? 'banned' : (selected === i.id ? 'sel' : '')} tag=${taken.has(i.id) ? 'Куплен' : (blocked && blocked.has(i.id) ? 'Нельзя' : (selected === i.id ? 'Выбран' : null))} onClick=${() => onPick(i.id)}/>`)}
+      ${list.map(i => { const isT = taken.has(i.id), isB = !!(blocked && blocked.has(i.id)), dsp = !isT && !isB && have && conflictsFor(have, i.id).length > 0;
+        return html`<${Card} key=${i.id} item=${i} size="g" state=${isT || isB ? 'banned' : (selected === i.id ? 'sel' : '')} tag=${isT ? 'Куплен' : (isB ? 'Нельзя' : (selected === i.id ? 'Выбран' : (dsp ? 'Спор' : null)))} onClick=${() => onPick(i.id)}/>`; })}
     </div>
+  </div>`;
+}
+function AuRepl({rep, names}){
+  const {nameLang} = useContext(PrefCtx);
+  return html`<div className="panel p-4 flex flex-col gap-2"><div className="panel-h">Что заменили в этом споре</div>
+    <div className="flex flex-wrap gap-3">${rep.map((x, i) => html`<div key=${i} className="panel p-2 flex items-center gap-2"><${Card} item=${BY_ID[x.victim]} size="s" state="banned"/><span style=${{fontSize:'20px'}}>→</span>${x.replacement ? html`<${Card} item=${BY_ID[x.replacement]} size="s" state="sel"/>` : html`<span className="muted">замены нет</span>`}<div style=${{fontSize:'12px',maxWidth:'150px'}}><b>${names[x.owner]}</b><div className="muted">${voteName(x.method)}</div></div></div>`)}</div></div>`;
+}
+function AuDispute({st, names, controls, dispatch}){
+  const {nameLang} = useContext(PrefCtx), dp = st.dp, pl = auPlan(st);
+  if (!dp || !pl) return null;
+  const nm = id => BY_ID[id].name[nameLang], votes = dp.votes || {}, both = votes.A && votes.B;
+  const reason = v => v.isPick ? (v.limit ? 'у игрока уже 4 активных предмета' : 'купленный предмет входит в уже имеющийся или делит с ним компонент') : 'поглощён улучшением «' + nm(dp.item) + '»';
+  return html`<div className="panel p-4 flex flex-col gap-3 active">
+    <div className="panel-h">Спор: предмет пропадает</div>
+    <div className="muted" style=${{fontSize:'13px'}}>Как в игре, улучшение съедает свои компоненты. Эти предметы пропадают, вместо каждого игрок получает другой предмет того же тира и того же типа (активный или пассивный), которого ещё не было в торгах.</div>
+    <div className="flex flex-wrap gap-3">${(dp.victims || []).map((v, i) => html`<div key=${i} className="panel p-2 flex items-center gap-2"><${Card} item=${BY_ID[v.id]} size="s"/><div style=${{maxWidth:'220px',fontSize:'13px'}}><b>${names[dp.owner]}</b><div className="muted">${reason(v)}</div></div></div>`)}</div>
+    ${pl.waitVote ? html`<div>
+      <div className="panel-h" style=${{fontSize:'15px'}}>Кто подберёт замену? Голосуют оба игрока.</div>
+      ${['A', 'B'].map(x => (controls.includes(x) && !votes[x]) ? html`<div key=${x} className="mt-2"><div className="muted" style=${{fontSize:'12px'}}>${controls.length === 2 ? 'Голосует ' + names[x] : 'Твой голос'}</div>
+        <div className="flex flex-wrap gap-2 mt-1">${VOTES.map(o => html`<button key=${o.v} className="btn" title=${o.d} onClick=${() => dispatch({t:'vote', seat:x, v:o.v})}>${o.t}</button>`)}</div></div>` : null)}
+      <div className="mt-2 flex flex-wrap gap-2">${['A', 'B'].map(x => html`<span key=${x} className=${cx('chip', votes[x] && 'ok')}>${names[x]}: ${votes[x] ? 'проголосовал ✓' : 'выбирает…'}</span>`)}</div>
+      <div className="muted mt-2" style=${{fontSize:'12px'}}>Если голоса разойдутся, решит рулетка 50/50 между двумя выбранными вариантами.</div>
+    </div>` : null}
+    ${both ? (pl.coin !== null
+      ? html`<div className="flex items-center gap-3 flex-wrap"><div className="wheel-w"><div className="wheel-p"></div><div className="wheel" style=${{'--end':(1440 + (pl.coin ? 90 : 270)) + 'deg'}}></div></div>
+          <div style=${{fontSize:'13px'}}>Голоса разошлись, рулетка 50/50:<br/><b style=${{color:'#e58a1f'}}>${voteName(votes.A)}</b> или <b style=${{color:'#5aa8d6'}}>${voteName(votes.B)}</b><br/>Выпало: <b>${voteName(pl.method)}</b></div></div>`
+      : html`<div style=${{fontSize:'13px'}}>Голоса совпали: <b>${voteName(pl.method)}</b></div>`) : null}
+    ${!pl.waitVote && pl.pend.length ? html`<div className="flex flex-col gap-3">${pl.pend.map(p => controls.includes(p.chooser)
+      ? html`<div key=${p.key} className="panel p-3"><div className="panel-h" style=${{fontSize:'15px'}}>${names[p.chooser]}, выбери замену для «${nm(p.victim)}» (${names[p.owner]}, тир ${BY_ID[p.victim].tier}, ${BY_ID[p.victim].active ? 'активный' : 'пассивный'})</div>
+          <div className="cgrid mt-2">${p.eligible.map(id => html`<${Card} key=${id} item=${BY_ID[id]} size="g" onClick=${() => dispatch({t:'choose', seat:p.chooser, key:p.key, id})}/>`)}</div></div>`
+      : html`<div key=${p.key} className="muted">Ждём: ${names[p.chooser]} подбирает замену для «${nm(p.victim)}»…</div>`)}</div>` : null}
   </div>`;
 }
 function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
@@ -1686,7 +1821,7 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
   const {nameLang} = useContext(PrefCtx);
   const names = {A:(st.seats.A && st.seats.A.name) || 'Игрок А', B:(st.seats.B && st.seats.B.name) || 'Игрок Б'};
   const won = {A:(st.won && st.won.A) || [], B:(st.won && st.won.B) || []}, log = st.log || [], bid = st.bid || {amount:0, by:''};
-  const taken = new Set(won.A.concat(won.B).map(w => w.id));
+  const taken = auUsed(st);
   const [amt, setAmt] = useState('');
   useEffect(() => { setAmt(String(bid.amount + 1)); }, [bid.amount, st.item]);
   const [pend, setPend] = useState(null), [sureP, setSureP] = useState(false);
@@ -1705,23 +1840,25 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
     <div className="flex flex-wrap gap-2 mt-2">${won[seat].map((w, i) => html`<${Card} key=${i} item=${BY_ID[w.id]} size="s"/>`)}</div>
   </div>`;
   const item = st.item ? BY_ID[st.item] : null, turnSeat = st.turn, nom = st.nominator;
-  const myBlocked = !!(item && turnSeat && blockedSet(won[turnSeat].map(w => w.id)).has(item.id));
+  const myWarn = (item && turnSeat) ? conflictWarn(won[turnSeat].map(w => w.id), item.id, nameLang) : '';
   const mine = Math.max(0, ...controls.filter(x => x === turnSeat).map(x => st.money[x]));
   const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, Math.max(Number(amt) || 0, bid.amount) + d)));
   return html`<div className="wide flex flex-col gap-4">
     <div className="panel p-4 text-center">
       <div className="muted disp" style=${{fontSize:'12px'}}>Чёрный аукцион · раунд ${Math.min(st.round, st.cfg.rounds)} из ${st.cfg.rounds}${remain != null ? html` · <b style=${{color:remain <= 5 ? 'var(--red)' : 'var(--gold2)',fontSize:'15px'}}>⏱ ${remain} с</b>` : ''}</div>
       <div className="disp" style=${{fontSize:'clamp(22px,4.5vw,36px)',color:'var(--gold2)'}}>
-        ${st.phase === 'lobby' ? 'Ждём второго игрока' : st.phase === 'done' ? 'Торги закончены' : st.phase === 'nominate' ? names[nom] + ' выставляет предмет' : 'Ставка: ' + (bid.by ? '$' + bid.amount + ' (' + names[bid.by] + ')' : 'пока нет')}
+        ${st.phase === 'lobby' ? 'Ждём второго игрока' : st.phase === 'done' ? 'Торги закончены' : st.phase === 'nominate' ? names[nom] + ' выставляет предмет' : st.phase === 'dispute' ? 'Спор: замена предмета' : 'Ставка: ' + (bid.by ? '$' + bid.amount + ' (' + names[bid.by] + ')' : 'пока нет')}
       </div>
       ${st.phase === 'done' ? html`<div className="muted mt-1">Предметы куплены. Удачи в бою!</div><div className="mt-3 flex justify-center gap-2"><button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Реванш</button><button className="btn" onClick=${onExit}>Выйти</button></div>` : null}
     </div>
     <div className="grid gap-4 md:grid-cols-2">${money('A')}${money('B')}</div>
+    ${st.phase === 'dispute' ? html`<${AuDispute} st=${st} names=${names} controls=${controls} dispatch=${dispatch}/>` : null}
+    ${st.rep && st.rep.length && st.phase !== 'dispute' ? html`<${AuRepl} rep=${st.rep} names=${names}/>` : null}
     ${st.phase === 'nominate' ? html`<div className="panel p-4">
       ${can(nom) ? html`<div className="panel-h mb-3">${names[nom]}, выбери предмет для торгов</div>${pend ? html`<div className="panel p-3 flex flex-wrap items-center gap-3 mb-3 active"><${Card} item=${BY_ID[pend]} size="s"/>
           <div style=${{flex:1,minWidth:'200px'}}><div className="panel-h">Выставить «${BY_ID[pend].name[nameLang]}» на торги?</div><div className="muted" style=${{fontSize:'13px'}}>После подтверждения отменить нельзя.</div></div>
           <button className="btn gold" onClick=${() => dispatch({t:'nominate', seat:nom, id:pend})}>Выставить</button><button className="btn" onClick=${() => setPend(null)}>Отмена</button></div>` : null}
-        <${ItemPicker} taken=${taken} blocked=${blockedSet(won[nom].map(w => w.id))} selected=${pend} onPick=${setPend}/>`
+        <${ItemPicker} taken=${taken} have=${won[nom].map(w => w.id)} selected=${pend} onPick=${setPend}/>`
         : html`<div className="muted">Ждём, пока ${names[nom]} выберет предмет…</div>`}
     </div>` : null}
     ${st.phase === 'bid' && item ? html`<div className="panel p-4 flex flex-wrap gap-5 items-start">
@@ -1729,21 +1866,21 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
       <div className="flex flex-col gap-3" style=${{flex:1,minWidth:'240px'}}>
         <div className="panel-h">${can(turnSeat) ? 'Твой ход: ' : 'Ход: '}${names[turnSeat]}</div>
         <div className="muted" style=${{fontSize:'13px'}}>${bid.by ? 'Текущая ставка $' + bid.amount + ' от ' + names[bid.by] + '. Перебей или спасуй.' : 'Ставок ещё нет. Если ' + names[turnSeat] + ' спасует, предмет достанется ' + names[nom] + ' бесплатно.'}</div>
-        ${can(turnSeat) && myBlocked ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Этот предмет конфликтует с твоей сборкой (в игре нельзя иметь и предмет, и его улучшение, или два улучшения одного предмета) либо у тебя уже 4 активных предмета. Ставить нельзя, можно только спасовать.</div>` : null}
+        ${can(turnSeat) && myWarn ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>⚠ ${myWarn} Спор начнётся, если ты выиграешь этот предмет.</div>` : null}
         ${can(turnSeat) ? html`<div className="flex flex-wrap items-center gap-2">
           <input className="fld num" type="number" min=${bid.amount + 1} max=${st.money[turnSeat]} style=${{width:'120px'}} value=${amt} onChange=${e => setAmt(e.target.value)}/>
           ${[1, 5, 10].map(d => html`<button key=${d} className="btn sm" onClick=${() => bump(d)}>+${d}</button>`)}
           <button className="btn sm" onClick=${() => setAmt(String(st.money[turnSeat]))}>Ва-банк</button>
         </div>
         <div className="flex gap-2">
-          <button className="btn gold" disabled=${myBlocked || !(Number(amt) > bid.amount && Number(amt) <= st.money[turnSeat])} onClick=${() => dispatch({t:'bid', seat:turnSeat, amount:Number(amt)})}>Поставить $${amt || ''}</button>
+          <button className="btn gold" disabled=${!(Number(amt) > bid.amount && Number(amt) <= st.money[turnSeat])} onClick=${() => dispatch({t:'bid', seat:turnSeat, amount:Number(amt)})}>Поставить $${amt || ''}</button>
           <button className=${cx('btn danger', sureP && 'gold')} onClick=${() => sureP ? dispatch({t:'pass', seat:turnSeat}) : setSureP(true)}>${sureP ? 'Точно пас?' : 'Пас'}</button>
         </div>` : null}
       </div>
     </div>` : null}
     ${log.length ? html`<div className="panel p-4"><div className="panel-h mb-2">Ход торгов</div>
       <table className="rt"><thead><tr><th>Раунд</th><th>Предмет</th><th>Достался</th><th>Цена</th></tr></thead><tbody>
-        ${log.map((l, i) => html`<tr key=${i}><td className="num">${l.round}</td><td><span className="inl"><${ItemIcon} item=${BY_ID[l.id]} size=${22}/>${BY_ID[l.id].name[nameLang]}</span></td><td>${names[l.winner]}</td><td className="num">${'$' + l.price}</td></tr>`)}
+        ${log.map((l, i) => html`<tr key=${i}><td className="num">${l.round}</td><td><span className="inl"><${ItemIcon} item=${BY_ID[l.id]} size=${22}/>${BY_ID[l.id].name[nameLang]}</span></td><td>${names[l.winner]}${l.from ? html` <span className="muted">(замена «${BY_ID[l.from].name[nameLang]}»)</span>` : ''}</td><td className="num">${'$' + l.price}</td></tr>`)}
       </tbody></table></div>` : null}
   </div>`;
 }
