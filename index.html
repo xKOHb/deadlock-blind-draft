@@ -162,6 +162,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ii-secs{margin:12px -16px -16px;background:rgba(0,0,0,.32)}
 .ii-sec{padding:6px 16px 8px;display:flex;flex-direction:column;gap:4px;font-size:13px;font-family:var(--f-itext)}
 .ii-st{font-family:var(--f-display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#d9cfb6}
+.c-badge{position:absolute;left:50%;bottom:30%;transform:translate(-50%,50%);z-index:2;font:700 calc(var(--cw)*.072)/1 var(--f-display);padding:2px 5px;background:#111;color:#fff;letter-spacing:.04em;white-space:nowrap}.c-badge.imb{background:#5b3490}
 .hl{font-weight:600;color:#fff}.dim{opacity:.7;font-size:12px}
 .ii-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:6px;margin-top:10px}
 .ii-tile{background:rgba(0,0,0,.3);padding:6px 4px;text-align:center;font-family:var(--f-itext)}
@@ -262,7 +263,11 @@ let ITEMS = [], CATALOG = {};
 const stubItem = id => ({id, name:{en:id, ru:id}, tier:1, price:TIER_PRICE[1], image:'', stats:[], desc:{en:'', ru:''}, slot:'', active:false, missing:true});
 // BY_ID[id] никогда не падает: если у соперника другая версия каталога, вернётся заглушка.
 const BY_ID = new Proxy({}, {get:(_, id) => typeof id === 'string' ? (CATALOG[id] || stubItem(id)) : undefined});
-function setCatalog(list){ ITEMS = list; CATALOG = Object.fromEntries(list.map(i => [i.id, i])); }
+let CAT_VER = '';
+function setCatalog(list){
+  let h = 5381; list.map(i => [i.id, i.tier, i.price, (i.comps || []).join('+'), i.active ? 1 : 0].join(':')).join('|').split('').forEach(ch => { h = ((h * 33) ^ ch.charCodeAt(0)) >>> 0; });
+  CAT_VER = h.toString(36);
+  ITEMS = list; CATALOG = Object.fromEntries(list.map(i => [i.id, i])); }
 
 async function getJson(url, ms = 15000){
   // Без AbortController: в песочницах (превью) signal нельзя передать через postMessage.
@@ -367,7 +372,7 @@ function parseCatalog(en, ru){
       id:x.class_name, name:{en:x.name || x.class_name, ru:r.name || x.name || x.class_name}, tier, price:TIER_PRICE[tier],
       image:x.shop_image_webp || x.shop_image || x.image_webp || x.image || '',
       stats:Object.keys(se).slice(0, 5).map(k => ({l:{en:se[k].l, ru:(sr[k] || se[k]).l}, v:se[k].v})),
-      slot:slotKey(x.item_slot_type), active:!!x.is_active_item, cd, comps:Array.isArray(x.component_items) ? x.component_items.filter(c => typeof c === 'string') : [],
+      slot:slotKey(x.item_slot_type), active:!!x.is_active_item, imbue:x.imbue || '', cd, comps:Array.isArray(x.component_items) ? x.component_items.filter(c => typeof c === 'string') : [],
       desc:{en:descOf(x.description), ru:descOf(r.description) || descOf(x.description)}
     });
     const it = list[list.length - 1], sc = buildSections(x, r);
@@ -379,7 +384,16 @@ function parseCatalog(en, ru){
   if (cnt.some(c => c < 6)) throw new Error('Каталог пришёл неполным (предметов по тирам: ' + cnt.join(' / ') + '). Формат API мог измениться.');
   return list.sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en));   // одинаковый порядок у обоих игроков
 }
+// Сначала берём файлы каталога с самого сайта (у всех игроков одна версия), если их нет, то API.
+async function fetchLocal(code){
+  for (const n of ['items-' + code + '.min.json', 'items-' + code + '.json']){
+    try { const j = await getJson(n, 20000); if (Array.isArray(j) && j.length > 24) return j; } catch (e){}
+  }
+  return null;
+}
 async function loadCatalog(){
+  const le = await fetchLocal('en'), lr = le ? await fetchLocal('ru') : null;
+  if (le && lr) return parseCatalog(le, lr);
   const en = await fetchItems('english');
   let ru = null; try { ru = await fetchItems('russian'); } catch (e){ console.warn('Русская локализация недоступна', e); }
   return parseCatalog(en, ru);
@@ -399,6 +413,7 @@ function tierForRound(settings, r){
 // Правило сборок как в игре: у каждого предмета один экземпляр, а улучшение «съедает» свои компоненты.
 // Поэтому два предмета несовместимы, если у них есть общий компонент (или один входит в другой):
 // нельзя иметь и Sprint Boots, и Trophy Collector; нельзя иметь два разных улучшения одного и того же предмета.
+const MAX_ACTIVE = 4;   // в игре максимум 4 активных предмета
 let _closFor = null, _clos = {};
 function closureOf(id){
   if (_closFor !== ITEMS){ _closFor = ITEMS; _clos = {}; }
@@ -411,6 +426,7 @@ function blockedSet(ids){
   const have = new Set(), list = Array.from(ids);
   list.forEach(id => closureOf(id).forEach(x => have.add(x)));
   const out = new Set(list);
+  if (list.filter(id => BY_ID[id] && BY_ID[id].active).length >= MAX_ACTIVE) ITEMS.forEach(i => { if (i.active) out.add(i.id); });
   ITEMS.forEach(i => { for (const x of closureOf(i.id)){ if (have.has(x)){ out.add(i.id); break; } } });
   return out;
 }
@@ -501,6 +517,7 @@ function ItemInfo({item}){
       <span className="soul num"><${Soul} size=${16}/>${item.price}</span>
       <span className="tchip" style=${{'--tc':'#fbf3e0'}}>${ROMAN[item.tier]}</span>
       ${slot ? html`<span className="tchip" style=${{'--tc':'#fbf3e0'}}>${slot}</span>` : null}
+      ${item.imbue ? html`<span className="tchip" style=${{'--tc':'#cfa8f5'}}>${ru ? 'Усиление' : 'Imbue'}</span>` : null}
     </div>
     <div className="flex flex-col">
       ${(item.innate || item.stats).map((x, i) => html`<div className="stat-line" key=${i}><b>${vOf(x)}</b><span>${x.l[descLang] || x.l.en}</span></div>`)}
@@ -582,6 +599,7 @@ function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
         ${item ? html`
           <div className="c-art"><${ItemIcon} item=${item}/></div>
           <span className="c-tier">${ROMAN[item.tier]}</span><span className="c-price num"><${Soul}/>${item.price}</span>
+          ${(item.active || item.imbue) && size !== 's' ? html`<div className=${cx('c-badge', !item.active && 'imb')}>${item.active ? (nameLang === 'ru' ? 'АКТИВНОЕ' : 'ACTIVE') : (nameLang === 'ru' ? 'УСИЛЕНИЕ' : 'IMBUE')}</div>` : null}
           <div className="c-name">${item.name[nameLang]}</div>
         ` : null}
       </div></div>
@@ -744,7 +762,7 @@ async function createRoom(db, uid, name, cfg){
   for (let i = 0; i < 6; i++){
     const code = genCode();
     const res = await db.ref('games/' + code + '/meta').transaction(cur => (
-      cur === null ? {code, hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
+      cur === null ? {code, ver:CAT_VER, hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
     ));
     if (!res.committed) continue;            // код уже занят, пробуем другой
     await db.ref('games/' + code + '/seats/A').set({uid, name, joinedAt:Date.now()});
@@ -762,7 +780,9 @@ async function joinRoom(db, uid, rawCode, name){
   if (aSnap.exists() && aSnap.val().uid === uid) return code;   // это хост
   const bSnap = await base.child('seats/B').once('value');
   if (bSnap.exists() && bSnap.val().uid === uid) return code;   // уже сидим на месте Б
-  if (metaSnap.val().status !== 'lobby') throw new Error('Игра в этой комнате уже идёт');
+  const mv = metaSnap.val();
+  if (mv.ver && CAT_VER && mv.ver !== CAT_VER) throw new Error('У вас разные версии каталога предметов (у хоста ' + mv.ver + ', у тебя ' + CAT_VER + '). Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
+  if (mv.status !== 'lobby') throw new Error('Игра в этой комнате уже идёт');
   const res = await base.child('seats/B').transaction(cur => (cur === null ? {uid, name, joinedAt:Date.now()} : undefined));
   if (!res.committed) throw new Error('Комната уже заполнена');
   return code;
@@ -802,7 +822,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <div className="panel-h">Загадай ${HIDE_COUNT} предмета для: ${receiverName}</div>
-        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть или конфликтуют с его сборкой (улучшение или компонент уже имеющегося предмета), недоступны.</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть или конфликтуют с его сборкой (улучшение или компонент уже имеющегося предмета), а при четырёх активных предметах недоступны и все остальные активные,.</div>
       </div>
       ${fixed ? html`<${TierChip} tier=${fixed}/>` : null}
     </div>
@@ -1316,6 +1336,28 @@ const Music = (() => {
   };
 })();
 
+function RulesModal({onClose}){
+  useEffect(() => { const k = e => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
+  const H = t => html`<div className="panel-h mt-4 mb-1" style=${{fontSize:'17px'}}>${t}</div>`;
+  const P = t => html`<p className="muted" style=${{fontSize:'14px',lineHeight:1.55,marginBottom:'6px'}}>${t}</p>`;
+  return html`<div className="modal-bg" onClick=${onClose}>
+    <div className="panel p-5" style=${{width:'min(560px,100%)',maxHeight:'90vh',overflow:'auto'}} onClick=${e => e.stopPropagation()} role="dialog" aria-label="Правила">
+      <div className="flex items-center justify-between"><div className="panel-h" style=${{fontSize:'22px'}}>Правила</div><button className="btn sm" onClick=${onClose}>Закрыть</button></div>
+      ${P('Сайт только помогает собрать билды. Победителя он не определяет: после драфта или торгов идите в игру и бейтесь 1 на 1.')}
+      ${H('Слепой драфт')}
+      ${P('Каждый раунд идёт на своём тире. В режиме «Баланс» тир общий для обоих, в «Хаосе» каждый выбирает тир сам, а соперник видит его только в конце раунда.')}
+      ${P('Оба загадывают сопернику три предмета этого тира (можно одновременно). Потом каждый вслепую выбирает одну из трёх карт соперника. Порядок выбора любой.')}
+      ${H('Чёрный аукцион')}
+      ${P('Игрок выставляет предмет, соперник ставит первым, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета; победитель платит свою последнюю ставку. Если никто не ставил, предмет бесплатно достаётся выставившему. Потом выставляет второй игрок. Если включён таймер, по его окончании игрок автоматически пасует.')}
+      ${H('Правила сборок (как в игре)')}
+      ${P('У каждого предмета один экземпляр, а улучшение съедает свои компоненты. Поэтому нельзя иметь и предмет, и его улучшение, а также два разных улучшения одного и того же предмета. Такие предметы на сайте закрыты.')}
+      ${P('Активных предметов не больше четырёх.')}
+      ${P('Предметы с пометкой «Усиление» усиливают выбранное умение. Что усиливать, решаете сами, как при покупке в игре. Ультимейт усилить нельзя, а на часть умений (например, с дополнительными зарядами) усиление не действует.')}
+      ${P('В драфте деньги считаются по цене тира (800, 1600, 3200, 6400), а не по реальной стоимости сборки с компонентами.')}
+      <p className="muted mt-3" style=${{fontSize:'12px'}}>Версия каталога предметов: ${CAT_VER || '?'}. Если у друга она другая, пусть обновит страницу (Ctrl+F5).</p>
+    </div>
+  </div>`;
+}
 function GearIcon(){
   return html`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v3M12 19.5v3M1.5 12h3M19.5 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></svg>`;
 }
@@ -1357,6 +1399,8 @@ const FAQ = [
   ['Описание предмета не совпадает с игрой. Почему?', 'Данные берутся из сообщества Deadlock API, а сайт сделан с помощью ИИ, поэтому часть описаний могла остаться неточной. Мы их постепенно поправляем.'],
   ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
   ['Как поменять язык названий или включить музыку?', 'Нажми на шестерёнку справа вверху. По умолчанию названия предметов на английском, а описания на русском.'],
+  ['Сколько активных предметов можно взять?', 'Как в игре, не больше четырёх. Когда у игрока уже четыре активных предмета, остальные активные для него закрыты (на карточках они подписаны «Активное»).'],
+  ['Что значит «Усиление» у предмета?', 'Такой предмет усиливает выбранное тобой умение. Какое именно, вы с другом решаете сами, как в игре при покупке (нельзя усилить ультимейт, а на некоторые умения усиление вообще не действует, например на дополнительные заряды).'],
   ['Это официальный проект Valve?', 'Нет. Это неофициальный фанатский проект, он никак не связан с Valve Corporation и не одобрен ею.']
 ];
 function Hub({onOpen}){
@@ -1403,7 +1447,7 @@ function Hub({onOpen}){
 /* ======================= АУКЦИОН ======================= */
 const otherSeat = x => (x === 'A' ? 'B' : 'A');
 function auInit(cfg, seats, first = 'A'){
-  return {cfg, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, first, nominator:first, item:'', turn:'', deadline:0, bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
+  return {cfg, ver:CAT_VER, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, first, nominator:first, item:'', turn:'', deadline:0, bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
 }
 // Одна функция правил: работает и на одном экране, и в онлайне (транзакция Firebase).
 function auReduce(st, a){
@@ -1496,7 +1540,7 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
       <div className="flex flex-col gap-3" style=${{flex:1,minWidth:'240px'}}>
         <div className="panel-h">${can(turnSeat) ? 'Твой ход: ' : 'Ход: '}${names[turnSeat]}</div>
         <div className="muted" style=${{fontSize:'13px'}}>${bid.by ? 'Текущая ставка $' + bid.amount + ' от ' + names[bid.by] + '. Перебей или спасуй.' : 'Ставок ещё нет. Если ' + names[turnSeat] + ' спасует, предмет достанется ' + names[nom] + ' бесплатно.'}</div>
-        ${can(turnSeat) && myBlocked ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Этот предмет конфликтует с твоей сборкой (в игре нельзя иметь и предмет, и его улучшение, или два улучшения одного предмета). Ставить нельзя, можно только спасовать.</div>` : null}
+        ${can(turnSeat) && myBlocked ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Этот предмет конфликтует с твоей сборкой (в игре нельзя иметь и предмет, и его улучшение, или два улучшения одного предмета) либо у тебя уже 4 активных предмета. Ставить нельзя, можно только спасовать.</div>` : null}
         ${can(turnSeat) ? html`<div className="flex flex-wrap items-center gap-2">
           <input className="fld num" type="number" min=${bid.amount + 1} max=${st.money[turnSeat]} style=${{width:'120px'}} value=${amt} onChange=${e => setAmt(e.target.value)}/>
           ${[1, 5, 10].map(d => html`<button key=${d} className="btn sm" onClick=${() => bump(d)}>+${d}</button>`)}
@@ -1548,6 +1592,8 @@ function Auction(){
     setBusy(true); setErr(null);
     try {
       const c = join.trim().toUpperCase(); if (c.length < 4) throw new Error('Введи код комнаты');
+      const pre = (await fbDb.ref('auctions/' + c + '/state/ver').once('value')).val();
+      if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов (у хоста ' + pre + ', у тебя ' + CAT_VER + '). Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
       const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => {
         if (!cur) return undefined;
         if ((cur.seats.A && cur.seats.A.uid === uid) || (cur.seats.B && cur.seats.B.uid === uid)) return cur;
@@ -1621,7 +1667,7 @@ function SlotTabs({value, onChange}){
 function App(){
   const [prefs, setPrefsS] = useState(() => ({...PREF_DEF, ...store.get('bd_prefs2', {})}));
   const setPrefs = p => { setPrefsS(p); store.set('bd_prefs2', p); };
-  const [showSet, setShowSet] = useState(false);
+  const [showSet, setShowSet] = useState(false), [showRules, setShowRules] = useState(false);
   useEffect(() => { if (prefs.musicOn) Music.play(prefs.track, prefs.vol); else Music.stop(); }, [prefs.musicOn, prefs.track]);
   useEffect(() => { Music.vol(prefs.vol); }, [prefs.vol]);
   useEffect(() => {
@@ -1690,10 +1736,11 @@ function App(){
 
   return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
     <div className="shell">
+      ${showRules ? html`<${RulesModal} onClose=${() => setShowRules(false)}/>` : null}
       ${showSet ? html`<${SettingsModal} prefs=${prefs} setPrefs=${setPrefs} onClose=${() => setShowSet(false)}/>` : null}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <button className="brand" style=${{background:'none',border:0,cursor:'pointer',padding:0}} onClick=${() => openGame(null)} title="К выбору игры"><${Soul} size=${18}/>Deadlock Minigames${game ? html`<span className="muted" style=${{fontSize:'14px',fontWeight:400}}> / ${GAME_NAME[game]}</span>` : null}</button>
-        <button className="gear" onClick=${() => setShowSet(true)} aria-label="Настройки" title="Настройки"><${GearIcon}/></button>
+        <span className="flex gap-2"><button className="gear" onClick=${() => setShowRules(true)} aria-label="Правила" title="Правила" style=${{fontFamily:'var(--f-head)',fontWeight:800,fontSize:'18px'}}>?</button><button className="gear" onClick=${() => setShowSet(true)} aria-label="Настройки" title="Настройки"><${GearIcon}/></button></span>
       </div>
       ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
       ${body}
