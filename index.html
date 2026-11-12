@@ -182,10 +182,21 @@ html[data-theme="crimson"]{--bg:#130a0b;--bg2:#1a0f10;--panel:#251416;--panel2:#
 html[data-theme="crimson"] body{background-image:radial-gradient(900px 520px at 50% 115%,rgba(184,90,90,.24),transparent 70%),repeating-linear-gradient(90deg,rgba(184,90,90,.06) 0 2px,transparent 2px 24px);background-size:auto,auto;background-position:0 0,0 0}
 html[data-theme="jade"]{--bg:#0b130f;--bg2:#101a14;--panel:#15241b;--panel2:#1a2d22;--edge:#2f5a42;--edge2:#4a8a68;--text:#def0e4;--muted:#93b5a0;--gold:#5ab88c;--gold2:#a0e8c8;--goldDim:#346e55;--acc:90,184,140;--btn1:#b4f0d4;--btn2:#3f9a73;--btn3:#c8ffe6;--btn4:#8fdcb8;--soul:#8fe6c0}
 html[data-theme="jade"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(90,184,140,.2),transparent 70%),radial-gradient(rgba(90,184,140,.14) 1.6px,transparent 1.8px);background-size:auto,24px 24px;background-position:0 0,0 0}
+html[data-theme="graphite"]{--bg:#0f1011;--bg2:#151718;--panel:#1d2022;--panel2:#25292c;--edge:#3a4046;--edge2:#5a636c;--text:#e6e9ec;--muted:#9aa3ab;--gold:#8d97a1;--gold2:#c9d1d8;--goldDim:#4a525a;--acc:141,151,161;--btn1:#d8dee4;--btn2:#7b858f;--btn3:#eef2f5;--btn4:#b9c1c8;--soul:#b8d4ea}
+html[data-theme="graphite"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(141,151,161,.16),transparent 70%),repeating-linear-gradient(45deg,rgba(141,151,161,.05) 0 2px,transparent 2px 9px),repeating-linear-gradient(-45deg,rgba(141,151,161,.035) 0 2px,transparent 2px 9px);background-size:auto,auto,auto;background-position:0 0,0 0,0 0}
 html[data-theme="violet"]{--bg:#110c18;--bg2:#171021;--panel:#20162d;--panel2:#291c3a;--edge:#4b3569;--edge2:#6f4f9a;--text:#eadff7;--muted:#a899c0;--gold:#9a62d6;--gold2:#cfa8f5;--goldDim:#5a3a85;--acc:154,98,214;--btn1:#dcc0fa;--btn2:#8250c0;--btn3:#ead5ff;--btn4:#c49af0;--soul:#d2b0ff}
 html[data-theme="violet"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(154,98,214,.22),transparent 70%),repeating-radial-gradient(circle at 50% -20%,rgba(154,98,214,.09) 0 2px,transparent 2px 46px);background-size:auto,auto;background-position:0 0,0 0}
 .theme-b{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:var(--f-display);letter-spacing:.06em;font-size:12px;text-transform:uppercase}
 .theme-b i{width:12px;height:12px;transform:rotate(45deg);display:inline-block}.theme-b.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:14px;justify-items:center}
+.wide{width:min(1600px,calc(100vw - 32px));margin-left:calc(50% - min(800px,50vw - 16px))}
+.wheel-w{position:relative;width:78px;height:78px;flex:none}.wheel-p{position:absolute;left:50%;top:-8px;transform:translateX(-50%);border:7px solid transparent;border-top:13px solid var(--gold2);z-index:2}
+.wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(#e58a1f 0 180deg,#5aa8d6 180deg 360deg);border:3px solid var(--edge2);transform:rotate(var(--end));animation:wspin 2s cubic-bezier(.15,.7,.2,1)}
+@keyframes wspin{from{transform:rotate(0)}to{transform:rotate(var(--end))}}
+.htile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 6px;border:1px solid var(--edge);background:var(--bg2);cursor:pointer;color:var(--text);font-size:12px;position:relative;width:98px;font-family:var(--f-body)}
+.htile img,.htile .hph{width:64px;height:64px;object-fit:cover;border-radius:4px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font:800 26px var(--f-head);color:var(--gold2)}
+.htile.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}.htile.dim{opacity:.5}
+.htile i{position:absolute;top:3px;right:3px;font-style:normal;background:var(--gold);color:#111;font-weight:700;font-size:11px;padding:0 5px;border-radius:8px}
 .hub-card{transition:transform .2s,box-shadow .2s}.hub-card.live:hover{transform:translateY(-4px);box-shadow:0 0 0 1px var(--goldDim),0 10px 34px rgba(224,197,138,.22)}
 .hub-art{height:96px;display:flex;align-items:center;gap:0;color:var(--gold2)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border:1px solid var(--edge2);background:rgba(20,19,17,.6);font-family:var(--f-display);letter-spacing:.06em;font-size:12px;color:var(--gold2);text-transform:uppercase}
@@ -430,27 +441,82 @@ function blockedSet(ids){
   ITEMS.forEach(i => { for (const x of closureOf(i.id)){ if (have.has(x)){ out.add(i.id); break; } } });
   return out;
 }
-function ownedSet(inv, seat){ return blockedSet(inv[seat].map(x => x.id)); }
+function ownedSet(inv, seat){ return new Set(inv[seat].map(x => x.id)); }   // в драфте блокируются только уже имеющиеся; конфликты решаются спором (см. derive)
 function availableOfTier(tier, ownedIds){ return ITEMS.filter(i => i.tier === tier && !ownedIds.has(i.id)); }
 
 // Состояние раунда выводится из ходов. moves[seat][round] = {hide:[id,id,id], tier, pick:{idx,id}, ready}
 // hide - 3 карты, которые seat загадал сопернику. pick - карта, которую seat взял из карт соперника.
+const hash32 = str => { let h = 2166136261; for (let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); } h ^= h >>> 15; h = Math.imul(h, 2246822519); h ^= h >>> 13; return h >>> 0; };
+// Что пропадает, когда игрок берёт предмет p при инвентаре ids: компоненты, съеденные улучшением, или сам p (он лишний), или p при лимите активных.
+function conflictsFor(ids, p){
+  const cp = closureOf(p), out = [];
+  ids.forEach(o => {
+    if (o === p) return;
+    let share = false; for (const x of closureOf(o)){ if (cp.has(x)){ share = true; break; } }
+    if (!share) return;
+    out.push(cp.has(o) ? {id:o, isPick:false} : {id:p, isPick:true});
+  });
+  const eaten = new Set(out.filter(v => !v.isPick).map(v => v.id));
+  if (!out.some(v => v.isPick) && BY_ID[p].active && ids.filter(o => !eaten.has(o) && BY_ID[o].active).length >= MAX_ACTIVE) out.push({id:p, isPick:true, limit:true});
+  const seen = new Set();
+  return out.filter(v => { const k = v.id + (v.isPick ? 'p' : 'o'); if (seen.has(k)) return false; seen.add(k); return true; });
+}
+// Замена: тот же тир (то есть та же цена) и тот же тип (активный/пассивный), без новых конфликтов.
+function eligibleRepl(afterIds, victimId, forcePassive){
+  const v = BY_ID[victimId], bl = blockedSet(afterIds), act = forcePassive ? false : !!v.active;
+  let list = ITEMS.filter(i => i.tier === v.tier && !!i.active === act && !bl.has(i.id) && i.id !== victimId);
+  if (!list.length) list = ITEMS.filter(i => i.tier === v.tier && !bl.has(i.id) && i.id !== victimId);
+  return list;
+}
 function derive(settings, moves){
-  const N = settings.rounds;
-  const inv = {A:[], B:[]};
-  let round = 1, phase = 'hide', finished = false;
+  const N = settings.rounds, seed = String(settings.seed || 'x');
+  const inv = {A:[], B:[]}, history = [];
+  const M = (s, r) => (moves[s] && moves[s][r]) || {};
+  let round = 1, phase = 'hide', finished = false, dispute = null;
   for (let r = 1; r <= N; r++){
-    const a = (moves.A && moves.A[r]) || {};
-    const b = (moves.B && moves.B[r]) || {};
-    if (a.pick) inv.A.push({id:a.pick.id, round:r});
-    if (b.pick) inv.B.push({id:b.pick.id, round:r});
-    round = r;
-    if (!(a.hide && b.hide)){ phase = 'hide'; break; }
-    if (!(a.pick && b.pick)){ phase = 'pick'; break; }   // выбирать можно одновременно или в любом порядке
+    const a = M('A', r), b = M('B', r), mv = {A:a, B:b};
+    round = r; dispute = null;
+    if (!(a.hide && b.hide) || !(a.pick && b.pick)){
+      ['A', 'B'].forEach(s => { if (mv[s].pick) inv[s].push({id:mv[s].pick.id, round:r}); });
+      phase = (a.hide && b.hide) ? 'pick' : 'hide'; break;
+    }
+    const vict = {A:conflictsFor(inv.A.map(x => x.id), a.pick.id), B:conflictsFor(inv.B.map(x => x.id), b.pick.id)};
+    const total = vict.A.length + vict.B.length, votes = {A:a.vote || null, B:b.vote || null};
+    let method = null, coin = null, waitVote = false;
+    if (total){
+      if (!(votes.A && votes.B)) waitVote = true;
+      else if (votes.A === votes.B) method = votes.A;
+      else { coin = hash32(seed + ':coin:' + r) % 2; method = coin ? votes.B : votes.A; }
+    }
+    const next = {A:null, B:null}, pend = [], resolved = [];
+    ['A', 'B'].forEach(s => {
+      let cur = inv[s].slice();
+      if (!vict[s].some(v => v.isPick)) cur.push({id:mv[s].pick.id, round:r});
+      vict[s].slice().sort((x, y) => (x.isPick - y.isPick) || String(x.id).localeCompare(String(y.id))).forEach(v => {
+        if (!v.isPick) cur = cur.filter(x => x.id !== v.id);
+        if (waitVote) return;
+        const elig = eligibleRepl(cur.map(x => x.id), v.id, !!v.limit), chooser = method === 'R' ? null : (method === 'O' ? s : other(s)), key = s + '_' + v.id;
+        let rep = null, missing = false;
+        if (!elig.length) rep = null;
+        else if (method === 'R') rep = elig[hash32(seed + ':' + r + ':' + key) % elig.length].id;
+        else { const pid = M(chooser, r).repl && M(chooser, r).repl[key]; if (pid && elig.some(e => e.id === pid)) rep = pid; else missing = true; }
+        if (missing) pend.push({owner:s, victim:v.id, chooser, key, eligible:elig.map(e => e.id)});
+        else { if (rep) cur.push({id:rep, round:r, from:v.id, repl:true}); resolved.push({owner:s, victim:v.id, isPick:v.isPick, limit:!!v.limit, replacement:rep, method, chooser, coin, round:r}); }
+      });
+      next[s] = cur;
+    });
+    if (waitVote || pend.length){
+      ['A', 'B'].forEach(s => inv[s].push({id:mv[s].pick.id, round:r}));
+      phase = waitVote ? 'vote' : 'choose';
+      dispute = {stage:phase, victims:vict, votes, method, coin, pending:pend, resolved};
+      break;
+    }
+    inv.A = next.A; inv.B = next.B; resolved.forEach(x => history.push(x));
+    if (total) dispute = {stage:'done', victims:vict, votes, method, coin, pending:[], resolved};
     if (!(a.ready && b.ready)){ phase = 'recap'; break; }
     if (r === N){ finished = true; phase = 'done'; }
   }
-  return {round, phase, inv, finished};
+  return {round, phase, inv, finished, dispute, history};
 }
 function totalSouls(list){ return list.reduce((s, x) => s + BY_ID[x.id].price, 0); }
 function genCode(){
@@ -674,13 +740,17 @@ function SettingsPanel({cfg, setCfg, readOnly}){
 /* ---------- сессии: локальная и онлайн ---------- */
 function useLocalSession(cfg, names){
   const [moves, setMoves] = useState({A:{}, B:{}});
+  const [seed] = useState(() => Math.random().toString(36).slice(2, 10));
+  const sett = useMemo(() => ({...cfg, seed}), [cfg, seed]);
   const patch = useCallback((seat, round, p) => setMoves(m => ({...m, [seat]:{...m[seat], [round]:{...(m[seat][round] || {}), ...p}}})), []);
   return useMemo(() => ({
-    kind:'local', settings:cfg, names, moves, viewerSeats:['A', 'B'], error:null,
+    kind:'local', settings:sett, names, moves, viewerSeats:['A', 'B'], error:null,
+    vote:(seat, round, v) => patch(seat, round, {vote:v}),
+    choose:(seat, round, key, id) => setMoves(m => ({...m, [seat]:{...m[seat], [round]:{...(m[seat][round] || {}), repl:{...((m[seat][round] || {}).repl || {}), [key]:id}}}})),
     hide:(seat, round, tier, ids) => patch(seat, round, {hide:ids, tier}),
     pick:(seat, round, idx, id) => patch(seat, round, {pick:{idx, id}}),
     ready:(seat, round) => patch(seat, round, {ready:true})
-  }), [cfg, names, moves, patch]);
+  }), [sett, names, moves, patch]);
 }
 
 /* ======================= FIREBASE (Realtime Database, SDK 8.10.1) =======================
@@ -747,13 +817,15 @@ function useOnlineSession(db, uid, code){
     db.ref('games/' + code + '/moves/' + seat + round).update({...patch, seat, round}).catch(fail);
   }, [db, code]);
   const names = {A:(seats.A && seats.A.name) || 'Игрок А', B:(seats.B && seats.B.name) || 'Игрок Б'};
-  const settings = meta ? {rounds:meta.rounds, mode:meta.mode, order:meta.order} : null;
+  const settings = meta ? {rounds:meta.rounds, mode:meta.mode, order:meta.order, seed:meta.seed || meta.code || 'x'} : null;
   return {
     kind:'online', room, meta, seats, mySeat, names, settings, moves, wErr, clearErr:() => setWErr(null),
     viewerSeats:mySeat ? [mySeat] : [], error:room.error,
     hide:(seat, round, tier, ids) => write(seat, round, {hide:ids, tier}),
     pick:(seat, round, idx, id) => write(seat, round, {pick:{idx, id}}),
     ready:(seat, round) => write(seat, round, {ready:true}),
+    vote:(seat, round, v) => write(seat, round, {vote:v}),
+    choose:(seat, round, key, id) => db.ref('games/' + code + '/moves/' + seat + round + '/repl/' + key).set(id).catch(fail),
     updateMeta:p => db.ref('games/' + code + '/meta').update(p).catch(fail)
   };
 }
@@ -762,7 +834,7 @@ async function createRoom(db, uid, name, cfg){
   for (let i = 0; i < 6; i++){
     const code = genCode();
     const res = await db.ref('games/' + code + '/meta').transaction(cur => (
-      cur === null ? {code, ver:CAT_VER, hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
+      cur === null ? {code, ver:CAT_VER, seed:Math.random().toString(36).slice(2, 10), hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, createdAt:Date.now()} : undefined
     ));
     if (!res.committed) continue;            // код уже занят, пробуем другой
     await db.ref('games/' + code + '/seats/A').set({uid, name, joinedAt:Date.now()});
@@ -822,7 +894,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <div className="panel-h">Загадай ${HIDE_COUNT} предмета для: ${receiverName}</div>
-        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть или конфликтуют с его сборкой (улучшение или компонент уже имеющегося предмета), а при четырёх активных предметах недоступны и все остальные активные,.</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Недоступны только предметы, которые у него уже есть. Если выбранный предмет конфликтует с его сборкой (например, это улучшение того, что у него уже есть), начнётся спор о замене.</div>
       </div>
       ${fixed ? html`<${TierChip} tier=${fixed}/>` : null}
     </div>
@@ -858,7 +930,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         <${SlotTabs} value=${tab} onChange=${setTab}/>
         <div style=${{flex:'1 1 200px',maxWidth:'340px'}}><input className="fld" type="search" placeholder="Поиск: название или характеристика" aria-label="Поиск предметов" value=${q} onInput=${e => setQ(e.target.value)}/></div>
       </div>
-      <div className="flex flex-wrap gap-4 justify-center" style=${{paddingBottom:'10px'}}>
+      <div className="cgrid" style=${{paddingBottom:'10px'}}>
         ${!shown.length ? html`<div className="muted py-6">Ничего не найдено. Попробуй другое слово или вкладку «Все предметы».</div>` : null}
         ${shown.map(it => {
           const banned = ownedIds.has(it.id);
@@ -901,6 +973,42 @@ function TrioRow({hider, move, pickMove, picker, names, reveal, interactive, onP
   </div>`;
 }
 
+const VOTES = [
+  {v:'R', t:'Случайный предмет', d:'Рулетка выберет предмет того же тира и типа'},
+  {v:'O', t:'Выбирает потерявший', d:'Владелец сам подбирает замену'},
+  {v:'X', t:'Выбирает соперник', d:'Соперник подбирает замену владельцу'}
+];
+const voteName = v => (VOTES.find(x => x.v === v) || {t:'?'}).t;
+function DisputePanel({session, d}){
+  const {names, viewerSeats, moves} = session, dp = d.dispute, r = d.round, {nameLang} = useContext(PrefCtx);
+  if (!dp) return null;
+  const pickOf = s => (moves[s] && moves[s][r] && moves[s][r].pick && moves[s][r].pick.id) || '';
+  const nm = id => BY_ID[id].name[nameLang];
+  const vlist = ['A', 'B'].flatMap(s => (dp.victims[s] || []).map(v => ({...v, owner:s})));
+  const reason = v => v.isPick ? (v.limit ? 'у игрока уже 4 активных предмета' : 'выбранный предмет входит в уже имеющийся или делит с ним компонент') : 'поглощён улучшением «' + nm(pickOf(v.owner)) + '»';
+  const both = dp.votes.A && dp.votes.B;
+  return html`<div className="panel p-4 flex flex-col gap-3 active">
+    <div className="panel-h">${dp.stage === 'done' ? 'Что заменили в этом раунде' : 'Спор: предмет пропадает'}</div>
+    ${dp.stage !== 'done' ? html`<div className="muted" style=${{fontSize:'13px'}}>В игре улучшение съедает свои компоненты. Эти предметы пропадают, вместо каждого игрок получает другой предмет того же тира (той же цены) и того же типа (активный или пассивный).</div>
+      <div className="flex flex-wrap gap-3">${vlist.map((v, i) => html`<div key=${i} className="panel p-2 flex items-center gap-2"><${Card} item=${BY_ID[v.id]} size="s"/><div style=${{maxWidth:'220px',fontSize:'13px'}}><b>${names[v.owner]}</b><div className="muted">${reason(v)}</div></div></div>`)}</div>` : null}
+    ${dp.stage === 'vote' ? html`<div>
+      <div className="panel-h" style=${{fontSize:'15px'}}>Кто подберёт замену? Голосуют оба игрока.</div>
+      ${['A', 'B'].map(s => (viewerSeats.includes(s) && !dp.votes[s]) ? html`<div key=${s} className="mt-2"><div className="muted" style=${{fontSize:'12px'}}>${viewerSeats.length === 2 ? 'Голосует ' + names[s] : 'Твой голос'}</div>
+        <div className="flex flex-wrap gap-2 mt-1">${VOTES.map(o => html`<button key=${o.v} className="btn" title=${o.d} onClick=${() => session.vote(s, r, o.v)}>${o.t}</button>`)}</div></div>` : null)}
+      <div className="mt-2 flex flex-wrap gap-2">${['A', 'B'].map(s => html`<span key=${s} className=${cx('chip', dp.votes[s] && 'ok')}>${names[s]}: ${dp.votes[s] ? 'проголосовал ✓' : 'выбирает…'}</span>`)}</div>
+      <div className="muted mt-2" style=${{fontSize:'12px'}}>Если голоса разойдутся, решит рулетка 50/50 между двумя выбранными вариантами.</div>
+    </div>` : null}
+    ${both && dp.stage !== 'vote' ? (dp.coin !== null
+      ? html`<div className="flex items-center gap-3 flex-wrap"><div className="wheel-w"><div className="wheel-p"></div><div className="wheel" style=${{'--end':(1440 + (dp.coin ? 90 : 270)) + 'deg'}}></div></div>
+          <div style=${{fontSize:'13px'}}>Голоса разошлись, рулетка 50/50:<br/><b style=${{color:'#e58a1f'}}>${voteName(dp.votes.A)}</b> или <b style=${{color:'#5aa8d6'}}>${voteName(dp.votes.B)}</b><br/>Выпало: <b>${voteName(dp.method)}</b></div></div>`
+      : html`<div style=${{fontSize:'13px'}}>Голоса совпали: <b>${voteName(dp.method)}</b></div>`) : null}
+    ${dp.stage === 'choose' ? html`<div className="flex flex-col gap-3">${dp.pending.map(p => viewerSeats.includes(p.chooser)
+      ? html`<div key=${p.key} className="panel p-3"><div className="panel-h" style=${{fontSize:'15px'}}>${names[p.chooser]}, выбери замену для «${nm(p.victim)}» (${names[p.owner]}, тир ${BY_ID[p.victim].tier}, ${BY_ID[p.victim].active ? 'активный' : 'пассивный'})</div>
+          <div className="cgrid mt-2">${p.eligible.map(id => html`<${Card} key=${id} item=${BY_ID[id]} size="g" onClick=${() => session.choose(p.chooser, r, p.key, id)}/>`)}</div></div>`
+      : html`<div key=${p.key} className="muted">Ждём: ${names[p.chooser]} подбирает замену для «${nm(p.victim)}»…</div>`)}</div>` : null}
+    ${dp.resolved.length ? html`<div className="flex flex-wrap gap-3">${dp.resolved.map((x, i) => html`<div key=${i} className="panel p-2 flex items-center gap-2"><${Card} item=${BY_ID[x.victim]} size="s" state="banned"/><span style=${{fontSize:'20px'}}>→</span>${x.replacement ? html`<${Card} item=${BY_ID[x.replacement]} size="s" state="sel"/>` : html`<span className="muted">замены нет</span>`}<div style=${{fontSize:'12px',maxWidth:'150px'}}><b>${names[x.owner]}</b><div className="muted">${voteName(x.method)}</div></div></div>`)}</div>` : null}
+  </div>`;
+}
 function Stage({session, d, peek}){
   const {settings, names, moves, viewerSeats} = session;
   const r = d.round, phase = d.phase;
@@ -916,7 +1024,7 @@ function Stage({session, d, peek}){
   const allReady = viewerSeats.length > 0 && viewerSeats.every(s => mv(s).ready);
   const roundTier = tierForRound(settings, r);
 
-  const revealFor = h => phase === 'recap' || (local ? peek : (viewerSeats.length === 1 && viewerSeats[0] === h));
+  const revealFor = h => ['recap', 'vote', 'choose'].includes(phase) || (local ? peek : (viewerSeats.length === 1 && viewerSeats[0] === h));
   const trio = h => html`<${TrioRow} key=${h} hider=${h} picker=${other(h)} names=${names} phase=${phase}
       move=${mv(h)} pickMove=${mv(other(h)).pick} reveal=${revealFor(h)}
       active=${picking && !mv(other(h)).pick} interactive=${canPick(other(h))}
@@ -926,7 +1034,7 @@ function Stage({session, d, peek}){
     <div className="panel p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="panel-h">
-          ${phase === 'hide' ? 'Загадывание' : phase === 'recap' ? 'Итог раунда' : 'Выбор карты'}
+          ${phase === 'hide' ? 'Загадывание' : phase === 'recap' ? 'Итог раунда' : (phase === 'vote' || phase === 'choose') ? 'Спор: замена предмета' : 'Выбор карты'}
         </div>
         <div className="flex flex-wrap gap-2">
           ${roundTier ? html`<${TierChip} tier=${roundTier}/>` : html`<span className="chip gold">Хаос: тир выбирает каждый</span>`}
@@ -937,6 +1045,8 @@ function Stage({session, d, peek}){
         ${phase !== 'hide' ? ['A', 'B'].map(s => html`<span key=${'p' + s} className=${cx('chip', mv(s).pick && 'ok')}>${names[s]}: ${mv(s).pick ? 'выбрал ✓' : 'ещё не выбрал'}</span>`) : null}
       </div>
     </div>
+
+    ${d.dispute ? html`<${DisputePanel} session=${session} d=${d}/>` : null}
 
     ${phase === 'hide' && pending.length > 0 ? html`<div className="panel p-4">
       ${local && pending.length > 1 ? html`<div className="flex gap-2 mb-3">
@@ -1025,9 +1135,9 @@ function Results({session, d, onExit}){
           <tbody>
             ${Array.from({length:settings.rounds}, (_, i) => {
               const a = moves.A[i + 1] || {}, b = moves.B[i + 1] || {};
-              const cell = m => m.pick ? html`<span className="inl"><${ItemIcon} item=${BY_ID[m.pick.id]} size=${22}/>${BY_ID[m.pick.id].name[nameLang]}</span>` : '-';
+              const cell = (m, s, rr) => m.pick ? html`<span className="inl"><${ItemIcon} item=${BY_ID[m.pick.id]} size=${22}/>${BY_ID[m.pick.id].name[nameLang]}${(d.history || []).filter(h => h.owner === s && h.round === rr).map((h, k) => html`<span key=${k} className="muted"> · заменено: ${h.replacement ? BY_ID[h.victim].name[nameLang] + ' → ' + BY_ID[h.replacement].name[nameLang] : BY_ID[h.victim].name[nameLang]}</span>`)}</span>` : '-';
               const off = m => m.hide ? html`<span className="tchip" style=${{'--tc':'var(--t' + m.tier + ')'}}>Т${m.tier}</span>` : '-';
-              return html`<tr key=${i}><td className="num">${i + 1}</td><td>${cell(a)}</td><td>${cell(b)}</td><td>${off(a)}</td><td>${off(b)}</td></tr>`;
+              return html`<tr key=${i}><td className="num">${i + 1}</td><td>${cell(a, 'A', i + 1)}</td><td>${cell(b, 'B', i + 1)}</td><td>${off(a)}</td><td>${off(b)}</td></tr>`;
             })}
           </tbody>
         </table>
@@ -1092,7 +1202,7 @@ function RoomLobby({session, onLeave, canWrite}){
   const view = isHost ? cfg : {rounds:meta.rounds, mode:meta.mode, order:meta.order};
   const change = c => { setCfg(c); save(c); };
   const bIn = !!(seats.B && seats.B.uid);
-  return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'1180px'}}>
+  return html`<div className="wide flex flex-col gap-4">
     <div className="panel p-5 text-center">
       <div className="muted disp" style=${{fontSize:'12px'}}>Код комнаты</div>
       <div className="disp num" style=${{fontSize:'clamp(40px,10vw,64px)',color:'var(--gold2)',letterSpacing:'.2em'}}>${meta.code}</div>
@@ -1222,7 +1332,7 @@ function CatalogError({err, onRetry}){
 const FILE_TRACKS = [];
 const THEMES = [
   {id:'gold', name:'Золотой нуар', sw:'#e0c58a'}, {id:'sapphire', name:'Сапфировое пламя', sw:'#5f93b8'},
-  {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'violet', name:'Спиритизм', sw:'#9a62d6'}
+  {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'graphite', name:'Уголь', sw:'#8d97a1'}, {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'violet', name:'Спиритизм', sw:'#9a62d6'}
 ];
 // Звуки меняются вместе с темой. tick/bid: [f1, f2, длительность, форма, громкость]; gavel: [f1, f2, длительность, форма, громкость, шум]
 const SFX_BANK = {
@@ -1230,6 +1340,7 @@ const SFX_BANK = {
   sapphire:{tick:[1250, 1000, .07, 'sine', .04], bid:[1568, 2093, .14, 'sine', .06], gavel:[420, 220, .3, 'triangle', .14, .04]},
   crimson:{tick:[190, 120, .07, 'triangle', .07], bid:[220, 330, .12, 'triangle', .1], gavel:[110, 45, .34, 'sine', .32, .1]},
   jade:{tick:[700, 900, .05, 'sine', .05], bid:[523, 784, .11, 'sine', .08], gavel:[300, 190, .2, 'sine', .2, .05]},
+  graphite:{tick:[300, 240, .05, 'triangle', .06], bid:[440, 660, .1, 'triangle', .09], gavel:[140, 55, .26, 'sine', .28, .09]},
   violet:{tick:[760, 1050, .08, 'sine', .04], bid:[659, 988, .16, 'sine', .07], gavel:[130, 95, .55, 'sine', .22, .03]}
 };
 const Sfx = (() => {
@@ -1350,8 +1461,8 @@ function RulesModal({onClose}){
       ${H('Чёрный аукцион')}
       ${P('Игрок выставляет предмет, соперник ставит первым, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета; победитель платит свою последнюю ставку. Если никто не ставил, предмет бесплатно достаётся выставившему. Потом выставляет второй игрок. Если включён таймер, по его окончании игрок автоматически пасует.')}
       ${H('Правила сборок (как в игре)')}
-      ${P('У каждого предмета один экземпляр, а улучшение съедает свои компоненты. Поэтому нельзя иметь и предмет, и его улучшение, а также два разных улучшения одного и того же предмета. Такие предметы на сайте закрыты.')}
-      ${P('Активных предметов не больше четырёх.')}
+      ${P('В игре у каждого предмета один экземпляр, а улучшение съедает свои компоненты. Если в драфте тебе достался предмет, который это нарушает (улучшение того, что у тебя есть, или второе улучшение одного предмета), начинается спор: лишний предмет пропадает, а вместо него игрок получает другой предмет того же тира и типа (активный или пассивный). Как подобрать замену, решают голосованием: случайно, выбирает потерявший или выбирает соперник. Если голоса разошлись, решает рулетка 50/50. В аукционе такие предметы закрыты.')}
+      ${P('Активных предметов не больше четырёх. Лишний активный предмет заменяется на пассивный того же тира (тем же спором).')}
       ${P('Предметы с пометкой «Усиление» усиливают выбранное умение. Что усиливать, решаете сами, как при покупке в игре. Ультимейт усилить нельзя, а на часть умений (например, с дополнительными зарядами) усиление не действует.')}
       ${P('В драфте деньги считаются по цене тира (800, 1600, 3200, 6400), а не по реальной стоимости сборки с компонентами.')}
       <p className="muted mt-3" style=${{fontSize:'12px'}}>Версия каталога предметов: ${CAT_VER || '?'}. Если у друга она другая, пусть обновит страницу (Ctrl+F5).</p>
@@ -1386,9 +1497,9 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const gameFromHash = h => h === '#draft' ? 'draft' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
+const gameFromHash = h => h === '#draft' ? 'draft' : h === '#builds' ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
 const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
-const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион'};
+const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', builds:'Сборки героев'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
   ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
@@ -1399,10 +1510,85 @@ const FAQ = [
   ['Описание предмета не совпадает с игрой. Почему?', 'Данные берутся из сообщества Deadlock API, а сайт сделан с помощью ИИ, поэтому часть описаний могла остаться неточной. Мы их постепенно поправляем.'],
   ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
   ['Как поменять язык названий или включить музыку?', 'Нажми на шестерёнку справа вверху. По умолчанию названия предметов на английском, а описания на русском.'],
+  ['Что будет, если мне достанется улучшение предмета, который у меня уже есть?', 'Как в игре, исходный предмет «съедается». Он пропадает, а вместо него появляется другой предмет того же тира и типа. Как его подобрать, игроки решают голосованием (случайно, сам или соперник), при разных голосах решает рулетка 50/50.'],
+  ['Где посмотреть сборки героев?', 'В разделе «Сборки героев» на главной странице: нажми на героя и увидишь его сборки с датой публикации. Если сборке больше трёх месяцев, возможно, она уже не актуальна после патчей.'],
   ['Сколько активных предметов можно взять?', 'Как в игре, не больше четырёх. Когда у игрока уже четыре активных предмета, остальные активные для него закрыты (на карточках они подписаны «Активное»).'],
   ['Что значит «Усиление» у предмета?', 'Такой предмет усиливает выбранное тобой умение. Какое именно, вы с другом решаете сами, как в игре при покупке (нельзя усилить ультимейт, а на некоторые умения усиление вообще не действует, например на дополнительные заряды).'],
   ['Это официальный проект Valve?', 'Нет. Это неофициальный фанатский проект, он никак не связан с Valve Corporation и не одобрен ею.']
 ];
+/* ======================= СБОРКИ ГЕРОЕВ ======================= */
+// Сборки лежат в файле builds.json рядом с index.html (герой по английскому названию, предметы по английским названиям).
+// Герои берутся из heroes-en.min.json / heroes-ru.min.json (если есть) или из Deadlock API.
+const HERO_API = 'https://api.deadlock-api.com/v1/assets/heroes';
+async function firstJson(urls){ for (const u of urls){ try { const j = await getJson(u, 20000); if (Array.isArray(j) && j.length) return j; } catch (e){} } return null; }
+const heroImg = h => {
+  const im = h.images || {};
+  for (const k of ['icon_hero_card', 'icon_image_small', 'selection_image', 'icon_hero_card_webp', 'minimap_image']){ if (typeof im[k] === 'string' && im[k]) return im[k]; }
+  return Object.values(im).find(v => typeof v === 'string' && /\.(png|webp|jpg)/.test(v)) || '';
+};
+const normN = x => String(x || '').trim().toLowerCase();
+const daysAgo = d => { const t = Date.parse(d); return isFinite(t) ? Math.max(0, Math.floor((Date.now() - t) / 86400000)) : null; };
+function HeroTile({h, n, on, onClick, nameLang}){
+  const [bad, setBad] = useState(false);
+  return html`<button className=${cx('htile', on && 'on', !n && 'dim')} onClick=${onClick} title=${h.name[nameLang]}>
+    ${h.img && !bad ? html`<img src=${h.img} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : html`<div className="hph">${h.name.en.charAt(0)}</div>`}
+    <span style=${{lineHeight:1.15,textAlign:'center'}}>${h.name[nameLang]}</span>${n ? html`<i>${n}</i>` : null}</button>`;
+}
+function BuildCard({b}){
+  const {nameLang} = useContext(PrefCtx);
+  const days = daysAgo(b.date), find = nm => { const k = normN(nm); return ITEMS.find(i => normN(i.name.en) === k || normN(i.name.ru) === k); };
+  const all = (b.stages || []).flatMap(st => st.items || []).map(find).filter(Boolean), total = all.reduce((a, i) => a + i.price, 0);
+  const fresh = days == null ? null : (days <= 30 ? ['Свежая', 'var(--teal)'] : (days <= 90 ? ['Была актуальна', 'var(--gold2)'] : ['Возможно устарела', '#e07a7a']));
+  const dt = isFinite(Date.parse(b.date)) ? new Date(b.date).toLocaleDateString('ru-RU') : '—';
+  return html`<div className="panel p-4 flex flex-col gap-3">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <div><div className="panel-h" style=${{fontSize:'20px'}}>${b.title || 'Сборка'}</div>
+        <div className="muted" style=${{fontSize:'13px'}}>${b.author ? 'Автор: ' + b.author + ' · ' : ''}Опубликовано: <b>${dt}</b>${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${b.patch ? ' · патч ' + b.patch : ''}</div></div>
+      <div className="flex flex-wrap gap-2">${b.example ? html`<span className="chip">Пример</span>` : null}${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}${total ? html`<span className="chip num"><${Soul}/> ${total}</span>` : null}</div>
+    </div>
+    ${b.desc ? html`<p className="muted" style=${{fontSize:'14px'}}>${b.desc}</p>` : null}
+    ${(b.stages || []).map((st, i) => html`<div key=${i}><div className="faq-q" style=${{fontSize:'15px'}}>${st.name}</div>
+      <div className="flex flex-wrap gap-3">${(st.items || []).map((nm, j) => { const it = find(nm); return it ? html`<${Card} key=${j} item=${it} size="g"/>` : html`<span key=${j} className="chip" title="Предмет не найден в каталоге">${nm} ?</span>`; })}</div></div>`)}
+  </div>`;
+}
+function Builds(){
+  const {nameLang} = useContext(PrefCtx);
+  const [st, setSt] = useState({loading:true, heroes:[], builds:[]});
+  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(false);
+  useEffect(() => {
+    let on = true;
+    (async () => {
+      const builds = (await firstJson(['builds.json'])) || [];
+      const he = await firstJson(['heroes-en.min.json', 'heroes-en.json', HERO_API + '?language=english', HERO_API]);
+      const hr = await firstJson(['heroes-ru.min.json', 'heroes-ru.json', HERO_API + '?language=russian']);
+      const ruBy = {}; (hr || []).forEach(h => { ruBy[h.id] = h.name; });
+      let heroes = (he || []).filter(h => h && h.name && !h.disabled && h.player_selectable !== false).map(h => ({key:h.name, name:{en:h.name, ru:ruBy[h.id] || h.name}, img:heroImg(h)}));
+      if (!heroes.length){ const seen = {}; builds.forEach(b => { if (b.hero && !seen[normN(b.hero)]){ seen[normN(b.hero)] = 1; heroes.push({key:b.hero, name:{en:b.hero, ru:b.hero}, img:''}); } }); }
+      heroes.sort((x, y) => x.name.en.localeCompare(y.name.en));
+      if (on) setSt({loading:false, heroes, builds});
+    })();
+    return () => { on = false; };
+  }, []);
+  const cnt = h => st.builds.filter(b => normN(b.hero) === normN(h.key)).length;
+  const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && (!onlyB || cnt(h)));
+  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => normN(b.hero) === normN(hero.key)).sort((x, y) => (Date.parse(y.date) || 0) - (Date.parse(x.date) || 0)) : [];
+  return html`<div className="flex flex-col gap-5">
+    <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Сборки героев</h2>
+      <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Выбери героя и посмотри сборки. У каждой указана дата публикации, чтобы понимать, не устарела ли она после патчей.</p></div>
+    <div className="panel p-4 flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
+        <${Seg} value=${onlyB} options=${[{v:false, l:'Все герои'}, {v:true, l:'Только со сборками'}]} onChange=${setOnlyB}/>
+      </div>
+      ${st.loading ? html`<div className="muted">Загружаем героев…</div>` : null}
+      ${!st.loading && !st.heroes.length ? html`<div className="muted">Список героев не загрузился. Обнови страницу или проверь интернет.</div>` : null}
+      <div className="flex flex-wrap gap-2">${list.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${cnt(h)} on=${sel === h.key} nameLang=${nameLang} onClick=${() => setSel(sel === h.key ? null : h.key)}/>`)}</div>
+    </div>
+    ${hero ? html`<div className="flex flex-col gap-4"><div className="panel-h" style=${{fontSize:'22px'}}>${hero.name[nameLang]}</div>
+      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b}/>`) : html`<div className="panel p-4 muted">Для этого героя сборок пока нет.</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
+    <p className="muted text-center" style=${{fontSize:'12px'}}>Оценки и отзывы появятся позже.</p>
+  </div>`;
+}
 function Hub({onOpen}){
   const [open, setOpen] = useState(-1);
   const games = [
@@ -1416,6 +1602,9 @@ function Hub({onOpen}){
        <rect x="40" y="78" width="60" height="10" rx="2" fill="#b8975a"/>
        <g transform="rotate(-35 66 40)"><rect x="62" y="40" width="8" height="42" rx="3" fill="#9a7a45"/><rect x="46" y="18" width="40" height="22" rx="4" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="43" y="20" width="6" height="18" rx="2" fill="#b8975a"/><rect x="83" y="20" width="6" height="18" rx="2" fill="#b8975a"/></g>
        <g transform="translate(116 38)"><circle r="20" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><circle r="14" fill="none" stroke="#b8975a" strokeWidth="1.5"/><text y="9" textAnchor="middle" fontSize="24" fontWeight="800" fill="#141311">$</text></g></g></svg>`}
+    ,{id:'builds', title:'Сборки героев', tag:'Справочник · с датой публикации', desc:'Выбери героя и посмотри сборки предметов. У каждой указана дата, чтобы понимать, метовая она или уже устарела.', btn:'Открыть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="40" cy="36" r="22" fill="#5f93b8" stroke="#141311" strokeWidth="3"/><circle cx="40" cy="30" r="8" fill="#141311" opacity=".55"/><path d="M24 54q16-14 32 0" fill="#141311" opacity=".55"/>
+       <rect x="76" y="14" width="26" height="26" rx="3" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="14" width="26" height="26" rx="3" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><rect x="76" y="46" width="26" height="26" rx="3" fill="#7fb53a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="46" width="26" height="26" rx="3" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/></g></svg>`}
   ];
   return html`<div className="flex flex-col gap-8">
     <div className="hero text-center">
@@ -1423,7 +1612,7 @@ function Hub({onOpen}){
       <p className="muted" style=${{maxWidth:'56ch',margin:'0 auto 14px'}}>Мини-режимы для игры в Deadlock с друзьями. Выбери режим, собери билд и вызови друга на бой.</p>
       <div className="flex flex-wrap justify-center gap-2"><span className="badge"><${Soul} size=${10}/>Бесплатно</span><span className="badge">Без регистрации</span><span className="badge">Онлайн на двоих</span></div>
     </div>
-    <div className="grid gap-5 md:grid-cols-2">
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
       ${games.map(g => html`<div key=${g.id} className="hub-card live panel p-6 flex flex-col gap-3 active" style=${{cursor:'pointer'}} onClick=${() => onOpen(g.id)}>
         <div className="hub-art">${g.art}</div>
         <div className="muted disp" style=${{fontSize:'12px'}}>${g.tag}</div>
@@ -1487,7 +1676,7 @@ function ItemPicker({taken, blocked, selected, onPick}){
       <${Seg} value=${tier} options=${[{v:0, l:'Все тиры'}, {v:1, l:'I'}, {v:2, l:'II'}, {v:3, l:'III'}, {v:4, l:'IV'}]} onChange=${setTier}/>
       <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск предмета" value=${q} onChange=${e => setQ(e.target.value)}/>
     </div>
-    <div className="flex flex-wrap gap-3">
+    <div className="cgrid">
       ${list.map(i => html`<${Card} key=${i.id} item=${i} size="g" state=${taken.has(i.id) || (blocked && blocked.has(i.id)) ? 'banned' : (selected === i.id ? 'sel' : '')} tag=${taken.has(i.id) ? 'Куплен' : (blocked && blocked.has(i.id) ? 'Нельзя' : (selected === i.id ? 'Выбран' : null))} onClick=${() => onPick(i.id)}/>`)}
     </div>
   </div>`;
@@ -1519,7 +1708,7 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
   const myBlocked = !!(item && turnSeat && blockedSet(won[turnSeat].map(w => w.id)).has(item.id));
   const mine = Math.max(0, ...controls.filter(x => x === turnSeat).map(x => st.money[x]));
   const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, Math.max(Number(amt) || 0, bid.amount) + d)));
-  return html`<div className="flex flex-col gap-4">
+  return html`<div className="wide flex flex-col gap-4">
     <div className="panel p-4 text-center">
       <div className="muted disp" style=${{fontSize:'12px'}}>Чёрный аукцион · раунд ${Math.min(st.round, st.cfg.rounds)} из ${st.cfg.rounds}${remain != null ? html` · <b style=${{color:remain <= 5 ? 'var(--red)' : 'var(--gold2)',fontSize:'15px'}}>⏱ ${remain} с</b>` : ''}</div>
       <div className="disp" style=${{fontSize:'clamp(22px,4.5vw,36px)',color:'var(--gold2)'}}>
@@ -1727,6 +1916,7 @@ function App(){
   if (!game) body = html`<${Hub} onOpen=${openGame}/>`;
   else if (cat.status === 'loading') body = html`<${CatalogLoading}/>`;
   else if (cat.status === 'error') body = html`<${CatalogError} err=${cat.err} onRetry=${loadCat}/>`;
+  else if (game === 'builds') body = html`<${Builds}/>`;
   else if (game === 'auction') body = html`<${Auction}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;

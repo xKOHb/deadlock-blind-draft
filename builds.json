@@ -1,0 +1,29 @@
+[
+  {
+    "id": "example-haze",
+    "hero": "Haze",
+    "title": "Пример: так выглядит сборка",
+    "author": "xKOHb",
+    "date": "2026-11-12",
+    "patch": "",
+    "example": true,
+    "desc": "Это пример формата. Настоящие сборки автор добавит позже.",
+    "stages": [
+      {
+        "name": "Старт",
+        "items": [
+          "Extra Spirit",
+          "Extra Health",
+          "Extra Stamina"
+        ]
+      },
+      {
+        "name": "Середина",
+        "items": [
+          "Cold Front",
+          "Healing Booster"
+        ]
+      }
+    ]
+  }
+]
