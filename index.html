@@ -161,6 +161,7 @@ input[type=range]{accent-color:var(--gold);width:100%}
 .ii-secs{margin:12px -16px -16px;background:rgba(0,0,0,.32)}
 .ii-sec{padding:6px 16px 8px;display:flex;flex-direction:column;gap:4px;font-size:13px;font-family:var(--f-itext)}
 .ii-st{font-family:var(--f-display);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#d9cfb6}
+.hl{font-weight:600;color:#fff}.dim{opacity:.7;font-size:12px}
 .ii-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:6px;margin-top:10px}
 .ii-tile{background:rgba(0,0,0,.3);padding:6px 4px;text-align:center;font-family:var(--f-itext)}
 .ii-tile b{display:block;font-size:15px;font-weight:600}.ii-tile span{display:block;font-size:11px;line-height:1.2;opacity:.9}
@@ -191,9 +192,13 @@ html{min-height:100%}body{min-height:100vh;background-attachment:fixed,fixed,fix
 .pbar{display:flex;gap:3px}
 .pbar i{flex:1;height:5px;background:var(--edge)}
 .pbar i.done{background:var(--teal)}.pbar i.cur{background:var(--gold2)}
-.tierb{cursor:pointer;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);padding:8px 10px;text-align:left;min-width:112px;font-family:var(--f-body)}
-.tierb.on{border-color:var(--tc);box-shadow:inset 0 0 0 1px var(--tc);background:color-mix(in srgb,var(--tc) 14%,var(--bg2))}
+.tierb{position:relative;overflow:hidden;cursor:pointer;border:1px solid color-mix(in srgb,var(--tc) 50%,var(--edge));background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 24%,var(--bg2)),var(--bg2) 72%);color:var(--text);padding:12px 16px 10px;text-align:left;min-width:140px;font-family:var(--f-body);clip-path:var(--step);transition:transform .15s,filter .15s}
+.tierb:hover:not(:disabled){transform:translateY(-3px);filter:drop-shadow(0 6px 12px color-mix(in srgb,var(--tc) 55%,transparent))}
+.tierb.on{border-color:var(--tc);background:linear-gradient(160deg,color-mix(in srgb,var(--tc) 42%,var(--bg2)),color-mix(in srgb,var(--tc) 10%,var(--bg2)) 80%);filter:drop-shadow(0 0 10px color-mix(in srgb,var(--tc) 70%,transparent))}
 .tierb:disabled{opacity:.35;cursor:not-allowed}
+.tb-n{position:absolute;right:8px;top:-6px;font:800 50px/1 var(--f-head);color:var(--tc);opacity:.25;pointer-events:none}
+.tb-t{font-size:17px;letter-spacing:.04em;color:var(--tc)}.tb-p{font-size:13px;margin-top:2px}
+.tb-bar{height:4px;background:rgba(255,255,255,.1);margin:8px 0 4px}.tb-bar i{display:block;height:100%;background:var(--tc)}
 .trayslot{width:64px;aspect-ratio:3/4;border:1px dashed var(--edge2);display:flex;align-items:center;justify-content:center;color:var(--edge2);font-family:var(--f-head);cursor:pointer;position:relative;flex:none;background:rgba(255,255,255,.015)}
 .trayslot.f{border:1px solid var(--tc);overflow:hidden}
 .trayslot.f small{position:absolute;bottom:0;right:0;font-size:10px;color:var(--soul);background:rgba(20,15,8,.82);padding:0 3px;font-weight:600}
@@ -290,57 +295,47 @@ function statsOf(props){
 // единицы: API иногда отдаёт "mm" вместо "m/s"; для русского переводим единицы
 const fmtV = (v, ru) => { v = String(v).replace(/mm$/, 'm/s'); return ru ? v.replace(/m\/s$/, ' м/с').replace(/(\d)\s*s$/, '$1 с') : v; };
 // Данные из tooltip_sections (то, что рисует сама игра): постоянные статы, пассивные/активные блоки, плитки, длительность, окно применения, перезарядка.
-function propEntry(pe, pr, k){
-  const a = pe && pe[k]; if (!a) return null;
-  const e = statsOf({[k]:a})[k]; if (!e) return null;
-  const b = (pr && pr[k]) ? (statsOf({[k]:pr[k]})[k] || e) : e;
-  return {l:{en:e.l, ru:b.l}, v:e.v, key:k};
+// ---- Разбор карточки предмета ТАК ЖЕ, как её рисует игра: tooltip_sections ----
+// innate = постоянные статы; passive/active = блок с текстом, плитками (important/elevated), строками (длительность, окно применения...) и перезарядкой.
+function fmtProp(p, lang, rp){
+  const ru = lang === 'ru', q = (ru && rp) ? rp : p;
+  const num = parseFloat(String(p.value == null ? '' : p.value).replace(',', '.').replace(/[^\d.\-]/g, ''));
+  if (!isFinite(num) || num === 0) return null;
+  if (p.disable_value != null && parseFloat(p.disable_value) === num) return null;
+  const pre = String(p.prefix || '').trim();
+  const sign = pre === '-' ? '-' : pre === '+' ? '+' : pre.includes('{s:sign}') ? (num >= 0 ? '+' : '-') : (num < 0 ? '-' : '');
+  let n = String(Math.round(Math.abs(num) * 100) / 100); if (ru) n = n.replace('.', ',');
+  let post = String(q.postfix || '').trim(); if (post.includes('{')) post = '';
+  if (ru){ if (/^(с\.?|сек\.?)$/.test(post)) post = ' с'; else if (/^м\/[cс]$/.test(post)) post = ' м/с'; else if (post === 'м') post = ' м'; else if (/^[A-Za-zА-Яа-я\/]{2,}/.test(post) || /^% /.test(post)) post = ' ' + post; }
+  else { if (p.css_class === 'move_speed' && post === 'm') post = 'm/s'; if (/^[A-Za-z\/]{2,}/.test(post) || /^% /.test(post)) post = ' ' + post; }
+  return sign + n + post;
 }
-function sectionsOf(x, r){
-  try {
-    const sec = Array.isArray(x.tooltip_sections) ? x.tooltip_sections : [];
-    if (!sec.length) return null;
-    const rsec = Array.isArray(r.tooltip_sections) ? r.tooltip_sections : [];
-    const innate = [], blocks = [], pe = x.properties, pr = r.properties || {};
-    sec.forEach((s, si) => (s.section_attributes || []).forEach((at, ai) => {
-      const ra = ((rsec[si] || {}).section_attributes || [])[ai] || {};
-      const get = list => (list || []).map(k => propEntry(pe, pr, k)).filter(Boolean);
-      const type = String(s.section_type || '').toLowerCase();
-      const props = get(at.properties), imp = get(at.important_properties), elev = get(at.elevated_properties);
-      if (type === 'innate' || (type !== 'active' && type !== 'passive')){ props.concat(elev).forEach(e => innate.push(e)); return; }
-      const all = props.concat(imp, elev), cdE = all.find(e => /cooldown/i.test(e.key) && !/reduc|bonus/i.test(e.key));
-      const tiles = elev.filter(e => e !== cdE), tk = new Set(tiles.map(e => e.key));
-      const meta = imp.concat(props).filter(e => e !== cdE && !tk.has(e.key));
-      blocks.push({type, cd:cdE ? parseFloat(pe[cdE.key].value) : 0, tiles, meta, own:true});
-    }));
-    if (!innate.length && !blocks.length) return null;
-    return {innate, blocks};
-  } catch (e){ return null; }
+function propEntry(x, r, k){
+  const p = x.properties && x.properties[k]; if (!p || typeof p !== 'object') return null;
+  const rp = (r.properties || {})[k], tech = p.provided_property_type === 'MODIFIER_VALUE_TECH_POWER';
+  const en = fmtProp(p, 'en', rp), ru = fmtProp(p, 'ru', rp);
+  const le = tech ? 'Spirit Power' : strip(p.label), lr = tech ? 'ед. к спиритической мощи' : strip((rp && rp.label) || p.label);
+  const lrFix = k === 'BonusAbilityDurationPercent' ? 'к длительности умений' : null;   // так подписано в игре
+  if (!en || !le) return null;
+  return {l:{en:le, ru:lrFix || lr || le}, v:{en, ru:ru || en}, css:p.css_class || '', key:k};
 }
-// Ручные правки по скриншотам игры (по англ. названию). Перекрывают данные API.
-const T = (en, ru, v) => ({l:{en, ru}, v});
-const ITEM_FIX = {
-  'Active Reload': {
-    innate:[T('Max Ammo', 'Макс. боезапас', '+20%')],
-    blocks:[{type:'passive', cd:12,
-      text:{en:'Pressing R at the indicated moment during reload instantly completes it and grants bonus fire rate, bullet lifesteal and movement speed.',
-            ru:'Нажав R в указанный момент перезарядки, вы мгновенно завершите её и получите бонус к скорострельности, краже здоровья пулями и скорости передвижения.'},
-      tiles:[T('Fire Rate', 'Скорострельность', '+25%'), T('Bullet Lifesteal', 'Кража здоровья пулями', '+16%'), T('Move Speed', 'Скорость передвижения', '+0.75m/s')],
-      meta:[T('Duration', 'Длительность', '7s')]}]
-  },
-  'Extra Spirit': {
-    innate:[T('Spirit Power', 'ед. к спиритической мощи', '+10')],
-    blocks:[]
-  },
-  'Arcane Surge': {
-    innate:[T('Stamina', 'Выносливость', '+1'), T('Stamina Recovery', 'Восстановление выносливости', '+12%')],
-    blocks:[{type:'passive', cd:0,
-      text:{en:'After performing a dash jump, the next ability you use within 7s gets bonus range, duration and spirit power.',
-            ru:'После совершения рывка с прыжком следующее умение, которое вы используете в течение 7 сек., будет иметь бонусную дальность, длительность и спиритическую мощь.'},
-      tiles:[T('Ability Range', 'Дальность умения', '+12%'), T('Ability Duration', 'к длительности умений', '+15%'), T('Spirit Power', 'ед. к спиритической мощи', '+20')],
-      meta:[T('Window', 'Окно применения', '7s')]}]
-  }
-};
+const RU_TEXT_FIX = [['Нажав Перезарядка', 'Нажав R']];   // в API вместо клавиши подставлено название действия
+function buildSections(x, r){
+  const secs = Array.isArray(x.tooltip_sections) ? x.tooltip_sections : [], rs = Array.isArray(r.tooltip_sections) ? r.tooltip_sections : [];
+  const innate = [], blocks = [], d = x.description || {}, rd = r.description || {};
+  secs.forEach((sec, si) => (sec.section_attributes || []).forEach((at, ai) => {
+    const rat = (((rs[si] || {}).section_attributes) || [])[ai] || {};
+    const type = sec.section_type || (x.is_active_item ? 'active' : 'passive');
+    const list = a => (a || []).map(k => propEntry(x, r, k)).filter(Boolean);
+    const props = list(at.properties), imp = list((at.important_properties || []).concat(at.important_properties_with_icon || [])), elev = list(at.elevated_properties);
+    if (type === 'innate'){ props.concat(elev, imp).forEach(e => innate.push(e)); return; }
+    const cdE = props.concat(imp).find(e => e.css === 'cooldown');
+    let te = at.loc_string || d[type] || d.desc || '', tr = rat.loc_string || rd[type] || rd.desc || te;
+    RU_TEXT_FIX.forEach(f => { tr = tr.split(f[0]).join(f[1]); });
+    blocks.push({type, cd:cdE ? cdE.v : null, text:{en:te, ru:tr}, tiles:imp.concat(elev).filter(e => e !== cdE), meta:props.filter(e => e !== cdE)});
+  }));
+  return {innate, blocks};
+}
 function parseCatalog(en, ru){
   const ruBy = {}; (ru || []).forEach(x => { if (x && x.class_name) ruBy[x.class_name] = x; });
   const seen = new Set(), list = [];
@@ -362,13 +357,8 @@ function parseCatalog(en, ru){
       slot:slotKey(x.item_slot_type), active:!!x.is_active_item, cd, comps:Array.isArray(x.component_items) ? x.component_items.filter(c => typeof c === 'string') : [],
       desc:{en:descOf(x.description), ru:descOf(r.description) || descOf(x.description)}
     });
-    const it = list[list.length - 1], sc = sectionsOf(x, r), fx = ITEM_FIX[it.name.en];
-    if (sc){
-      it.innate = sc.innate;
-      const dd = k => ({en:strip((x.description || {})[k]), ru:strip((r.description || {})[k]) || strip((x.description || {})[k])});
-      it.blocks = sc.blocks.map(b => ({...b, text:dd(b.type)}));
-    }
-    if (fx){ it.innate = fx.innate; it.blocks = fx.blocks; }
+    const it = list[list.length - 1], sc = buildSections(x, r);
+    if (sc.innate.length || sc.blocks.length){ it.innate = sc.innate; it.blocks = sc.blocks; }
   });
   list.forEach(i => { i.comps = i.comps.filter(c => seen.has(c)); });
   list.forEach(i => { i.up = list.filter(o => o.comps.includes(i.id)).map(o => o.id); });
@@ -393,7 +383,19 @@ function tierForRound(settings, r){
   if (settings.order === 'cycle') return ((r - 1) % 4) + 1;
   return Math.ceil(r * 4 / settings.rounds);
 }
-function ownedSet(inv, seat){ return new Set(inv[seat].map(x => x.id)); }
+// Если у игрока уже есть улучшенный предмет, его компоненты (в том числе вложенные) брать нельзя.
+// Исключения: английские названия предметов, которые всё равно можно брать (пока пусто).
+const COVER_EXCEPT = new Set([]);
+function ownedSet(inv, seat){
+  const out = new Set();
+  const add = (id, root) => {
+    if (out.has(id)) return; const it = BY_ID[id];
+    if (!root && it && COVER_EXCEPT.has(it.name.en)) return;
+    out.add(id); if (it) (it.comps || []).forEach(c => add(c, false));
+  };
+  inv[seat].forEach(x => add(x.id, true));
+  return out;
+}
 function availableOfTier(tier, ownedIds){ return ITEMS.filter(i => i.tier === tier && !ownedIds.has(i.id)); }
 
 // Состояние раунда выводится из ходов. moves[seat][round] = {hide:[id,id,id], tier, pick:{idx,id}, ready}
@@ -446,9 +448,31 @@ function ItemIcon({item, size}){
   if (!item.image || bad) return html`<span className="mono" data-l=${(item.name.en || '?').charAt(0)} style=${size ? {width:(size * .6) + 'px'} : null}></span>`;
   return html`<img className="ico" src=${item.image} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)} style=${st}/>`;
 }
+// Текст описания: жирные слова из игры (highlight), серые пометки (diminish), без svg и картинок.
+function RichText({html: h}){
+  const nodes = useMemo(() => {
+    try {
+      const doc = new DOMParser().parseFromString('<div>' + h + '</div>', 'text/html');
+      let k = 0;
+      const walk = n => {
+        if (n.nodeType === 3) return n.textContent;
+        if (n.nodeType !== 1) return null;
+        const t = n.tagName.toLowerCase(); if (t === 'svg' || t === 'img') return null;
+        const kids = Array.from(n.childNodes).map(walk), cl = n.getAttribute('class') || '';
+        if (t === 'br') return React.createElement('br', {key:k++});
+        if (/highlight|inline-attribute-label/.test(cl)) return React.createElement('b', {key:k++, className:'hl'}, ...kids);
+        if (/diminish/.test(cl)) return React.createElement('span', {key:k++, className:'dim'}, ...kids);
+        return React.createElement(React.Fragment, {key:k++}, ...kids);
+      };
+      return Array.from(doc.body.firstChild.childNodes).map(walk);
+    } catch (e){ return [strip(h)]; }
+  }, [h]);
+  return html`<${Fragment}>${nodes}<//>`;
+}
 function ItemInfo({item}){
   const {nameLang, descLang} = useContext(PrefCtx);
   const ru = descLang === 'ru', slot = SLOT_LABEL[item.slot], text = item.desc[descLang] || item.desc.en;
+  const vOf = x => (typeof x.v === 'string' ? fmtV(x.v, ru) : (x.v[descLang] || x.v.en));
   const blocks = item.blocks || ((text || item.active) ? [{type:item.active ? 'active' : 'passive', cd:item.cd, text:item.desc, tiles:[], meta:[]}] : []);
   const comps = (item.comps || []).map(id => BY_ID[id]), ups = (item.up || []).map(id => BY_ID[id]);
   const rel = (t, list) => list.length ? html`<div className="ii-sec"><div className="ii-st">${t}</div>
@@ -461,15 +485,15 @@ function ItemInfo({item}){
       ${slot ? html`<span className="tchip" style=${{'--tc':'#fbf3e0'}}>${slot}</span>` : null}
     </div>
     <div className="flex flex-col">
-      ${(item.innate || item.stats).map((x, i) => html`<div className="stat-line" key=${i}><b>${fmtV(x.v, ru)}</b><span>${x.l[descLang] || x.l.en}</span></div>`)}
+      ${(item.innate || item.stats).map((x, i) => html`<div className="stat-line" key=${i}><b>${vOf(x)}</b><span>${x.l[descLang] || x.l.en}</span></div>`)}
     </div>
     ${blocks.map((bl, i) => {
       const txt = bl.text ? (bl.text[descLang] || bl.text.en) : '';
       return html`<${Fragment} key=${i}>
-        ${(txt || bl.type === 'active' || bl.cd) ? html`<div className="ii-band"><span>${bl.type === 'active' ? (ru ? 'Активное' : 'Active') : (ru ? 'Пассивное' : 'Passive')}</span>${bl.cd ? html`<span className="ii-cd num">${fmtV(bl.cd + 's', ru)}</span>` : null}</div>` : null}
-        ${txt ? html`<div className="ii-txt">${txt}</div>` : null}
-        ${bl.tiles && bl.tiles.length ? html`<div className="ii-tiles">${bl.tiles.map((t, j) => html`<div className="ii-tile" key=${j}><b>${fmtV(t.v, ru)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}</div>` : null}
-        ${(bl.meta || []).map((t, j) => html`<div className="ii-mline" key=${j}><b>${fmtV(t.v, ru)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}
+        ${(txt || bl.type === 'active' || bl.cd) ? html`<div className="ii-band"><span>${bl.type === 'active' ? (ru ? 'Активное' : 'Active') : (ru ? 'Пассивное' : 'Passive')}</span>${bl.cd ? html`<span className="ii-cd num">⏱ ${typeof bl.cd === 'object' ? (bl.cd[descLang] || bl.cd.en) : fmtV(bl.cd + 's', ru)}</span>` : null}</div>` : null}
+        ${txt ? html`<div className="ii-txt"><${RichText} html=${txt}/></div>` : null}
+        ${bl.tiles && bl.tiles.length ? html`<div className="ii-tiles">${bl.tiles.map((t, j) => html`<div className="ii-tile" key=${j}><b>${vOf(t)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}</div>` : null}
+        ${(bl.meta || []).map((t, j) => html`<div className="ii-mline" key=${j}><b>${vOf(t)}</b><span>${t.l[descLang] || t.l.en}</span></div>`)}
       <//>`;
     })}
     ${(comps.length || ups.length) ? html`<div className="ii-secs">${rel(ru ? 'Компоненты:' : 'Components:', comps)}${rel(ru ? 'Улучшения:' : 'Upgrades:', ups)}</div>` : null}
@@ -500,6 +524,11 @@ function TipHost({children}){
     hideTip:() => setTip(null),
     openDetail:item => { setTip(null); setDetail(item); }
   }), []);
+  useEffect(() => {
+    const h = () => setTip(null);
+    window.addEventListener('click', h, true); window.addEventListener('scroll', h, true);
+    return () => { window.removeEventListener('click', h, true); window.removeEventListener('scroll', h, true); };
+  }, []);
   useEffect(() => {
     const k = e => { if (e.key === 'Escape') setDetail(null); };
     window.addEventListener('keydown', k);
@@ -536,7 +565,6 @@ function Card({item, back = false, state = '', n, size = 'g', onClick, tag}){
           <div className="c-art"><${ItemIcon} item=${item}/></div>
           <span className="c-tier">${ROMAN[item.tier]}</span><span className="c-price num"><${Soul}/>${item.price}</span>
           <div className="c-name">${item.name[nameLang]}</div>
-          ${!back && size !== 's' ? html`<button className="c-info" aria-label="Подробнее" onClick=${e => { e.stopPropagation(); ui.openDetail(item); }}>i</button>` : null}
         ` : null}
       </div></div>
       <div className="back"><div className="back-in"><span><i><${Soul} size=${18}/></i></span>${n ? html`<b>${n}</b>` : null}</div></div>
@@ -766,8 +794,10 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
         ${[1, 2, 3, 4].map(t => {
           const av = availableOfTier(t, ownedIds).length;
           return html`<button key=${t} className=${cx('tierb', tier === t && 'on')} style=${{'--tc':'var(--t' + t + ')'}} disabled=${av < HIDE_COUNT} onClick=${() => pickTier(t)}>
-            <div className="disp" style=${{color:'var(--t' + t + ')',fontSize:'15px'}}>Тир ${t}</div>
-            <div className="num" style=${{fontSize:'12px'}}><${Soul}/> ${TIER_PRICE[t]}</div>
+            <span className="tb-n">${ROMAN[t]}</span>
+            <div className="disp tb-t">Тир ${t}</div>
+            <div className="num tb-p"><${Soul}/> ${TIER_PRICE[t]}</div>
+            <div className="tb-bar"><i style=${{width:Math.round(100 * av / Math.max(1, ITEMS.filter(i => i.tier === t).length)) + '%'}}></i></div>
             <div className="muted" style=${{fontSize:'11px'}}>доступно ${av} из ${ITEMS.filter(i => i.tier === t).length}</div>
           </button>`;
         })}
@@ -1024,7 +1054,7 @@ function RoomLobby({session, onLeave, canWrite}){
   const view = isHost ? cfg : {rounds:meta.rounds, mode:meta.mode, order:meta.order};
   const change = c => { setCfg(c); save(c); };
   const bIn = !!(seats.B && seats.B.uid);
-  return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'760px'}}>
+  return html`<div className="mx-auto flex flex-col gap-4" style=${{maxWidth:'1180px'}}>
     <div className="panel p-5 text-center">
       <div className="muted disp" style=${{fontSize:'12px'}}>Код комнаты</div>
       <div className="disp num" style=${{fontSize:'clamp(40px,10vw,64px)',color:'var(--gold2)',letterSpacing:'.2em'}}>${meta.code}</div>
@@ -1152,6 +1182,22 @@ function CatalogError({err, onRetry}){
 /* ======================= МУЗЫКА (генерируется прямо в браузере, без файлов) =======================
    Настоящие саундтреки Deadlock мы не вшиваем (авторские права). Свои mp3 можно добавить в FILE_TRACKS: {id:'my', name:'Мой трек', src:'music/my.mp3'}. */
 const FILE_TRACKS = [];
+const ACCENTS = {gold:['#b8975a', '#e0c58a', '#6e5a34'], ice:['#5f93b8', '#a9d4ee', '#34556e'], crimson:['#b85a5a', '#e8a0a0', '#6e3434'], jade:['#5ab88c', '#a0e8c8', '#346e55']};
+const Sfx = (() => {
+  let ctx = null, on = true;
+  const C = () => { if (!ctx){ const A = window.AudioContext || window.webkitAudioContext; if (!A) return null; ctx = new A(); } if (ctx.state === 'suspended') ctx.resume(); return ctx; };
+  const tone = (c, f0, f1, t0, dur, type, g) => { const o = c.createOscillator(), e = c.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur); e.gain.setValueAtTime(g, t0); e.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(e); e.connect(c.destination); o.start(t0); o.stop(t0 + dur + .02); };
+  const noise = (c, t0, dur, g) => { const n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); const src = c.createBufferSource(), f = c.createBiquadFilter(), e = c.createGain(); f.type = 'lowpass'; f.frequency.value = 1400; src.buffer = b; e.gain.value = g; src.connect(f); f.connect(e); e.connect(c.destination); src.start(t0); };
+  return {
+    setOn(v){ on = v; },
+    play(kind){
+      if (!on) return; const c = C(); if (!c) return; const t = c.currentTime;
+      if (kind === 'gavel'){ noise(c, t, .12, .5); tone(c, 170, 45, t, .22, 'sine', .55); tone(c, 900, 300, t, .06, 'square', .08); }
+      else if (kind === 'bid'){ tone(c, 880, 880, t, .09, 'sine', .16); tone(c, 1320, 1320, t + .08, .14, 'sine', .14); }
+      else if (kind === 'tick'){ tone(c, 700, 500, t, .05, 'triangle', .1); }
+    }
+  };
+})();
 const GEN_TRACKS = [
   {id:'noir', name:'Ночной нуар', bpm:66, root:45, wave:'triangle', chord:[0,3,7,10], prog:[0,5,3,7], arp:false},
   {id:'neon', name:'Неоновый дрейф', bpm:84, root:40, wave:'sawtooth', chord:[0,3,7,12], prog:[0,8,5,10], arp:true},
@@ -1159,7 +1205,7 @@ const GEN_TRACKS = [
 ];
 const YT_TRACK = {id:'yt', name:'Саундтрек Deadlock (YouTube)', yt:'PLk-l3guipFR5uDKFKGSV1nSubOWLIslor'};
 const ALL_TRACKS = [YT_TRACK].concat(GEN_TRACKS, FILE_TRACKS);
-const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'yt', anim:true};
+const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'yt', anim:true, sfx:true, accent:'gold'};
 const Music = (() => {
   let ctx = null, master = null, timer = null, cur = null, vol = .35, step = 0, next = 0, audio = null, yt = null, ytWait = false;
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -1241,6 +1287,8 @@ function SettingsModal({prefs, setPrefs, onClose}){
         <select className="fld" style=${{width:'auto',minWidth:'180px'}} value=${prefs.track} onChange=${e => set({track:e.target.value})}>${ALL_TRACKS.map(t => html`<option key=${t.id} value=${t.id}>${t.name}</option>`)}</select></div>
       ${prefs.musicOn && prefs.track === 'yt' ? html`<div className="set-row"><span className="set-l">Трек плейлиста</span><span className="flex gap-2"><button className="btn sm" onClick=${() => Music.skip(-1)}>◀ Назад</button><button className="btn sm" onClick=${() => Music.skip(1)}>Дальше ▶</button></span></div>` : null}
       <div className="set-row"><span className="set-l">Громкость</span><input type="range" min="0" max="1" step="0.05" value=${prefs.vol} style=${{width:'200px'}} onChange=${e => set({vol:Number(e.target.value)})}/></div>
+      <div className="set-row"><span className="set-l">Звуки (молоток, ставки, клики)</span><${Seg} value=${prefs.sfx !== false} options=${onoff} onChange=${v => set({sfx:v})}/></div>
+      <div className="set-row"><span className="set-l">Цвет оформления</span><${Seg} value=${prefs.accent || 'gold'} options=${[{v:'gold', l:'Золото'}, {v:'ice', l:'Лёд'}, {v:'crimson', l:'Кровь'}, {v:'jade', l:'Нефрит'}]} onChange=${v => set({accent:v})}/></div>
       <div className="set-row"><span className="set-l">Анимации</span><${Seg} value=${prefs.anim !== false} options=${onoff} onChange=${v => set({anim:v})}/></div>
       <p className="muted mt-3" style=${{fontSize:'12px'}}>Саундтрек Deadlock играет через встроенный плеер YouTube (нужен интернет), остальные треки создаются прямо в браузере. Если музыка не пошла, нажми в любом месте страницы: браузер не даёт играть звук до первого клика. Если трек из плейлиста не играет, нажми «Дальше».</p>
       <div className="mt-3"><button className="btn sm danger" onClick=${() => setPrefs({...PREF_DEF})}>Сбросить настройки</button></div>
@@ -1249,7 +1297,8 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const HASH_GAME = {'#draft':'draft', '#auction':'auction'};
+const gameFromHash = h => h === '#draft' ? 'draft' : (/^#auction(-|$)/.test(h) ? 'auction' : null);
+const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
 const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
@@ -1306,32 +1355,34 @@ function Hub({onOpen}){
 
 /* ======================= АУКЦИОН ======================= */
 const otherSeat = x => (x === 'A' ? 'B' : 'A');
-function auInit(cfg, seats){
-  return {cfg, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, nominator:'A', item:'', turn:'', bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
+function auInit(cfg, seats, first = 'A'){
+  return {cfg, seats, phase:seats.B ? 'nominate' : 'lobby', round:1, first, nominator:first, item:'', turn:'', deadline:0, bid:{amount:0, by:''}, money:{A:cfg.budget, B:cfg.budget}, won:{A:[], B:[]}, log:[]};
 }
 // Одна функция правил: работает и на одном экране, и в онлайне (транзакция Firebase).
 function auReduce(st, a){
   if (!st) return st;
   const s = {...st, money:{...st.money}, won:{A:[...((st.won && st.won.A) || [])], B:[...((st.won && st.won.B) || [])]}, log:[...(st.log || [])]};
-  const bid = st.bid || {amount:0, by:''};
-  if (a.t === 'nominate'){
-    if (s.phase !== 'nominate' || a.seat !== s.nominator) return st;
-    if (s.won.A.concat(s.won.B).some(w => w.id === a.id)) return st;
-    s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; return s;
-  }
-  if (a.t === 'bid'){
-    const n = Math.floor(Number(a.amount));
-    if (s.phase !== 'bid' || a.seat !== s.turn || !(n > bid.amount) || n > s.money[a.seat]) return st;
-    s.bid = {amount:n, by:a.seat}; s.turn = otherSeat(a.seat); return s;
-  }
-  if (a.t === 'pass'){
-    if (s.phase !== 'bid' || a.seat !== s.turn) return st;
+  const bid = st.bid || {amount:0, by:''}, tm = (st.cfg && st.cfg.timer) || 0;
+  const settle = () => {
     const winner = bid.by || s.nominator, price = bid.by ? bid.amount : 0;
     s.won[winner].push({id:s.item, price, round:s.round}); s.money[winner] -= price;
     s.log.push({round:s.round, id:s.item, winner, price});
     if (s.round >= s.cfg.rounds) s.phase = 'done'; else { s.round++; s.nominator = otherSeat(s.nominator); s.phase = 'nominate'; }
-    s.item = ''; s.turn = ''; s.bid = {amount:0, by:''}; return s;
+    s.item = ''; s.turn = ''; s.deadline = 0; s.bid = {amount:0, by:''}; return s;
+  };
+  if (a.t === 'rematch'){ return st.phase === 'done' ? auInit(st.cfg, st.seats, otherSeat(st.first || 'A')) : st; }
+  if (a.t === 'nominate'){
+    if (s.phase !== 'nominate' || a.seat !== s.nominator) return st;
+    if (s.won.A.concat(s.won.B).some(w => w.id === a.id)) return st;
+    s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
   }
+  if (a.t === 'bid'){
+    const n = Math.floor(Number(a.amount));
+    if (s.phase !== 'bid' || a.seat !== s.turn || !(n > bid.amount) || n > s.money[a.seat]) return st;
+    s.bid = {amount:n, by:a.seat}; s.turn = otherSeat(a.seat); s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
+  }
+  if (a.t === 'pass'){ if (s.phase !== 'bid' || a.seat !== s.turn) return st; return settle(); }
+  if (a.t === 'timeout'){ if (s.phase !== 'bid' || !s.deadline || !(a.now >= s.deadline)) return st; return settle(); }
   return st;
 }
 function ItemPicker({taken, onPick}){
@@ -1348,13 +1399,20 @@ function ItemPicker({taken, onPick}){
     </div>
   </div>`;
 }
-function AuctionBoard({st, controls, dispatch, onExit}){
+function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
+  const dispatch = a => dispatch0({...a, now:Date.now()});
   const {nameLang} = useContext(PrefCtx);
   const names = {A:(st.seats.A && st.seats.A.name) || 'Игрок А', B:(st.seats.B && st.seats.B.name) || 'Игрок Б'};
   const won = {A:(st.won && st.won.A) || [], B:(st.won && st.won.B) || []}, log = st.log || [], bid = st.bid || {amount:0, by:''};
   const taken = new Set(won.A.concat(won.B).map(w => w.id));
   const [amt, setAmt] = useState('');
   useEffect(() => { setAmt(String(bid.amount + 1)); }, [bid.amount, st.item]);
+  const [now, setNow] = useState(Date.now()), fired = useRef(0), pl = useRef(log.length), pb = useRef(bid.amount + ':' + bid.by);
+  useEffect(() => { if (st.phase !== 'bid' || !st.deadline) return; const t = setInterval(() => setNow(Date.now()), 250); return () => clearInterval(t); }, [st.phase, st.deadline]);
+  const remain = (st.phase === 'bid' && st.deadline) ? Math.max(0, Math.ceil((st.deadline - now) / 1000)) : null;
+  useEffect(() => { if (st.phase === 'bid' && st.deadline && now >= st.deadline && fired.current !== st.deadline){ fired.current = st.deadline; dispatch0({t:'timeout', now:Date.now()}); } }, [now]);
+  useEffect(() => { if (log.length > pl.current) Sfx.play('gavel'); pl.current = log.length; }, [log.length]);
+  useEffect(() => { const k = bid.amount + ':' + bid.by; if (bid.amount > 0 && k !== pb.current) Sfx.play('bid'); pb.current = k; }, [bid.amount, bid.by]);
   const can = seat => controls.includes(seat);
   const money = seat => html`<div className=${cx('panel p-3', st.turn === seat || (st.phase === 'nominate' && st.nominator === seat) ? 'active' : '')}>
     <div className="panel-h truncate">${names[seat]}${controls.length === 1 && controls[0] === seat ? ' (ты)' : ''}</div>
@@ -1363,14 +1421,14 @@ function AuctionBoard({st, controls, dispatch, onExit}){
   </div>`;
   const item = st.item ? BY_ID[st.item] : null, turnSeat = st.turn, nom = st.nominator;
   const mine = Math.max(0, ...controls.filter(x => x === turnSeat).map(x => st.money[x]));
-  const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, bid.amount + d)));
+  const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, Math.max(Number(amt) || 0, bid.amount) + d)));
   return html`<div className="flex flex-col gap-4">
     <div className="panel p-4 text-center">
-      <div className="muted disp" style=${{fontSize:'12px'}}>Чёрный аукцион · раунд ${Math.min(st.round, st.cfg.rounds)} из ${st.cfg.rounds}</div>
+      <div className="muted disp" style=${{fontSize:'12px'}}>Чёрный аукцион · раунд ${Math.min(st.round, st.cfg.rounds)} из ${st.cfg.rounds}${remain != null ? html` · <b style=${{color:remain <= 5 ? 'var(--red)' : 'var(--gold2)',fontSize:'15px'}}>⏱ ${remain} с</b>` : ''}</div>
       <div className="disp" style=${{fontSize:'clamp(22px,4.5vw,36px)',color:'var(--gold2)'}}>
         ${st.phase === 'lobby' ? 'Ждём второго игрока' : st.phase === 'done' ? 'Торги закончены' : st.phase === 'nominate' ? names[nom] + ' выставляет предмет' : 'Ставка: ' + (bid.by ? '$' + bid.amount + ' (' + names[bid.by] + ')' : 'пока нет')}
       </div>
-      ${st.phase === 'done' ? html`<div className="muted mt-1">Предметы куплены. Удачи в бою!</div><div className="mt-3"><button className="btn gold" onClick=${onExit}>Играть снова</button></div>` : null}
+      ${st.phase === 'done' ? html`<div className="muted mt-1">Предметы куплены. Удачи в бою!</div><div className="mt-3 flex justify-center gap-2"><button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Реванш</button><button className="btn" onClick=${onExit}>Выйти</button></div>` : null}
     </div>
     <div className="grid gap-4 md:grid-cols-2">${money('A')}${money('B')}</div>
     ${st.phase === 'nominate' ? html`<div className="panel p-4">
@@ -1400,10 +1458,10 @@ function AuctionBoard({st, controls, dispatch, onExit}){
   </div>`;
 }
 function Auction(){
-  const [cfg, setCfg] = useState({budget:100, rounds:6});
+  const [cfg, setCfg] = useState({budget:100, rounds:6, timer:30});
   const [nick, setNick] = useState(() => store.get('bd_nick', ''));
-  const [code, setCode] = useState(() => store.get('bd_aroom', null));
-  const [join, setJoin] = useState('');
+  const [code, setCode] = useState(() => hashRoom() ? null : store.get('bd_aroom', null));
+  const [join, setJoin] = useState(hashRoom);
   const [mode, setMode] = useState(null);       // null | 'local'
   const [local, setLocal] = useState(null);
   const [err, setErr] = useState(null), [busy, setBusy] = useState(false);
@@ -1451,7 +1509,7 @@ function Auction(){
     if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
     const my = online.seats.A && online.seats.A.uid === uid ? 'A' : (online.seats.B && online.seats.B.uid === uid ? 'B' : null);
     return html`<div className="flex flex-col gap-4">
-      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><button className="btn sm" onClick=${() => { copyText(code); }}>Копировать код</button><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><button className="btn sm" onClick=${() => { copyText(code); }}>Копировать код</button><button className="btn sm" onClick=${() => { copyText(location.origin + location.pathname + '#auction-' + code); }}>Копировать ссылку-приглашение</button><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
       <${AuctionBoard} st=${online} controls=${my ? [my] : []} dispatch=${dispatchOnline} onExit=${leave}/>
     </div>`;
@@ -1464,10 +1522,12 @@ function Auction(){
         <div className="panel-h">Настройки торгов</div>
         <div><div className="flex justify-between"><span>Бюджет у каждого</span><b className="disp num">${'$' + cfg.budget}</b></div><input type="range" min="20" max="500" step="10" value=${cfg.budget} onChange=${e => setCfg({...cfg, budget:Number(e.target.value)})}/></div>
         <div><div className="flex justify-between"><span>Предметов в торгах</span><b className="disp num">${cfg.rounds}</b></div><input type="range" min="2" max="12" step="2" value=${cfg.rounds} onChange=${e => setCfg({...cfg, rounds:Number(e.target.value)})}/></div>
+        <div><div className="flex justify-between items-center"><span>Время на ставку</span><${Seg} value=${cfg.timer} options=${[{v:0, l:'Выкл'}, {v:15, l:'15 с'}, {v:30, l:'30 с'}, {v:60, l:'60 с'}]} onChange=${v => setCfg({...cfg, timer:v})}/></div></div>
         <button className="btn gold" onClick=${() => { setLocal(auInit(cfg, {A:{name:'Игрок А'}, B:{name:'Игрок Б'}})); setMode('local'); }}>Играть на одном экране</button>
       </div>
       <div className="panel p-5 flex flex-col gap-3">
         <div className="panel-h">Онлайн с другом</div>
+        ${hashRoom() ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Тебя пригласили в комнату ${hashRoom()}. Введи ник и нажми «Войти».</div>` : null}
         <input className="fld" placeholder="Твой ник" maxLength="20" value=${nick} onChange=${e => { setNick(e.target.value); store.set('bd_nick', e.target.value); }}/>
         <button className="btn gold" disabled=${busy || !fbDb} onClick=${create}>Создать комнату</button>
         <div className="flex gap-2"><input className="fld" placeholder="Код комнаты" maxLength="6" value=${join} onChange=${e => setJoin(e.target.value)}/><button className="btn" disabled=${busy || !fbDb} onClick=${joinRoom}>Войти</button></div>
@@ -1514,12 +1574,15 @@ function App(){
     return () => window.removeEventListener('pointerdown', h);
   }, [prefs.musicOn, prefs.track]);
   useEffect(() => { document.body.classList.toggle('no-anim', prefs.anim === false); }, [prefs.anim]);
+  useEffect(() => { Sfx.setOn(prefs.sfx !== false); }, [prefs.sfx]);
+  useEffect(() => { const a = ACCENTS[prefs.accent] || ACCENTS.gold, r = document.documentElement.style; r.setProperty('--gold', a[0]); r.setProperty('--gold2', a[1]); r.setProperty('--goldDim', a[2]); }, [prefs.accent]);
+  useEffect(() => { const h = e => { if (e.target.closest && e.target.closest('.card:not(.banned)')) Sfx.play('tick'); }; document.addEventListener('click', h, true); return () => document.removeEventListener('click', h, true); }, []);
   const [conn, setConn] = useState('online');
   const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
   const [names, setNames] = useState({A:'Игрок А', B:'Игрок Б'});
   const [roomCode0] = useState(() => store.get('bd_room', null));
-  const [game, setGame] = useState(() => HASH_GAME[location.hash] || (roomCode0 ? 'draft' : null));
-  useEffect(() => { const h = () => setGame(HASH_GAME[location.hash] || null); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
+  const [game, setGame] = useState(() => gameFromHash(location.hash) || (roomCode0 ? 'draft' : null));
+  useEffect(() => { const h = () => setGame(gameFromHash(location.hash)); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
   const openGame = g => { location.hash = g ? '#' + g : ''; setGame(g); };
   const [localRun, setLocalRun] = useState(null);
   const [roomCode, setRoomCode] = useState(() => store.get('bd_room', null));
@@ -1531,10 +1594,10 @@ function App(){
     setCat({status:'loading'});
     try {
       const items = await loadCatalog();
-      setCatalog(items); store.set('bd_catalog', {v:2, t:Date.now(), items});
+      setCatalog(items); store.set('bd_catalog', {v:3, t:Date.now(), items});
       setCat({status:'ready', stale:false});
     } catch (e){
-      const c0 = store.get('bd_catalog', null), c = c0 && c0.v === 2 ? c0 : null;       // API лежит, но есть копия с прошлого раза
+      const c0 = store.get('bd_catalog', null), c = c0 && c0.v === 3 ? c0 : null;       // API лежит, но есть копия с прошлого раза
       if (c && Array.isArray(c.items) && c.items.length >= 24){ setCatalog(c.items); setCat({status:'ready', stale:true, t:c.t}); }
       else setCat({status:'error', err:(e && e.message) || 'Неизвестная ошибка'});
     }
