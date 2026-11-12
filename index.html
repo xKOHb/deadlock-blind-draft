@@ -26,6 +26,7 @@
 :root{
   --bg:#141311; --bg2:#1a1815; --panel:#22201c; --panel2:#2a2722; --edge:#4a4132; --edge2:#6b5d44;
   --text:#ece1c8; --muted:#a99e86; --gold:#b8975a; --gold2:#e0c58a; --goldDim:#6e5a34;
+  --acc:184,151,90; --btn1:#e3c883; --btn2:#a8843f; --btn3:#f0d9a0; --btn4:#d9bd7e;
   --teal:#8fc2a0; --red:#d0685c; --soul:#7ec4d1;
   --t1:#6fb35c; --t2:#e68a2e; --t3:#a67ee6; --t4:#f0c54e;
   --f-head:'Playfair Display',Georgia,serif; --f-display:'Oswald','Arial Narrow',sans-serif; --f-ihead:'Russo One','Oswald',Arial,sans-serif; --f-itext:'Rubik','Barlow',system-ui,sans-serif; --f-body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -35,9 +36,9 @@
 *{box-sizing:border-box}
 html,body{background:var(--bg)}
 body{margin:0;color:var(--text);font:15px/1.5 var(--f-body);
-  background-image:radial-gradient(900px 480px at 50% -80px,rgba(184,151,90,.16),transparent 70%),
-    linear-gradient(45deg,rgba(184,151,90,.04) 25%,transparent 25% 75%,rgba(184,151,90,.04) 75%),
-    linear-gradient(45deg,rgba(184,151,90,.04) 25%,transparent 25% 75%,rgba(184,151,90,.04) 75%);
+  background-image:radial-gradient(900px 480px at 50% -80px,rgba(var(--acc),.16),transparent 70%),
+    linear-gradient(45deg,rgba(var(--acc),.04) 25%,transparent 25% 75%,rgba(var(--acc),.04) 75%),
+    linear-gradient(45deg,rgba(var(--acc),.04) 25%,transparent 25% 75%,rgba(var(--acc),.04) 75%);
   background-size:auto,28px 28px,28px 28px;background-position:0 0,0 0,14px 14px;background-attachment:fixed;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
 .shell{max-width:1320px;margin:0 auto}
@@ -48,13 +49,13 @@ body{margin:0;color:var(--text);font:15px/1.5 var(--f-body);
 .brand{font-family:var(--f-head);font-weight:700;font-size:20px;color:var(--gold2);display:flex;align-items:center;gap:8px}
 .hero{position:relative;isolation:isolate;padding-top:10px}
 .hero::before{content:"";position:absolute;left:50%;bottom:-10px;width:min(760px,100%);height:150%;transform:translateX(-50%);z-index:-1;
-  background:repeating-conic-gradient(from -90deg at 50% 88%,rgba(184,151,90,.17) 0 4deg,transparent 4deg 10deg);
+  background:repeating-conic-gradient(from -90deg at 50% 88%,rgba(var(--acc),.17) 0 4deg,transparent 4deg 10deg);
   -webkit-mask:radial-gradient(ellipse 60% 70% at 50% 88%,#000,transparent 75%);mask:radial-gradient(ellipse 60% 70% at 50% 88%,#000,transparent 75%)}
-.hero-t{font-family:var(--f-head);font-weight:800;font-size:clamp(42px,9vw,78px);line-height:1.02;margin:6px 0 8px;color:var(--gold2);text-shadow:0 3px 0 #000,0 0 28px rgba(184,151,90,.28)}
+.hero-t{font-family:var(--f-head);font-weight:800;font-size:clamp(42px,9vw,78px);line-height:1.02;margin:6px 0 8px;color:var(--gold2);text-shadow:0 3px 0 #000,0 0 28px rgba(var(--acc),.28)}
 
 /* панели: двойная рамка + золотые уголки */
 .panel{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--edge);--c:var(--gold);--g:linear-gradient(var(--c),var(--c))}
-.panel::before{content:"";position:absolute;inset:4px;border:1px solid rgba(184,151,90,.22);pointer-events:none}
+.panel::before{content:"";position:absolute;inset:4px;border:1px solid rgba(var(--acc),.22);pointer-events:none}
 .panel::after{content:"";position:absolute;inset:-1px;pointer-events:none;background:
   var(--g) 0 0/16px 2px no-repeat,var(--g) 0 0/2px 16px no-repeat,var(--g) 100% 0/16px 2px no-repeat,var(--g) 100% 0/2px 16px no-repeat,
   var(--g) 0 100%/16px 2px no-repeat,var(--g) 0 100%/2px 16px no-repeat,var(--g) 100% 100%/16px 2px no-repeat,var(--g) 100% 100%/2px 16px no-repeat}
@@ -64,17 +65,17 @@ body{margin:0;color:var(--text);font:15px/1.5 var(--f-body);
 
 /* кнопки */
 button.btn{font-family:var(--f-display);font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:14px;padding:10px 20px;cursor:pointer;color:var(--text);
-  border:1px solid var(--gold);background:linear-gradient(180deg,#322e27,#221f1b);box-shadow:inset 0 0 0 3px #1a1815,inset 0 0 0 4px rgba(184,151,90,.4);transition:filter .15s,transform .1s}
+  border:1px solid var(--gold);background:linear-gradient(180deg,#322e27,#221f1b);box-shadow:inset 0 0 0 3px #1a1815,inset 0 0 0 4px rgba(var(--acc),.4);transition:filter .15s,transform .1s}
 button.btn:hover:not(:disabled){filter:brightness(1.2);border-color:var(--gold2)}
 button.btn:active:not(:disabled){transform:translateY(1px)}
 button.btn:disabled{opacity:.4;cursor:not-allowed}
-button.btn.gold{background:linear-gradient(180deg,#e3c883,#a8843f);color:#1a1409;border-color:#f0d9a0;box-shadow:inset 0 0 0 3px #b8975a,inset 0 0 0 4px rgba(26,20,9,.55);font-weight:600}
+button.btn.gold{background:linear-gradient(180deg,var(--btn1),var(--btn2));color:#1a1409;border-color:var(--btn3);box-shadow:inset 0 0 0 3px var(--gold),inset 0 0 0 4px rgba(26,20,9,.55);font-weight:600}
 button.btn.sm{padding:6px 12px;font-size:12px;box-shadow:inset 0 0 0 2px #1a1815}
 button.btn.danger:hover:not(:disabled){border-color:var(--red);color:#f2b4ac}
 button.btn:focus-visible,button.seg-b:focus-visible,.card:focus-visible,.tierb:focus-visible,.c-info:focus-visible,input:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
 .seg{display:inline-flex;border:1px solid var(--gold);background:var(--bg2)}
 button.seg-b{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:12px;padding:6px 14px;cursor:pointer;color:var(--muted);background:transparent;border:0}
-button.seg-b.on{background:linear-gradient(180deg,#d9bd7e,#a8843f);color:#1a1409;font-weight:600}
+button.seg-b.on{background:linear-gradient(180deg,var(--btn4),var(--btn2));color:#1a1409;font-weight:600}
 button.seg-b:not(.on):hover{color:var(--text)}
 input.fld{background:var(--bg2);border:1px solid var(--edge2);color:var(--text);padding:9px 12px;font-family:var(--f-body);font-size:15px;width:100%;outline:none}
 input.fld:focus{border-color:var(--gold2)}
@@ -172,6 +173,18 @@ html{min-height:100%}body{min-height:100vh;background-attachment:fixed,fixed,fix
 .faq{padding:0}.faq-btn{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;cursor:pointer}
 .faq-btn:focus-visible{outline:2px solid var(--gold2);outline-offset:-4px}.faq-btn .faq-q{margin:0}
 .faq-ch{color:var(--gold2);transition:transform .2s;font-size:14px}.faq-ch.o{transform:rotate(180deg)}.faq-body{padding:0 16px 14px}
+
+/* ===== темы оформления: меняют цвета, фон и узор всего сайта ===== */
+html[data-theme="sapphire"]{--bg:#0d1218;--bg2:#121a23;--panel:#16212c;--panel2:#1c2a38;--edge:#2c4559;--edge2:#46698a;--text:#dcebf7;--muted:#8ea9bf;--gold:#5f93b8;--gold2:#a9d4ee;--goldDim:#34556e;--acc:95,147,184;--btn1:#c4e6fa;--btn2:#4f86ad;--btn3:#d6f0ff;--btn4:#9fcbe6;--soul:#8fd3ff}
+html[data-theme="sapphire"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(95,147,184,.24),transparent 70%),repeating-linear-gradient(135deg,rgba(95,147,184,.06) 0 1px,transparent 1px 16px);background-size:auto,auto;background-position:0 0,0 0}
+html[data-theme="crimson"]{--bg:#130a0b;--bg2:#1a0f10;--panel:#251416;--panel2:#2e191c;--edge:#5a2c30;--edge2:#834349;--text:#f1dcd8;--muted:#b79691;--gold:#b85a5a;--gold2:#ee9f9f;--goldDim:#6e3434;--acc:184,90,90;--btn1:#f2b0aa;--btn2:#a84646;--btn3:#ffc9c2;--btn4:#e08a85;--soul:#f0a0a0}
+html[data-theme="crimson"] body{background-image:radial-gradient(900px 520px at 50% 115%,rgba(184,90,90,.24),transparent 70%),repeating-linear-gradient(90deg,rgba(184,90,90,.06) 0 2px,transparent 2px 24px);background-size:auto,auto;background-position:0 0,0 0}
+html[data-theme="jade"]{--bg:#0b130f;--bg2:#101a14;--panel:#15241b;--panel2:#1a2d22;--edge:#2f5a42;--edge2:#4a8a68;--text:#def0e4;--muted:#93b5a0;--gold:#5ab88c;--gold2:#a0e8c8;--goldDim:#346e55;--acc:90,184,140;--btn1:#b4f0d4;--btn2:#3f9a73;--btn3:#c8ffe6;--btn4:#8fdcb8;--soul:#8fe6c0}
+html[data-theme="jade"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(90,184,140,.2),transparent 70%),radial-gradient(rgba(90,184,140,.14) 1.6px,transparent 1.8px);background-size:auto,24px 24px;background-position:0 0,0 0}
+html[data-theme="violet"]{--bg:#110c18;--bg2:#171021;--panel:#20162d;--panel2:#291c3a;--edge:#4b3569;--edge2:#6f4f9a;--text:#eadff7;--muted:#a899c0;--gold:#9a62d6;--gold2:#cfa8f5;--goldDim:#5a3a85;--acc:154,98,214;--btn1:#dcc0fa;--btn2:#8250c0;--btn3:#ead5ff;--btn4:#c49af0;--soul:#d2b0ff}
+html[data-theme="violet"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(154,98,214,.22),transparent 70%),repeating-radial-gradient(circle at 50% -20%,rgba(154,98,214,.09) 0 2px,transparent 2px 46px);background-size:auto,auto;background-position:0 0,0 0}
+.theme-b{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:var(--f-display);letter-spacing:.06em;font-size:12px;text-transform:uppercase}
+.theme-b i{width:12px;height:12px;transform:rotate(45deg);display:inline-block}.theme-b.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
 .hub-card{transition:transform .2s,box-shadow .2s}.hub-card.live:hover{transform:translateY(-4px);box-shadow:0 0 0 1px var(--goldDim),0 10px 34px rgba(224,197,138,.22)}
 .hub-art{height:96px;display:flex;align-items:center;gap:0;color:var(--gold2)}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border:1px solid var(--edge2);background:rgba(20,19,17,.6);font-family:var(--f-display);letter-spacing:.06em;font-size:12px;color:var(--gold2);text-transform:uppercase}
@@ -383,19 +396,25 @@ function tierForRound(settings, r){
   if (settings.order === 'cycle') return ((r - 1) % 4) + 1;
   return Math.ceil(r * 4 / settings.rounds);
 }
-// Если у игрока уже есть улучшенный предмет, его компоненты (в том числе вложенные) брать нельзя.
-// Исключения: английские названия предметов, которые всё равно можно брать (пока пусто).
-const COVER_EXCEPT = new Set([]);
-function ownedSet(inv, seat){
-  const out = new Set();
-  const add = (id, root) => {
-    if (out.has(id)) return; const it = BY_ID[id];
-    if (!root && it && COVER_EXCEPT.has(it.name.en)) return;
-    out.add(id); if (it) (it.comps || []).forEach(c => add(c, false));
-  };
-  inv[seat].forEach(x => add(x.id, true));
+// Правило сборок как в игре: у каждого предмета один экземпляр, а улучшение «съедает» свои компоненты.
+// Поэтому два предмета несовместимы, если у них есть общий компонент (или один входит в другой):
+// нельзя иметь и Sprint Boots, и Trophy Collector; нельзя иметь два разных улучшения одного и того же предмета.
+let _closFor = null, _clos = {};
+function closureOf(id){
+  if (_closFor !== ITEMS){ _closFor = ITEMS; _clos = {}; }
+  if (_clos[id]) return _clos[id];
+  const out = new Set([id]), it = BY_ID[id];
+  ((it && it.comps) || []).forEach(c => closureOf(c).forEach(x => out.add(x)));
+  return (_clos[id] = out);
+}
+function blockedSet(ids){
+  const have = new Set(), list = Array.from(ids);
+  list.forEach(id => closureOf(id).forEach(x => have.add(x)));
+  const out = new Set(list);
+  ITEMS.forEach(i => { for (const x of closureOf(i.id)){ if (have.has(x)){ out.add(i.id); break; } } });
   return out;
 }
+function ownedSet(inv, seat){ return blockedSet(inv[seat].map(x => x.id)); }
 function availableOfTier(tier, ownedIds){ return ITEMS.filter(i => i.tier === tier && !ownedIds.has(i.id)); }
 
 // Состояние раунда выводится из ходов. moves[seat][round] = {hide:[id,id,id], tier, pick:{idx,id}, ready}
@@ -411,8 +430,7 @@ function derive(settings, moves){
     if (b.pick) inv.B.push({id:b.pick.id, round:r});
     round = r;
     if (!(a.hide && b.hide)){ phase = 'hide'; break; }
-    if (!a.pick){ phase = 'pickA'; break; }
-    if (!b.pick){ phase = 'pickB'; break; }
+    if (!(a.pick && b.pick)){ phase = 'pick'; break; }   // выбирать можно одновременно или в любом порядке
     if (!(a.ready && b.ready)){ phase = 'recap'; break; }
     if (r === N){ finished = true; phase = 'done'; }
   }
@@ -784,7 +802,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <div className="panel-h">Загадай ${HIDE_COUNT} предмета для: ${receiverName}</div>
-        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть, недоступны.</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Из них он выберет один вслепую. Предметы, которые у него уже есть или конфликтуют с его сборкой (улучшение или компонент уже имеющегося предмета), недоступны.</div>
       </div>
       ${fixed ? html`<${TierChip} tier=${fixed}/>` : null}
     </div>
@@ -826,7 +844,7 @@ function Composer({seat, round, settings, receiverName, ownedIds, onSubmit}){
           const banned = ownedIds.has(it.id);
           const picked = sel.includes(it.id);
           return html`<${Card} key=${it.id} item=${it} size="g" state=${banned ? 'banned' : (picked ? 'sel' : '')}
-            tag=${banned ? 'ЗАБАНЕН' : (picked ? 'ВЫБРАН' : null)} onClick=${() => toggle(it.id)}/>`;
+            tag=${banned ? 'НЕДОСТУПЕН' : (picked ? 'ВЫБРАН' : null)} onClick=${() => toggle(it.id)}/>`;
         })}
       </div>
     </div>` : null}
@@ -871,8 +889,8 @@ function Stage({session, d, peek}){
   const [tab, setTab] = useState('A');
   const pending = viewerSeats.filter(s => !mv(s).hide);
   const active = pending.includes(tab) ? tab : pending[0];
-  const picker = phase === 'pickA' ? 'A' : (phase === 'pickB' ? 'B' : null);
-  const iPick = picker && viewerSeats.includes(picker);
+  const picking = phase === 'pick';
+  const canPick = s => picking && viewerSeats.includes(s) && !mv(s).pick;
   const showTrios = phase !== 'hide' || mv('A').hide || mv('B').hide;
   const isLast = r === settings.rounds;
   const allReady = viewerSeats.length > 0 && viewerSeats.every(s => mv(s).ready);
@@ -881,8 +899,8 @@ function Stage({session, d, peek}){
   const revealFor = h => phase === 'recap' || (local ? peek : (viewerSeats.length === 1 && viewerSeats[0] === h));
   const trio = h => html`<${TrioRow} key=${h} hider=${h} picker=${other(h)} names=${names} phase=${phase}
       move=${mv(h)} pickMove=${mv(other(h)).pick} reveal=${revealFor(h)}
-      active=${picker === other(h)} interactive=${iPick && picker === other(h)}
-      onPick=${idx => session.pick(picker, r, idx, mv(h).hide[idx])}/>`;
+      active=${picking && !mv(other(h)).pick} interactive=${canPick(other(h))}
+      onPick=${idx => session.pick(other(h), r, idx, mv(h).hide[idx])}/>`;
 
   return html`<div className="flex flex-col gap-3">
     <div className="panel p-3">
@@ -916,9 +934,9 @@ function Stage({session, d, peek}){
 
     ${showTrios ? html`<div className="flex flex-col gap-3">${trio('A')}${trio('B')}</div>` : null}
 
-    ${picker ? html`<div className="panel p-3 text-center">
-      <div className="disp" style=${{fontSize:'17px',color:iPick ? 'var(--gold2)' : 'var(--muted)'}}>
-        ${iPick ? (local ? 'Ход: ' + names[picker] : 'Твой ход') + ': выбери одну из трёх карт' : 'Выбирает ' + names[picker] + '…'}
+    ${picking ? html`<div className="panel p-3 text-center">
+      <div className="disp" style=${{fontSize:'17px',color:viewerSeats.some(canPick) ? 'var(--gold2)' : 'var(--muted)'}}>
+        ${viewerSeats.some(canPick) ? 'Выбери одну из трёх карт соперника (можно одновременно, порядок любой)' : 'Ждём выбор соперника…'}
       </div>
       ${local ? html`<div className="muted" style=${{fontSize:'12px'}}>Игрок называет номер карты 1, 2 или 3. Нажми на неё, она откроется и уйдёт в его инвентарь.</div>` : null}
     </div>` : null}
@@ -1007,9 +1025,9 @@ function GameView({session, onExit}){
   useEffect(() => { if (!sure) return; const t = setTimeout(() => setSure(false), 3500); return () => clearTimeout(t); }, [sure]);
   const local = viewerSeats.length === 2;
   if (d.finished) return html`<${Results} session=${session} d=${d} onExit=${onExit}/>`;
-  const picker = d.phase === 'pickA' ? 'A' : (d.phase === 'pickB' ? 'B' : null);
+  const pickingNow = s => d.phase === 'pick' && !(moves[s] && moves[s][d.round] && moves[s][d.round].pick);
   const hideAct = s => d.phase === 'hide' && !(moves[s] && moves[s][d.round] && moves[s][d.round].hide);
-  const steps = [['hide', 'Загадывание'], ['pickA', 'Выбор ' + SEAT_LABEL.A], ['pickB', 'Выбор ' + SEAT_LABEL.B], ['recap', 'Итог раунда']];
+  const steps = [['hide', 'Загадывание'], ['pick', 'Выбор карт (в любом порядке)'], ['recap', 'Итог раунда']];
   const idx = steps.findIndex(s => s[0] === d.phase);
   return html`<div className="flex flex-col gap-3">
     <div className="panel p-3">
@@ -1033,9 +1051,9 @@ function GameView({session, onExit}){
     <div className="grid gap-3 grid-cols-2 lg:grid-cols-[minmax(230px,1fr)_minmax(0,1.9fr)_minmax(230px,1fr)] items-start">
       <div className="col-span-2 lg:col-span-1 lg:order-2" style=${{minWidth:0}}><${Stage} session=${session} d=${d} peek=${peek}/></div>
       <div className="lg:order-1" style=${{minWidth:0}}><${Inventory} seat="A" name=${names.A} list=${d.inv.A} curRound=${d.round}
-        active=${picker === 'A' || hideAct('A')} you=${!local && viewerSeats[0] === 'A'}/></div>
+        active=${pickingNow('A') || hideAct('A')} you=${!local && viewerSeats[0] === 'A'}/></div>
       <div className="lg:order-3" style=${{minWidth:0}}><${Inventory} seat="B" name=${names.B} list=${d.inv.B} curRound=${d.round}
-        active=${picker === 'B' || hideAct('B')} you=${!local && viewerSeats[0] === 'B'}/></div>
+        active=${pickingNow('B') || hideAct('B')} you=${!local && viewerSeats[0] === 'B'}/></div>
     </div>
   </div>`;
 }
@@ -1182,19 +1200,47 @@ function CatalogError({err, onRetry}){
 /* ======================= МУЗЫКА (генерируется прямо в браузере, без файлов) =======================
    Настоящие саундтреки Deadlock мы не вшиваем (авторские права). Свои mp3 можно добавить в FILE_TRACKS: {id:'my', name:'Мой трек', src:'music/my.mp3'}. */
 const FILE_TRACKS = [];
-const ACCENTS = {gold:['#b8975a', '#e0c58a', '#6e5a34'], ice:['#5f93b8', '#a9d4ee', '#34556e'], crimson:['#b85a5a', '#e8a0a0', '#6e3434'], jade:['#5ab88c', '#a0e8c8', '#346e55']};
+const THEMES = [
+  {id:'gold', name:'Золотой нуар', sw:'#e0c58a'}, {id:'sapphire', name:'Сапфировое пламя', sw:'#5f93b8'},
+  {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'violet', name:'Спиритизм', sw:'#9a62d6'}
+];
+// Звуки меняются вместе с темой. tick/bid: [f1, f2, длительность, форма, громкость]; gavel: [f1, f2, длительность, форма, громкость, шум]
+const SFX_BANK = {
+  gold:{tick:[520, 420, .05, 'sine', .05], bid:[880, 1320, .1, 'sine', .08], gavel:[170, 60, .24, 'sine', .26, .08]},
+  sapphire:{tick:[1250, 1000, .07, 'sine', .04], bid:[1568, 2093, .14, 'sine', .06], gavel:[420, 220, .3, 'triangle', .14, .04]},
+  crimson:{tick:[190, 120, .07, 'triangle', .07], bid:[220, 330, .12, 'triangle', .1], gavel:[110, 45, .34, 'sine', .32, .1]},
+  jade:{tick:[700, 900, .05, 'sine', .05], bid:[523, 784, .11, 'sine', .08], gavel:[300, 190, .2, 'sine', .2, .05]},
+  violet:{tick:[760, 1050, .08, 'sine', .04], bid:[659, 988, .16, 'sine', .07], gavel:[130, 95, .55, 'sine', .22, .03]}
+};
 const Sfx = (() => {
-  let ctx = null, on = true;
-  const C = () => { if (!ctx){ const A = window.AudioContext || window.webkitAudioContext; if (!A) return null; ctx = new A(); } if (ctx.state === 'suspended') ctx.resume(); return ctx; };
-  const tone = (c, f0, f1, t0, dur, type, g) => { const o = c.createOscillator(), e = c.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(f1, t0 + dur); e.gain.setValueAtTime(g, t0); e.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(e); e.connect(c.destination); o.start(t0); o.stop(t0 + dur + .02); };
-  const noise = (c, t0, dur, g) => { const n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n); const src = c.createBufferSource(), f = c.createBiquadFilter(), e = c.createGain(); f.type = 'lowpass'; f.frequency.value = 1400; src.buffer = b; e.gain.value = g; src.connect(f); f.connect(e); e.connect(c.destination); src.start(t0); };
+  let ctx = null, out = null, on = true, theme = 'gold';
+  const C = () => {
+    if (!ctx){
+      const A = window.AudioContext || window.webkitAudioContext; if (!A) return null;
+      ctx = new A(); const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+      out = ctx.createGain(); out.gain.value = .9; out.connect(lp); lp.connect(ctx.destination);
+    }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  };
+  const tone = (c, f0, f1, t0, dur, type, g) => {
+    const o = c.createOscillator(), e = c.createGain(); o.type = type; o.frequency.setValueAtTime(f0, t0); o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t0 + dur);
+    e.gain.setValueAtTime(0.0001, t0); e.gain.linearRampToValueAtTime(g, t0 + .008); e.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(e); e.connect(out); o.start(t0); o.stop(t0 + dur + .03);
+  };
+  const noise = (c, t0, dur, g) => {
+    const n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+    const src = c.createBufferSource(), f = c.createBiquadFilter(), e = c.createGain(); f.type = 'lowpass'; f.frequency.value = 900; src.buffer = b; e.gain.value = g;
+    src.connect(f); f.connect(e); e.connect(out); src.start(t0);
+  };
   return {
-    setOn(v){ on = v; },
+    setOn(v){ on = v; }, setTheme(t){ theme = SFX_BANK[t] ? t : 'gold'; },
     play(kind){
-      if (!on) return; const c = C(); if (!c) return; const t = c.currentTime;
-      if (kind === 'gavel'){ noise(c, t, .12, .5); tone(c, 170, 45, t, .22, 'sine', .55); tone(c, 900, 300, t, .06, 'square', .08); }
-      else if (kind === 'bid'){ tone(c, 880, 880, t, .09, 'sine', .16); tone(c, 1320, 1320, t + .08, .14, 'sine', .14); }
-      else if (kind === 'tick'){ tone(c, 700, 500, t, .05, 'triangle', .1); }
+      if (!on) return; const c = C(); if (!c) return; const t = c.currentTime, b = SFX_BANK[theme][kind]; if (!b) return;
+      if (kind === 'tick') tone(c, b[0], b[1], t, b[2], b[3], b[4]);
+      else if (kind === 'bid'){ tone(c, b[0], b[0], t, b[2], b[3], b[4]); tone(c, b[1], b[1], t + b[2] * .8, b[2] * 1.3, b[3], b[4]); }
+      else if (kind === 'gavel'){ tone(c, b[0], b[1], t, b[2], b[3], b[4]); noise(c, t, .08, b[5]); }
     }
   };
 })();
@@ -1205,7 +1251,7 @@ const GEN_TRACKS = [
 ];
 const YT_TRACK = {id:'yt', name:'Саундтрек Deadlock (YouTube)', yt:'PLk-l3guipFR5uDKFKGSV1nSubOWLIslor'};
 const ALL_TRACKS = [YT_TRACK].concat(GEN_TRACKS, FILE_TRACKS);
-const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'yt', anim:true, sfx:true, accent:'gold'};
+const PREF_DEF = {nameLang:'en', descLang:'ru', musicOn:false, vol:.35, track:'yt', anim:true, sfx:true, theme:'gold'};
 const Music = (() => {
   let ctx = null, master = null, timer = null, cur = null, vol = .35, step = 0, next = 0, audio = null, yt = null, ytWait = false;
   const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
@@ -1288,7 +1334,8 @@ function SettingsModal({prefs, setPrefs, onClose}){
       ${prefs.musicOn && prefs.track === 'yt' ? html`<div className="set-row"><span className="set-l">Трек плейлиста</span><span className="flex gap-2"><button className="btn sm" onClick=${() => Music.skip(-1)}>◀ Назад</button><button className="btn sm" onClick=${() => Music.skip(1)}>Дальше ▶</button></span></div>` : null}
       <div className="set-row"><span className="set-l">Громкость</span><input type="range" min="0" max="1" step="0.05" value=${prefs.vol} style=${{width:'200px'}} onChange=${e => set({vol:Number(e.target.value)})}/></div>
       <div className="set-row"><span className="set-l">Звуки (молоток, ставки, клики)</span><${Seg} value=${prefs.sfx !== false} options=${onoff} onChange=${v => set({sfx:v})}/></div>
-      <div className="set-row"><span className="set-l">Цвет оформления</span><${Seg} value=${prefs.accent || 'gold'} options=${[{v:'gold', l:'Золото'}, {v:'ice', l:'Лёд'}, {v:'crimson', l:'Кровь'}, {v:'jade', l:'Нефрит'}]} onChange=${v => set({accent:v})}/></div>
+      <div className="set-row" style=${{display:'block'}}><span className="set-l">Оформление сайта (цвета, фон и звуки)</span>
+        <div className="flex flex-wrap gap-2 mt-2">${THEMES.map(t => html`<button key=${t.id} className=${cx('theme-b', (prefs.theme || 'gold') === t.id && 'on')} onClick=${() => { Sfx.setTheme(t.id); Sfx.play('bid'); set({theme:t.id}); }}><i style=${{background:t.sw}}></i>${t.name}</button>`)}</div></div>
       <div className="set-row"><span className="set-l">Анимации</span><${Seg} value=${prefs.anim !== false} options=${onoff} onChange=${v => set({anim:v})}/></div>
       <p className="muted mt-3" style=${{fontSize:'12px'}}>Саундтрек Deadlock играет через встроенный плеер YouTube (нужен интернет), остальные треки создаются прямо в браузере. Если музыка не пошла, нажми в любом месте страницы: браузер не даёт играть звук до первого клика. Если трек из плейлиста не играет, нажми «Дальше».</p>
       <div className="mt-3"><button className="btn sm danger" onClick=${() => setPrefs({...PREF_DEF})}>Сбросить настройки</button></div>
@@ -1374,18 +1421,20 @@ function auReduce(st, a){
   if (a.t === 'nominate'){
     if (s.phase !== 'nominate' || a.seat !== s.nominator) return st;
     if (s.won.A.concat(s.won.B).some(w => w.id === a.id)) return st;
+    if (blockedSet(s.won[a.seat].map(w => w.id)).has(a.id)) return st;   // выставлять можно только то, что сам можешь взять
     s.phase = 'bid'; s.item = a.id; s.turn = otherSeat(a.seat); s.bid = {amount:0, by:''}; s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
   }
   if (a.t === 'bid'){
     const n = Math.floor(Number(a.amount));
     if (s.phase !== 'bid' || a.seat !== s.turn || !(n > bid.amount) || n > s.money[a.seat]) return st;
+    if (blockedSet(s.won[a.seat].map(w => w.id)).has(s.item)) return st;   // предмет конфликтует со сборкой: только пас
     s.bid = {amount:n, by:a.seat}; s.turn = otherSeat(a.seat); s.deadline = tm ? (a.now || 0) + tm * 1000 : 0; return s;
   }
   if (a.t === 'pass'){ if (s.phase !== 'bid' || a.seat !== s.turn) return st; return settle(); }
   if (a.t === 'timeout'){ if (s.phase !== 'bid' || !s.deadline || !(a.now >= s.deadline)) return st; return settle(); }
   return st;
 }
-function ItemPicker({taken, onPick}){
+function ItemPicker({taken, blocked, selected, onPick}){
   const [slot, setSlot] = useState('all'), [tier, setTier] = useState(0), [q, setQ] = useState('');
   const list = ITEMS.filter(i => (slot === 'all' || i.slot === slot) && (!tier || i.tier === tier) && matchItem(i, q));
   return html`<div className="flex flex-col gap-3">
@@ -1395,7 +1444,7 @@ function ItemPicker({taken, onPick}){
       <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск предмета" value=${q} onChange=${e => setQ(e.target.value)}/>
     </div>
     <div className="flex flex-wrap gap-3">
-      ${list.map(i => html`<${Card} key=${i.id} item=${i} size="g" state=${taken.has(i.id) ? 'banned' : ''} tag=${taken.has(i.id) ? 'Куплен' : null} onClick=${() => onPick(i.id)}/>`)}
+      ${list.map(i => html`<${Card} key=${i.id} item=${i} size="g" state=${taken.has(i.id) || (blocked && blocked.has(i.id)) ? 'banned' : (selected === i.id ? 'sel' : '')} tag=${taken.has(i.id) ? 'Куплен' : (blocked && blocked.has(i.id) ? 'Нельзя' : (selected === i.id ? 'Выбран' : null))} onClick=${() => onPick(i.id)}/>`)}
     </div>
   </div>`;
 }
@@ -1407,6 +1456,9 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
   const taken = new Set(won.A.concat(won.B).map(w => w.id));
   const [amt, setAmt] = useState('');
   useEffect(() => { setAmt(String(bid.amount + 1)); }, [bid.amount, st.item]);
+  const [pend, setPend] = useState(null), [sureP, setSureP] = useState(false);
+  useEffect(() => { setPend(null); setSureP(false); }, [st.phase, st.nominator, st.round, st.item]);
+  useEffect(() => { if (!sureP) return; const t = setTimeout(() => setSureP(false), 3500); return () => clearTimeout(t); }, [sureP]);
   const [now, setNow] = useState(Date.now()), fired = useRef(0), pl = useRef(log.length), pb = useRef(bid.amount + ':' + bid.by);
   useEffect(() => { if (st.phase !== 'bid' || !st.deadline) return; const t = setInterval(() => setNow(Date.now()), 250); return () => clearInterval(t); }, [st.phase, st.deadline]);
   const remain = (st.phase === 'bid' && st.deadline) ? Math.max(0, Math.ceil((st.deadline - now) / 1000)) : null;
@@ -1420,6 +1472,7 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
     <div className="flex flex-wrap gap-2 mt-2">${won[seat].map((w, i) => html`<${Card} key=${i} item=${BY_ID[w.id]} size="s"/>`)}</div>
   </div>`;
   const item = st.item ? BY_ID[st.item] : null, turnSeat = st.turn, nom = st.nominator;
+  const myBlocked = !!(item && turnSeat && blockedSet(won[turnSeat].map(w => w.id)).has(item.id));
   const mine = Math.max(0, ...controls.filter(x => x === turnSeat).map(x => st.money[x]));
   const bump = d => setAmt(String(Math.min(st.money[turnSeat] || 0, Math.max(Number(amt) || 0, bid.amount) + d)));
   return html`<div className="flex flex-col gap-4">
@@ -1432,7 +1485,10 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
     </div>
     <div className="grid gap-4 md:grid-cols-2">${money('A')}${money('B')}</div>
     ${st.phase === 'nominate' ? html`<div className="panel p-4">
-      ${can(nom) ? html`<div className="panel-h mb-3">${names[nom]}, выбери предмет для торгов</div><${ItemPicker} taken=${taken} onPick=${id => dispatch({t:'nominate', seat:nom, id})}/>`
+      ${can(nom) ? html`<div className="panel-h mb-3">${names[nom]}, выбери предмет для торгов</div>${pend ? html`<div className="panel p-3 flex flex-wrap items-center gap-3 mb-3 active"><${Card} item=${BY_ID[pend]} size="s"/>
+          <div style=${{flex:1,minWidth:'200px'}}><div className="panel-h">Выставить «${BY_ID[pend].name[nameLang]}» на торги?</div><div className="muted" style=${{fontSize:'13px'}}>После подтверждения отменить нельзя.</div></div>
+          <button className="btn gold" onClick=${() => dispatch({t:'nominate', seat:nom, id:pend})}>Выставить</button><button className="btn" onClick=${() => setPend(null)}>Отмена</button></div>` : null}
+        <${ItemPicker} taken=${taken} blocked=${blockedSet(won[nom].map(w => w.id))} selected=${pend} onPick=${setPend}/>`
         : html`<div className="muted">Ждём, пока ${names[nom]} выберет предмет…</div>`}
     </div>` : null}
     ${st.phase === 'bid' && item ? html`<div className="panel p-4 flex flex-wrap gap-5 items-start">
@@ -1440,14 +1496,15 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
       <div className="flex flex-col gap-3" style=${{flex:1,minWidth:'240px'}}>
         <div className="panel-h">${can(turnSeat) ? 'Твой ход: ' : 'Ход: '}${names[turnSeat]}</div>
         <div className="muted" style=${{fontSize:'13px'}}>${bid.by ? 'Текущая ставка $' + bid.amount + ' от ' + names[bid.by] + '. Перебей или спасуй.' : 'Ставок ещё нет. Если ' + names[turnSeat] + ' спасует, предмет достанется ' + names[nom] + ' бесплатно.'}</div>
+        ${can(turnSeat) && myBlocked ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Этот предмет конфликтует с твоей сборкой (в игре нельзя иметь и предмет, и его улучшение, или два улучшения одного предмета). Ставить нельзя, можно только спасовать.</div>` : null}
         ${can(turnSeat) ? html`<div className="flex flex-wrap items-center gap-2">
           <input className="fld num" type="number" min=${bid.amount + 1} max=${st.money[turnSeat]} style=${{width:'120px'}} value=${amt} onChange=${e => setAmt(e.target.value)}/>
           ${[1, 5, 10].map(d => html`<button key=${d} className="btn sm" onClick=${() => bump(d)}>+${d}</button>`)}
           <button className="btn sm" onClick=${() => setAmt(String(st.money[turnSeat]))}>Ва-банк</button>
         </div>
         <div className="flex gap-2">
-          <button className="btn gold" disabled=${!(Number(amt) > bid.amount && Number(amt) <= st.money[turnSeat])} onClick=${() => dispatch({t:'bid', seat:turnSeat, amount:Number(amt)})}>Поставить $${amt || ''}</button>
-          <button className="btn danger" onClick=${() => dispatch({t:'pass', seat:turnSeat})}>Пас</button>
+          <button className="btn gold" disabled=${myBlocked || !(Number(amt) > bid.amount && Number(amt) <= st.money[turnSeat])} onClick=${() => dispatch({t:'bid', seat:turnSeat, amount:Number(amt)})}>Поставить $${amt || ''}</button>
+          <button className=${cx('btn danger', sureP && 'gold')} onClick=${() => sureP ? dispatch({t:'pass', seat:turnSeat}) : setSureP(true)}>${sureP ? 'Точно пас?' : 'Пас'}</button>
         </div>` : null}
       </div>
     </div>` : null}
@@ -1575,7 +1632,7 @@ function App(){
   }, [prefs.musicOn, prefs.track]);
   useEffect(() => { document.body.classList.toggle('no-anim', prefs.anim === false); }, [prefs.anim]);
   useEffect(() => { Sfx.setOn(prefs.sfx !== false); }, [prefs.sfx]);
-  useEffect(() => { const a = ACCENTS[prefs.accent] || ACCENTS.gold, r = document.documentElement.style; r.setProperty('--gold', a[0]); r.setProperty('--gold2', a[1]); r.setProperty('--goldDim', a[2]); }, [prefs.accent]);
+  useEffect(() => { document.documentElement.setAttribute('data-theme', prefs.theme || 'gold'); Sfx.setTheme(prefs.theme || 'gold'); }, [prefs.theme]);
   useEffect(() => { const h = e => { if (e.target.closest && e.target.closest('.card:not(.banned)')) Sfx.play('tick'); }; document.addEventListener('click', h, true); return () => document.removeEventListener('click', h, true); }, []);
   const [conn, setConn] = useState('online');
   const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
