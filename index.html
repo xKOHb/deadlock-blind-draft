@@ -1538,15 +1538,17 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : (/^#guess(-|$)/.test(h) ? 'guess' : null));
+const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : (/^#guess(-|$)/.test(h) ? 'guess' : (/^#budget(-|$)/.test(h) ? 'budget' : (/^#cards(-|$)/.test(h) ? 'cards' : null))));
 const hashRoomG = () => { const m = /^#guess-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
 const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
-const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', guess:'Угадай предмет', builds:'Сборки героев'};
+const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', guess:'Угадай предмет', budget:'Бюджетный билд', cards:'Челлендж-карточки', builds:'Сборки героев'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
   ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
   ['Как играть со слепым драфтом?', 'Каждый раунд вы загадываете сопернику три предмета, а он вслепую выбирает один из них. Так у обоих набирается билд. Потом идёте в игру и бьётесь 1 на 1 на этих предметах.'],
   ['Как играть в «Угадай предмет»?', 'Есть три режима. «Пиксель»: иконка сильно запикселена, каждая ошибка делает её чётче, первый верный ответ даёт 3, 2 или 1 очко. «Статы»: угадай предмет по характеристикам. «Оригинал»: показан предмет, нужно выбрать набор характеристик без подделок. В двух последних верный ответ даёт очко, а кто ответил верно первым, получает ещё одно. Можно играть онлайн с другом или одному.'],
+  ['Как играть в «Бюджетный билд»?', 'У обоих игроков одинаковый бюджет душ и лимит предметов (активных не больше четырёх). Вы собираете билд втайне и жмёте «Готово». Когда готовы оба, билды открываются, и вы играете матч. Победителя отмечаете сами, счёт копится между раундами.'],
+  ['Как играть в «Челлендж-карточки»?', 'Каждому по очереди выпадает условие на матч. Его можно принять, один раз сменить и один раз отклонить. Когда у обоих набралось нужное число условий, играете матч и выполняете их.'],
   ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются. Если выигранный предмет конфликтует со сборкой (например, это улучшение того, что уже куплено), начинается спор о замене, как в драфте.'],
   ['Как сыграть с другом по сети?', 'Создай комнату и отправь другу код из пяти символов. Он вводит его на сайте и садится на второе место. Если друг рядом, можно играть вдвоём на одном экране.'],
   ['Кто побеждает в итоге?', 'Сайт победителя не объявляет. Он собирает билды, а выясняете вы это уже в игре: кто победил в бою 1 на 1, тот и молодец.'],
@@ -1762,6 +1764,10 @@ function Hub({onOpen}){
        <g transform="translate(116 38)"><circle r="20" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><circle r="14" fill="none" stroke="#b8975a" strokeWidth="1.5"/><text y="9" textAnchor="middle" fontSize="24" fontWeight="800" fill="#141311">$</text></g></g></svg>`}
     ,{id:'guess', title:'Угадай предмет', tag:'1 на 1 · онлайн или одному', desc:'Пиксельная иконка, угадай по статам или найди настоящие характеристики среди подделок.', btn:'Играть',
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><rect x="22" y="14" width="58" height="66" rx="6" fill="#2a2620" stroke="#b8975a" strokeWidth="3"/><path d="M51 30 68 47 51 64 34 47z" fill="#141311"/><text x="51" y="55" textAnchor="middle" fontSize="26" fontWeight="800" fill="#e0c58a">?</text><rect x="92" y="22" width="40" height="9" rx="2" fill="#7fb53a"/><rect x="92" y="40" width="40" height="9" rx="2" fill="#9a62d6"/><rect x="92" y="58" width="40" height="9" rx="2" fill="#e58a1f"/></g></svg>`}
+    ,{id:'budget', title:'Бюджетный билд', tag:'1 на 1 · онлайн', desc:'Одинаковый бюджет душ у обоих. Соберите билд втайне, откройте одновременно и сыграйте матч.', btn:'Играть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="48" cy="48" r="30" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><text x="48" y="59" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311">$</text><rect x="92" y="26" width="38" height="12" rx="2" fill="#7fb53a"/><rect x="92" y="44" width="30" height="12" rx="2" fill="#9a62d6"/><rect x="92" y="62" width="22" height="12" rx="2" fill="#e58a1f"/></g></svg>`}
+    ,{id:'cards', title:'Челлендж-карточки', tag:'1 на 1 · онлайн или на одном экране', desc:'Случайные условия на матч: принимай, меняй или отклоняй. Потом выполняй их в игре.', btn:'Играть',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><g transform="rotate(-12 48 52)"><rect x="22" y="16" width="52" height="68" rx="5" fill="#9a62d6" stroke="#141311" strokeWidth="3"/><text x="48" y="60" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311" opacity=".6">!</text></g><g transform="rotate(10 106 50)"><rect x="80" y="12" width="52" height="68" rx="5" fill="#e58a1f" stroke="#141311" strokeWidth="3"/><path d="M106 30 120 46 106 62 92 46z" fill="#141311"/></g></g></svg>`}
   ];
   const buildsArt = html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="40" cy="36" r="22" fill="#5f93b8" stroke="#141311" strokeWidth="3"/><circle cx="40" cy="30" r="8" fill="#141311" opacity=".55"/><path d="M24 54q16-14 32 0" fill="#141311" opacity=".55"/>
        <rect x="76" y="14" width="26" height="26" rx="3" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="14" width="26" height="26" rx="3" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><rect x="76" y="46" width="26" height="26" rx="3" fill="#7fb53a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="46" width="26" height="26" rx="3" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/></g></svg>`;
@@ -2226,6 +2232,199 @@ function GuessBoard({st, controls, dispatch, onExit}){
     <div><button className="btn sm" onClick=${onExit}>Выйти</button></div>
   </div>`;
 }
+/* ======================= ОБЩАЯ ОБЁРТКА КОМНАТ + «БЮДЖЕТНЫЙ БИЛД» + «ЧЕЛЛЕНДЖ-КАРТОЧКИ» ======================= */
+// RoomShell: лобби, создание комнаты и вход по коду/ссылке (#хэш-КОД), подписка на guess-подобный узел Firebase {path}/{КОД}/state.
+// Игре нужны: init(cfg, seats), reduce(state, action) (чистая функция), start (фаза после входа второго игрока), Board.
+function RoomShell({cfg0, path, hash, skey, title, desc, settings, init, reduce, start, Board, local}){
+  const rm = () => { const m = new RegExp('^#' + hash + '-([A-Za-z0-9]{4,8})$').exec(location.hash); return m ? m[1].toUpperCase() : ''; };
+  const [cfg, setCfg] = useState(cfg0);
+  const [nick, setNick] = useState(() => store.get('bd_nick', ''));
+  const [code, setCode] = useState(() => rm() ? null : store.get(skey, null));
+  const [join, setJoin] = useState(rm);
+  const [lc, setLc] = useState(null), [err, setErr] = useState(null), [busy, setBusy] = useState(false);
+  const uid = useMemo(getUid, []), [online, setOnline] = useState(undefined);
+  useEffect(() => {
+    if (!code || !fbDb) return;
+    const r = fbDb.ref(path + '/' + code + '/state');
+    const h = r.on('value', x => setOnline(x.val()), e => { setErr((e && e.message) || 'Нет связи с базой'); setOnline(null); });
+    return () => r.off('value', h);
+  }, [code]);
+  const nm = n => n.trim() || 'Игрок';
+  const ref = c => fbDb.ref(path + '/' + c + '/state');
+  const create = async () => {
+    setBusy(true); setErr(null);
+    try {
+      for (let i = 0; i < 6; i++){
+        const c = genCode(), res = await ref(c).transaction(cur => (cur === null ? init(cfg, {A:{uid, name:nm(nick)}}) : undefined));
+        if (res.committed){ store.set(skey, c); setCode(c); setBusy(false); return; }
+      }
+      throw new Error('Не удалось создать комнату, попробуй ещё раз');
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const joinRoom = async () => {
+    setBusy(true); setErr(null);
+    try {
+      const c = join.trim().toUpperCase(); if (c.length < 4) throw new Error('Введи код комнаты');
+      const pre = (await ref(c).child('ver').once('value')).val();
+      if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов. Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
+      const res = await ref(c).transaction(cur => {
+        if (!cur) return undefined;
+        const sa = cur.seats || {};
+        if ((sa.A && sa.A.uid === uid) || (sa.B && sa.B.uid === uid)) return cur;
+        if (sa.B) return undefined;
+        return {...cur, seats:{...sa, B:{uid, name:nm(nick)}}, phase:start};
+      });
+      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      store.set(skey, c); setCode(c);
+    } catch (e){ setErr(e.message); }
+    setBusy(false);
+  };
+  const leave = () => { store.set(skey, null); setCode(null); setOnline(undefined); setLc(null); };
+  if (lc) return html`<${Board} st=${lc} controls=${['A', 'B']} dispatch=${a => setLc(x => reduce(x, a))} onExit=${leave}/>`;
+  if (code){
+    if (online === undefined) return html`<div className="panel p-6 text-center"><div className="spin"></div><p className="muted mt-3">Подключаемся к комнате…</p></div>`;
+    if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
+    const sa = online.seats || {}, my = sa.A && sa.A.uid === uid ? 'A' : (sa.B && sa.B.uid === uid ? 'B' : null);
+    const link = location.origin + location.pathname + '#' + hash + '-' + code;
+    const dispatch = a => ref(code).transaction(cur => (cur ? reduce(cur, {...a, seat:my}) : undefined)).catch(e => setErr(e.message));
+    return html`<div className="flex flex-col gap-4">
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><button className="btn sm" onClick=${() => copyText(code)}>Копировать код</button><button className="btn sm" onClick=${() => copyText(link)}>Копировать ссылку</button></span></div>
+      ${err ? html`<pre className="err">${err}</pre>` : null}
+      <${Board} st=${online} controls=${my ? [my] : []} dispatch=${dispatch} onExit=${leave}/>
+    </div>`;
+  }
+  return html`<div className="flex flex-col gap-5">
+    <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(30px,6vw,52px)'}}>${title}</h2><p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>${desc}</p></div>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="panel p-5 flex flex-col gap-4"><div className="panel-h">Настройки</div>${settings({cfg, setCfg})}
+        ${local ? html`<button className="btn gold" onClick=${() => setLc(init(cfg, {A:{name:'Игрок А'}, B:{name:'Игрок Б'}}))}>Играть на одном экране</button>` : null}</div>
+      <div className="panel p-5 flex flex-col gap-3"><div className="panel-h">Онлайн с другом</div>
+        ${rm() ? html`<div className="chip gold" style=${{whiteSpace:'normal'}}>Тебя пригласили в комнату ${rm()}. Введи ник и нажми «Войти».</div>` : null}
+        <input className="fld" placeholder="Твой ник" maxLength="20" value=${nick} onChange=${e => { setNick(e.target.value); store.set('bd_nick', e.target.value); }}/>
+        <button className="btn gold" disabled=${busy || !fbDb} onClick=${create}>Создать комнату</button>
+        <div className="flex gap-2"><input className="fld" placeholder="Код комнаты" maxLength="6" value=${join} onChange=${e => setJoin(e.target.value)}/><button className="btn" disabled=${busy || !fbDb} onClick=${joinRoom}>Войти</button></div>
+        ${err ? html`<pre className="err">${err}</pre>` : null}</div>
+    </div>
+  </div>`;
+}
+const WaitPanel = ({onExit}) => html`<div className="panel p-6 text-center flex flex-col gap-3"><div className="spin" style=${{margin:'0 auto'}}></div><p>Ждём второго игрока. Отправь ему код комнаты или ссылку.</p><div><button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+
+/* ---------- Бюджетный билд ---------- */
+// Состояние: {cfg:{budget,max}, ver, seats, phase:'lobby'|'build'|'reveal', picks:{A:[id],B:[id]}, ready:{A,B}, res:'A'|'B'|'D', score}
+// Оба собирают билд на один бюджет душ (максимум предметов задан, активных не больше 4), потом билды открываются.
+// Кто победил в настоящем матче, игроки отмечают сами; счёт копится между реваншами.
+function buCheck(ids, cfg){
+  if (!Array.isArray(ids) || !ids.length || ids.length > cfg.max || new Set(ids).size !== ids.length) return false;
+  let sum = 0, act = 0;
+  for (const id of ids){ const it = CATALOG[id]; if (!it) return false; sum += it.price; if (it.active) act++; }
+  return sum <= cfg.budget && act <= 4;
+}
+function buInit(cfg, seats, score){ return {cfg, ver:CAT_VER, seats, phase:seats.B ? 'build' : 'lobby', picks:{}, ready:{}, score:score || {A:0, B:0}}; }
+function buReduce(st, a){
+  const s = JSON.parse(JSON.stringify(st)); s.picks = s.picks || {}; s.ready = s.ready || {}; s.score = s.score || {A:0, B:0};
+  if (a.t === 'ready' && s.phase === 'build' && (a.seat === 'A' || a.seat === 'B') && !s.ready[a.seat] && buCheck(a.ids, s.cfg)){
+    s.picks[a.seat] = a.ids; s.ready[a.seat] = true; if (s.ready.A && s.ready.B) s.phase = 'reveal';
+  } else if (a.t === 'win' && s.phase === 'reveal' && !s.res && ['A', 'B', 'D'].includes(a.w)){
+    s.res = a.w; if (a.w !== 'D') s.score[a.w] += 1;
+  } else if (a.t === 'rematch' && s.phase === 'reveal') return buInit(s.cfg, s.seats, s.score);
+  return s;
+}
+function BudgetBoard({st, controls, dispatch, onExit}){
+  const {nameLang} = useContext(PrefCtx);
+  const me = controls[0], cfg = st.cfg, picks = st.picks || {}, ready = st.ready || {}, sc = st.score || {A:0, B:0};
+  const nm = x => (st.seats[x] && st.seats[x].name) || 'Игрок';
+  const [draft, setDraft] = useState([]), [q, setQ] = useState(''), [slot, setSlot] = useState('all'), [copied, setCopied] = useState(false);
+  const list = useMemo(() => ITEMS.filter(i => !i.missing).sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en)), []);
+  const items = draft.map(id => BY_ID[id]), spent = items.reduce((t, i) => t + i.price, 0), acts = items.filter(i => i.active).length, left = cfg.budget - spent;
+  const can = it => !draft.includes(it.id) && draft.length < cfg.max && it.price <= left && !(it.active && acts >= 4);
+  const ql = q.trim().toLowerCase(), shown = list.filter(i => (slot === 'all' || i.slot === slot) && (!ql || (i.name.ru + ' ' + i.name.en).toLowerCase().includes(ql))).slice(0, 60);
+  const sum = ids => (ids || []).reduce((t, id) => t + BY_ID[id].price, 0);
+  const rows = ids => (ids || []).map(id => { const it = BY_ID[id]; return html`<div key=${id} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num"><${Soul} size=${9}/> ${it.price}</span></div>`; });
+  const head = html`<div className="panel p-3 flex flex-wrap items-center justify-between gap-3"><span className="muted disp" style=${{fontSize:'13px'}}>Бюджетный билд · бюджет ${cfg.budget} · до ${cfg.max} предметов</span><div className="flex gap-3">${['A', 'B'].map(x => html`<span key=${x} className="chip" style=${me === x ? {borderColor:'var(--gold2)',color:'var(--gold2)'} : null}>${nm(x)}: <b className="num">${sc[x]}</b></span>`)}</div></div>`;
+  if (st.phase === 'lobby') return html`<${WaitPanel} onExit=${onExit}/>`;
+  if (st.phase === 'reveal'){
+    const text = ['A', 'B'].map(x => nm(x) + ' (' + sum(picks[x]) + '): ' + (picks[x] || []).map(id => BY_ID[id].name[nameLang]).join(', ')).join('\n');
+    return html`<div className="flex flex-col gap-4">${head}
+      <div className="grid gap-4 md:grid-cols-2">${['A', 'B'].map(x => html`<div key=${x} className=${cx('panel p-4 flex flex-col gap-2', st.res === x && 'active')}><div className="panel-h">${nm(x)}</div>${rows(picks[x])}<div className="muted num">Потрачено ${sum(picks[x])} из ${cfg.budget}</div></div>`)}</div>
+      <div className="panel p-4 flex flex-wrap items-center gap-2"><span>Играйте матч с этими билдами. Кто победил?</span>
+        ${st.res ? html`<span className="chip ok">${st.res === 'D' ? 'Ничья' : 'Победил(а) ' + nm(st.res)}</span>` : (controls.length ? ['A', 'B', 'D'].map(w => html`<button key=${w} className="btn sm" onClick=${() => dispatch({t:'win', w})}>${w === 'D' ? 'Ничья' : nm(w)}</button>`) : null)}
+        <button className="btn sm" onClick=${() => copyText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {})}>${copied ? 'Скопировано' : 'Копировать билды'}</button></div>
+      <${MatchCmds}/>
+      <div className="flex gap-2">${controls.length ? html`<button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Новый билд</button>` : null}<button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+  }
+  if (!me) return html`<div className="panel p-6 text-center">Ты наблюдатель.<div className="mt-3"><button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+  if (ready[me]) return html`<div className="flex flex-col gap-4">${head}<div className="panel p-6 text-center"><div className="spin" style=${{margin:'0 auto'}}></div><p className="mt-3">Билд отправлен. Ждём соперника…</p></div></div>`;
+  return html`<div className="flex flex-col gap-4">${head}
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Предметы</div>
+        <${SlotTabs} value=${slot} onChange=${setSlot}/>
+        <input className="fld" placeholder="Поиск по названию" value=${q} onChange=${e => setQ(e.target.value)}/>
+        <div className="grid gap-2" style=${{maxHeight:'420px',overflowY:'auto'}}>${shown.map(it => html`<button key=${it.id} className="gu-opt" style=${{display:'flex',alignItems:'center',gap:'10px',textAlign:'left',opacity:can(it) ? 1 : .4}} onClick=${() => { if (can(it)) setDraft(d => d.concat(it.id)); }}><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">Т${it.tier} · ${it.price}</span></button>`)}</div></div>
+      <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Твой билд</div>
+        <div className="flex flex-wrap gap-2"><span className="chip">Осталось ${left}</span><span className="chip">${draft.length} из ${cfg.max}</span><span className="chip">Активных ${acts} из 4</span></div>
+        ${items.length ? items.map(it => html`<div key=${it.id} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">${it.price}</span><button className="btn sm" onClick=${() => setDraft(d => d.filter(x => x !== it.id))}>Убрать</button></div>`) : html`<div className="muted">Пока пусто. Выбери предметы слева.</div>`}
+        <button className="btn gold" disabled=${!draft.length} onClick=${() => dispatch({t:'ready', ids:draft})}>Готово, отправить билд</button></div>
+    </div>
+    <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
+}
+function Budget(){
+  const settings = ({cfg, setCfg}) => html`<${Fragment}>
+    <div><div className="flex justify-between"><span>Бюджет душ</span><b className="disp num">${cfg.budget}</b></div><input type="range" min="3000" max="30000" step="1000" value=${cfg.budget} onChange=${e => setCfg({...cfg, budget:Number(e.target.value)})}/></div>
+    <div><div className="flex justify-between"><span>Максимум предметов</span><b className="disp num">${cfg.max}</b></div><input type="range" min="4" max="12" step="1" value=${cfg.max} onChange=${e => setCfg({...cfg, max:Number(e.target.value)})}/></div><//>`;
+  return html`<${RoomShell} cfg0=${{budget:12000, max:8}} path="budget" hash="budget" skey="bd_broom" title="Бюджетный билд" desc="У обоих одинаковый бюджет душ. Соберите билд втайне, потом откройте их одновременно и сыграйте матч." settings=${settings} init=${buInit} reduce=${buReduce} start="build" Board=${BudgetBoard}/>`;
+}
+
+/* ---------- Челлендж-карточки ---------- */
+// Состояние: {cfg:{cards}, seats, phase:'lobby'|'play'|'done', deck:[индексы], ptr, cur, tgt:'A'|'B', got:{A:[],B:[]}, tok:{A:{r,s},B:{r,s}}}
+// Получателю выпадает условие на матч. Он может принять его, один раз сменить (r) или один раз отклонить (s). Игра идёт, пока у обоих не наберётся cards условий.
+const CA_DECK = ['Без активных предметов', 'Только предметы Оружия', 'Только предметы Спиритизма', 'Только предметы Живучести', 'Нельзя покупать предметы Оружия', 'Нельзя покупать предметы тира IV', 'Только предметы тира I и II', 'Максимум 5 предметов за матч', 'Первые 5 минут ничего не покупать', 'Каждый предмет не дороже 1600 душ', 'Нельзя продавать предметы', 'Только предметы с названием из одного слова', 'Соперник называет слот, из которого ты покупаешь следующий предмет', 'Покупаешь только то, что посоветует соперник (три раза)', 'После каждой смерти следующая покупка только тира I', 'Все предметы из одного слота', 'Максимум по два предмета каждого слота', 'Купи предмет, который ты ещё ни разу не покупал(а)'];
+function caDraw(s){ s.cur = s.deck[s.ptr % s.deck.length]; s.ptr += 1; }
+function caInit(cfg, seats){
+  const rnd = guRng(Math.random().toString(36).slice(2, 10)), deck = CA_DECK.map((_, i) => i);
+  for (let i = deck.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); const x = deck[i]; deck[i] = deck[j]; deck[j] = x; }
+  const s = {cfg, ver:CAT_VER, seats, phase:seats.B ? 'play' : 'lobby', deck, ptr:0, cur:0, tgt:'A', got:{A:[], B:[]}, tok:{A:{r:1, s:1}, B:{r:1, s:1}}};
+  caDraw(s); return s;
+}
+function caReduce(st, a){
+  const s = JSON.parse(JSON.stringify(st)); s.got = s.got || {}; s.got.A = s.got.A || []; s.got.B = s.got.B || [];
+  const n = s.cfg.cards, oth = x => x === 'A' ? 'B' : 'A';
+  const next = () => {
+    if (s.got.A.length >= n && s.got.B.length >= n){ s.phase = 'done'; s.cur = -1; return; }
+    let t = oth(s.tgt); if (s.got[t].length >= n) t = s.tgt;
+    s.tgt = t; caDraw(s);
+  };
+  const mine = s.phase === 'play' && a.seat === s.tgt;
+  if (a.t === 'accept' && mine){ s.got[s.tgt].push(s.cur); next(); }
+  else if (a.t === 'reroll' && mine && s.tok[a.seat].r > 0){ s.tok[a.seat].r -= 1; caDraw(s); }
+  else if (a.t === 'shield' && mine && s.tok[a.seat].s > 0){ s.tok[a.seat].s -= 1; next(); }
+  else if (a.t === 'rematch' && s.phase === 'done') return caInit(s.cfg, s.seats);
+  return s;
+}
+function CardsBoard({st, controls, dispatch, onExit}){
+  const [copied, setCopied] = useState(false);
+  const nm = x => (st.seats[x] && st.seats[x].name) || 'Игрок', n = st.cfg.cards, got = st.got || {A:[], B:[]}, tok = st.tok;
+  const g = x => got[x] || [];
+  const can = controls.includes(st.tgt), act = t => dispatch({t, seat:st.tgt});
+  const lists = html`<div className="grid gap-4 md:grid-cols-2">${['A', 'B'].map(x => html`<div key=${x} className="panel p-4 flex flex-col gap-2"><div className="panel-h">${nm(x)} · ${g(x).length} из ${n}</div>${g(x).length ? g(x).map((c, i) => html`<div key=${i}>${i + 1}. ${CA_DECK[c]}</div>`) : html`<div className="muted">Пока нет условий</div>`}</div>`)}</div>`;
+  if (st.phase === 'lobby') return html`<${WaitPanel} onExit=${onExit}/>`;
+  if (st.phase === 'done'){
+    const text = ['A', 'B'].map(x => nm(x) + ':\n' + g(x).map((c, i) => (i + 1) + '. ' + CA_DECK[c]).join('\n')).join('\n\n');
+    return html`<div className="flex flex-col gap-4"><div className="panel p-5 text-center"><div className="panel-h">Условия матча готовы</div><p className="muted">Играйте матч и выполняйте свои условия.</p></div>${lists}<${MatchCmds}/>
+      <div className="flex flex-wrap gap-2"><button className="btn" onClick=${() => copyText(text).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1500); }).catch(() => {})}>${copied ? 'Скопировано' : 'Копировать итог'}</button>${controls.length ? html`<button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Ещё раз</button>` : null}<button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
+  }
+  return html`<div className="flex flex-col gap-4">
+    <div className="panel p-5 text-center flex flex-col gap-3 items-center">
+      <div className="muted disp" style=${{fontSize:'13px'}}>Условие для: ${nm(st.tgt)}</div>
+      <div className="disp" style=${{fontSize:'clamp(20px,4vw,32px)',color:'var(--gold2)',maxWidth:'28ch'}}>${CA_DECK[st.cur]}</div>
+      ${can ? html`<div className="flex flex-wrap justify-center gap-2"><button className="btn gold" onClick=${() => act('accept')}>Принять</button><button className="btn" disabled=${tok[st.tgt].r < 1} onClick=${() => act('reroll')}>Сменить (${tok[st.tgt].r})</button><button className="btn" disabled=${tok[st.tgt].s < 1} onClick=${() => act('shield')}>Отклонить (${tok[st.tgt].s})</button></div>` : html`<div className="muted">${controls.length ? 'Решает соперник…' : 'Решает ' + nm(st.tgt) + '…'}</div>`}
+    </div>${lists}
+    <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
+}
+function Cards(){
+  const settings = ({cfg, setCfg}) => html`<div><div className="flex justify-between"><span>Условий каждому</span><b className="disp num">${cfg.cards}</b></div><input type="range" min="1" max="5" step="1" value=${cfg.cards} onChange=${e => setCfg({...cfg, cards:Number(e.target.value)})}/></div>`;
+  return html`<${RoomShell} cfg0=${{cards:3}} path="cards" hash="cards" skey="bd_croom" title="Челлендж-карточки" desc="Перед матчем вам выпадают случайные условия. Можно принять, один раз сменить и один раз отклонить карточку. Потом играете матч и выполняете их." settings=${settings} init=${caInit} reduce=${caReduce} start="play" Board=${CardsBoard} local=${true}/>`;
+}
 function Guess(){
   const [cfg, setCfg] = useState({rounds:10, kind:'all'});
   const [nick, setNick] = useState(() => store.get('bd_nick', ''));
@@ -2391,6 +2590,8 @@ function App(){
   else if (game === 'builds') body = html`<${Builds}/>`;
   else if (game === 'auction') body = html`<${Auction}/>`;
   else if (game === 'guess') body = html`<${Guess}/>`;
+  else if (game === 'budget') body = html`<${Budget}/>`;
+  else if (game === 'cards') body = html`<${Cards}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
