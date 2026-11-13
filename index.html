@@ -275,6 +275,17 @@ button.btn:active:not(:disabled){transform:translateY(1px) scale(.98)}
 .stg-n{font-family:var(--f-head);font-weight:700;font-size:16px;color:var(--gold2);margin-bottom:2px}
 .stg.opt .stg-n{color:#a9c8f2}
 .stg-note{font-size:15.5px;font-weight:700;line-height:1.45;color:var(--text);white-space:pre-line;margin:2px 0 10px;max-width:72ch}
+/* порядок прокачки умений: 4 строки (умения) на 16 колонок (шаги), как в игре */
+.skw{overflow-x:auto;padding-bottom:4px}.skg{--cw:26px;display:flex;flex-direction:column;gap:2px;width:max-content;max-width:none;border:1px solid var(--edge2);background:rgba(0,0,0,.28);padding:8px 10px}
+.skr{display:flex;align-items:center;height:30px;background:rgba(0,0,0,.28)}.skr:nth-child(even){background:rgba(255,255,255,.035)}
+.ski{flex:none;width:34px;height:30px;margin-right:6px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--edge);border-radius:3px;overflow:hidden;font:700 13px var(--f-display);color:var(--gold2)}
+.ski img{width:100%;height:100%;object-fit:cover;display:block}
+.skc{flex:none;width:var(--cw);height:30px;display:flex;align-items:center;justify-content:center;position:relative}
+.skm{width:20px;height:20px;transform:rotate(45deg);background:var(--bg2);border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center}
+.skm b{transform:rotate(-45deg);font:700 11px var(--f-display);color:var(--text)}
+.skm.u{background:#ce91ff;border-color:#ece1c8}.skm.u b{display:none}
+.skm.u::after{content:'';width:7px;height:7px;background:rgba(0,0,0,.45)}
+
 .wide{width:min(1600px,calc(100vw - 32px));margin-left:calc(50% - min(800px,50vw - 16px))}
 .wheel-w{position:relative;width:78px;height:78px;flex:none}.wheel-p{position:absolute;left:50%;top:-8px;transform:translateX(-50%);border:7px solid transparent;border-top:13px solid var(--gold2);z-index:2}
 .wheel{width:100%;height:100%;border-radius:50%;background:conic-gradient(#e58a1f 0 180deg,#5aa8d6 180deg 360deg);border:3px solid var(--edge2);transform:rotate(var(--end));animation:wspin 2s cubic-bezier(.15,.7,.2,1)}
@@ -1772,7 +1783,8 @@ const FAQ = [
 ];
 /* ======================= СБОРКИ ГЕРОЕВ ======================= */
 // Сборки лежат в файле builds.json рядом с index.html (герой по английскому названию, предметы по английским названиям).
-// Поля сборки: id (нужен для ссылки #builds-id), gameId (ID сборки в игре), hero, title, author, date, updated (необязательно), patch, weekly (true у сборки недели), stages:[{name, note, optional, items}].
+// Поля сборки: id (нужен для ссылки #builds-id), gameId (ID сборки в игре), hero, title, author, version (необязательно), date, updated (необязательно), patch, weekly (true у сборки недели), tags, stages:[{name, note, optional, items}], skills (порядок прокачки умений, см. SkillOrder).
+// Иконки и названия умений лежат в файле abilities.json рядом с index.html: [{hero, abilities:[{en, ru, img} x4]}], порядок как в игре (умения 1..4).
 // Герои берутся из heroes-en.min.json / heroes-ru.min.json (если есть) или из Deadlock API.
 const HERO_API = 'https://api.deadlock-api.com/v1/assets/heroes';
 async function firstJson(urls){ for (const u of urls){ try { const j = await getJson(u, 20000); if (Array.isArray(j) && j.length) return j; } catch (e){} } return null; }
@@ -1989,7 +2001,28 @@ function buildTags(b){
   }));
   return n ? TAG_ORDER.filter(k => cnt[k] >= Math.max(2, n * .3)) : [];
 }
-function BuildCard({b, heroName, weekly, focus, anchor}){
+// Порядок улучшения умений: b.skills = 4 массива (умения 1..4 сверху вниз), в каждом номера шагов 0..15: первый шаг это открытие умения (фиолетовый ромб), дальше улучшения с метками 1, 2, 5.
+const SK_COLS = 16, SK_LABELS = ['1', '2', '5'];
+function skillRows(b){
+  const r = Array.isArray(b.skills) ? b.skills.slice(0, 4).map(row => (Array.isArray(row) ? row : []).map(Number).filter(n => Number.isInteger(n) && n >= 0 && n < SK_COLS)) : [];
+  return r.length && r.some(x => x.length) ? r : null;
+}
+function SkIcon({a, n}){
+  const [bad, setBad] = useState(false);
+  return html`<div className="ski" title=${a ? a.name : 'Умение ' + n}>${a && a.img && !bad ? html`<img src=${a.img} alt=${a.name} loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : n}</div>`;
+}
+function SkillOrder({b, abilities}){
+  const {nameLang} = useContext(PrefCtx), rows = skillRows(b);
+  if (!rows) return null;
+  const hero = (abilities || []).find(h => h && sameHero(h.hero, b.hero)), list = (hero && Array.isArray(hero.abilities)) ? hero.abilities : [];
+  return html`<div className="flex flex-col gap-3"><div className="sec-h"><span>Порядок улучшения умений</span></div>
+    <div className="skw"><div className="skg" role="img" aria-label="Порядок улучшения умений">${rows.map((row, i) => {
+      const a = list[i] ? {name:list[i][nameLang] || list[i].en, img:list[i].img} : null;
+      return html`<div key=${i} className="skr"><${SkIcon} a=${a} n=${i + 1}/>${Array.from({length:SK_COLS}, (_, c) => { const k = row.indexOf(c); return html`<div key=${c} className="skc">${k < 0 ? null : (k === 0 ? html`<span className="skm u" title="Открыть умение"><b></b></span>` : html`<span className="skm" title=${'Улучшение ' + SK_LABELS[k - 1]}><b>${SK_LABELS[k - 1] || k}</b></span>`)}</div>`; })}</div>`;
+    })}</div></div>
+    <div className="muted" style=${{fontSize:'12px'}}>Слева направо: порядок вложения очков умений. Фиолетовый ромб: открыть умение, ромбы с цифрами: улучшения 1, 2 и 5.</div></div>`;
+}
+function BuildCard({b, heroName, abilities, weekly, focus, anchor}){
   const [msg, setMsg] = useState(''), [open, setOpen] = useState(!!focus);
   useEffect(() => { if (focus) setOpen(true); }, [focus]);
   useEffect(() => { if (!msg) return; const t = setTimeout(() => setMsg(''), 2500); return () => clearTimeout(t); }, [msg]);
@@ -2016,6 +2049,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
         <div className="btitle">${heroName ? heroName + ': ' : ''}${b.title || 'Сборка'}</div>
         <div className="muted flex flex-wrap items-center gap-x-3 gap-y-1" style=${{fontSize:'13px',marginTop:'3px'}}>
           ${b.author ? html`<span>Автор: <b>${b.author}</b></span>` : null}
+          ${b.version ? html`<span>Версия ${b.version}</span>` : null}
           <span>${dt}${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${up ? ', обновлена ' + up : ''}</span>
           ${b.patch ? html`<span>патч ${b.patch}</span>` : null}
           ${tags.map(k => html`<span key=${k} className="chip" style=${{color:'var(--s-' + k + ')',borderColor:'var(--s-' + k + ')'}}>${TAG_RU[k]}</span>`)}
@@ -2033,6 +2067,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
     ${open ? html`<div className="bbody">
       ${must.length ? html`<div className="flex flex-col gap-3"><div className="sec-h"><span>Обязательно</span></div><div className="flex flex-wrap gap-3 items-start">${must.map(box)}</div></div>` : null}
       ${opt.length ? html`<div className="flex flex-col gap-3"><div className="sec-h opt"><span>Необязательно, по ситуации</span></div><div className="flex flex-wrap gap-3 items-start">${opt.map(box)}</div></div>` : null}
+      <${SkillOrder} b=${b} abilities=${abilities}/>
       ${!stages.length ? html`<div className="muted">Предметы в этой сборке пока не добавлены. Скопируй ID и открой сборку в игре.</div>` : null}
       <div className="flex flex-wrap items-center gap-2">
         ${b.id ? html`<button className="btn sm" onClick=${() => doCopy(buildLink(b.id), 'Ссылка скопирована')}>Поделиться ссылкой</button>` : null}
@@ -2044,7 +2079,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
 }
 function Builds(){
   const {nameLang} = useContext(PrefCtx);
-  const [st, setSt] = useState({loading:true, heroes:[], builds:[]});
+  const [st, setSt] = useState({loading:true, heroes:[], builds:[], abilities:[]});
   const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(true), [tag, setTag] = useState('all');
   const [hash, setHash] = useState(location.hash);
   useEffect(() => { const h = () => setHash(location.hash); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
@@ -2055,13 +2090,14 @@ function Builds(){
       const b0 = await firstJson(['builds.json']), builds = Array.isArray(b0) ? b0.filter(x => x && typeof x === 'object') : [];
       const he = await firstJson(['heroes-en.min.json', 'heroes-en.json', HERO_API + '?language=english', HERO_API]);
       const hr = await firstJson(['heroes-ru.min.json', 'heroes-ru.json', HERO_API + '?language=russian']);
+      const abilities = (await firstJson(['abilities.json'])) || [];   // иконки и названия 4 умений каждого героя
       const ruBy = {}; (hr || []).forEach(h => { ruBy[h.id] = h.name; });
       let heroes = (he || []).filter(h => h && h.name && !h.disabled && h.player_selectable !== false).map(h => ({key:h.name, name:{en:h.name, ru:ruBy[h.id] || h.name}, img:heroImg(h)}));
       // Если героя из builds.json нет в списке API (другое имя, скрыт и т.п.), добавляем его плиткой без картинки: сборки не пропадают.
       builds.forEach(b => { if (b.hero && !heroes.some(h => sameHero(h.key, b.hero))) heroes.push({key:b.hero, name:{en:b.hero, ru:b.hero}, img:''}); });
       heroes.sort((x, y) => hkey(x.name.en).localeCompare(hkey(y.name.en)));
-      if (on) setSt({loading:false, heroes, builds});
-    })().catch(() => { if (on) setSt({loading:false, heroes:[], builds:[]}); });
+      if (on) setSt({loading:false, heroes, builds, abilities});
+    })().catch(() => { if (on) setSt({loading:false, heroes:[], builds:[], abilities:[]}); });
     return () => { on = false; };
   }, []);
   // Ссылка #builds-ID: сразу открываем героя этой сборки, раскрываем её и прокручиваем.
@@ -2081,7 +2117,7 @@ function Builds(){
   return html`<div className="flex flex-col gap-5">
     <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Сборки героев</h2>
       <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>Выбери героя, открой сборку и скопируй её ID: вставь его в игре, и сборка найдётся. Дата показывает, не устарела ли она после патчей.</p></div>
-    ${weekly ? html`<${BuildCard} b=${weekly} heroName=${heroNm(weekly)} weekly=${true}/>` : null}
+    ${weekly ? html`<${BuildCard} b=${weekly} heroName=${heroNm(weekly)} abilities=${st.abilities} weekly=${true}/>` : null}
     <div className="panel p-4 flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
@@ -2093,7 +2129,7 @@ function Builds(){
       <div className="flex flex-wrap gap-2">${list.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${cnt(h)} on=${sel === h.key} nameLang=${nameLang} onClick=${() => setSel(sel === h.key ? null : h.key)}/>`)}</div>
     </div>
     ${hero ? html`<div className="flex flex-col gap-3"><div className="panel-h" style=${{fontSize:'22px'}}>${hero.name[nameLang]} <span className="muted" style=${{fontSize:'14px',fontWeight:400}}>· сборок: ${hb.length}</span></div>
-      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b} anchor=${true} focus=${!!focusId && String(b.id) === focusId}/>`) : html`<div className="panel p-4 muted">Для этого героя сборок пока нет.</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
+      ${hb.length ? hb.map((b, i) => html`<${BuildCard} key=${b.id || i} b=${b} abilities=${st.abilities} anchor=${true} focus=${!!focusId && String(b.id) === focusId}/>`) : html`<div className="panel p-4 muted">Для этого героя сборок пока нет.</div>`}</div>` : html`<div className="muted text-center">Нажми на героя, чтобы увидеть его сборки.</div>`}
     <p className="muted text-center" style=${{fontSize:'12px'}}>Оценки и отзывы появятся позже.</p>
   </div>`;
 }
