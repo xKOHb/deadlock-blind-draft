@@ -20,6 +20,7 @@
 <meta name="twitter:image" content="https://deadlock-games.vercel.app/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&family=Russo+One&family=Rubik:wght@400;500;600&display=swap">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'none'">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
 /* Оккультный нуар 1930-х, арт-деко: угольные фоны, кремовый текст, тусклое золото. Рамки со ступенчатыми углами. */
@@ -42,6 +43,7 @@ body{margin:0;color:var(--text);font:15px/1.5 var(--f-body);
   background-size:auto,28px 28px,28px 28px;background-position:0 0,0 0,14px 14px;background-attachment:fixed;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
 .shell{max-width:1320px;margin:0 auto}
+.foot{margin-top:32px;padding:14px 8px 6px;border-top:1px solid var(--edge);color:var(--muted);font-size:12px;line-height:1.55;text-align:center}
 .disp{font-family:var(--f-display);letter-spacing:.04em}
 .muted{color:var(--muted)}
 .num{font-variant-numeric:tabular-nums}
@@ -329,7 +331,7 @@ button.seg-b{transition:background .2s,color .2s}
 .mcard.on{border-color:var(--gold2);background:linear-gradient(160deg,rgba(var(--acc),.3),var(--bg2) 75%);box-shadow:inset 0 0 0 1px var(--gold2)}
 .mcard .mt{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase;font-size:14px;font-weight:600;color:var(--gold2)}
 .mcard .md{font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
-.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:18px 12px}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:16px 10px}
 .hcard{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:transform .2s,filter .2s;animation:cardIn .4s ease backwards}
 .hcard:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
 .hf{width:100%;aspect-ratio:3/4;background:linear-gradient(160deg,var(--gold2),var(--goldDim));clip-path:var(--step);padding:2px;transition:background .25s}
@@ -342,8 +344,8 @@ button.seg-b{transition:background .2s,color .2s}
 .hcard.on{transform:translateY(-6px);filter:drop-shadow(0 0 16px rgba(var(--acc),.95))}
 .hcard.on .hf{background:linear-gradient(160deg,var(--btn3),var(--gold2))}.hcard.on .hn{color:var(--gold2)}
 .hcard.on::after{content:"✓";position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--gold2);color:#1a1409;font:700 14px/22px var(--f-body);text-align:center;animation:popIn .25s}
-.hprev{width:176px;flex:none;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
-.hprev .hf{width:150px}
+.hprev{position:sticky;top:10px;width:160px;flex:none;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.hprev .hf{width:136px}
 .hn2{font-family:var(--f-head);font-weight:800;font-size:22px;line-height:1.1;color:var(--gold2);text-shadow:0 2px 0 #000}
 .hrev{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px}
 .hside{width:150px;text-align:center;display:flex;flex-direction:column;gap:8px;animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
@@ -1751,7 +1753,7 @@ function heroResolve(mode, pick, seed){
 const heroMs = c => (c === 0 || c === 1) ? 5800 : 3800;   // сколько показываем открытие выбора
 function heroReduce(st, a){
   const h = st && st.hero;
-  if (!h || h.done || !['A', 'B'].includes(a.seat) || typeof a.key !== 'string' || !a.key) return st;
+  if (!h || h.done || !['A', 'B'].includes(a.seat) || typeof a.key !== 'string' || !a.key || a.key.length > 40) return st;
   if (h.pick && h.pick[a.seat]) return st;
   const s = JSON.parse(JSON.stringify(st)); s.hero.pick = {...(s.hero.pick || {}), [a.seat]:a.key};
   const pk = s.hero.pick;
@@ -1855,7 +1857,7 @@ function HeroPick({hero, names, controls, onPick, onSkip, onExit}){
       ${mine ? html`<div style=${{width:'140px'}}><${HeroFace} h=${mine}/></div><div className="panel-h">Ты выбрал: ${nm(mine)}</div>` : html`<div className="panel-h">Игроки выбирают героев…</div>`}
       <div className="spin"></div><p className="muted">Выбор соперника скрыт, он откроется, когда выберут оба.</p></div>`;
   }
-  return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1100px'}}>${head}${stat}${body}${exit}</div>`;
+  return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1320px'}}>${head}${stat}${body}${exit}</div>`;
 }
 // Обёртка для игр на состоянии (аукцион, бюджетный билд, карточки): до игры показывает выбор героя, потом полоску с героями и саму игру.
 function withHero(Inner){
@@ -1911,6 +1913,19 @@ function HeroTile({h, n, on, onClick, nameLang}){
 // Цена обязательных предметов в сборке скрыта. Чтобы вернуть, поставь true.
 const SHOW_BUILD_PRICE = false;
 // Сборка = закладка: свёрнуто показывает название, ID и дату, по клику раскрывается. Внутри сначала обязательное, потом необязательное (на синем фоне, как в игре).
+const TAG_ORDER = ['spirit', 'weapon', 'vitality'], TAG_RU = {spirit:'Спирит', weapon:'Оружие', vitality:'Живучесть'};
+const tagKey = v => { const k = norm(v); return /^(спир|spirit)/.test(k) ? 'spirit' : (/^(оруж|weapon)/.test(k) ? 'weapon' : (/^(живуч|vital)/.test(k) ? 'vitality' : '')); };
+const skName = x => normN(x).replace(/[^a-z0-9а-яё]/g, '');
+// Теги сборки: из поля tags в builds.json (spirit / weapon / vitality или по-русски), а если его нет, считаются по обязательным предметам.
+function buildTags(b){
+  if (Array.isArray(b.tags) && b.tags.length) return TAG_ORDER.filter(k => b.tags.some(t => tagKey(t) === k));
+  const cnt = {spirit:0, weapon:0, vitality:0}; let n = 0;
+  (b.stages || []).filter(st => !st.optional).forEach(st => (st.items || []).forEach(nm => {
+    const k = skName(nm), it = ITEMS.find(i => skName(i.name.en) === k || skName(i.name.ru) === k);
+    if (it && cnt[it.slot] != null){ cnt[it.slot]++; n++; }
+  }));
+  return n ? TAG_ORDER.filter(k => cnt[k] >= Math.max(2, n * .3)) : [];
+}
 function BuildCard({b, heroName, weekly, focus, anchor}){
   const [msg, setMsg] = useState(''), [open, setOpen] = useState(!!focus);
   useEffect(() => { if (focus) setOpen(true); }, [focus]);
@@ -1920,7 +1935,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
   const stages = (b.stages || []).filter(st => (st.items || []).length || st.note);
   const must = stages.filter(st => !st.optional), opt = stages.filter(st => st.optional);
   const total = must.flatMap(st => st.items || []).map(find).filter(Boolean).reduce((a, i) => a + i.price, 0);
-  const days = daysAgo(bStamp(b));
+  const days = daysAgo(bStamp(b)), tags = buildTags(b);
   const fresh = days == null ? null : (days <= 30 ? ['Свежая', 'var(--teal)'] : (days <= 90 ? ['Была актуальна', 'var(--gold2)'] : ['Возможно устарела', '#e07a7a']));
   const dt = isFinite(Date.parse(b.date)) ? new Date(b.date).toLocaleDateString('ru-RU') : '—';
   const up = b.updated && isFinite(Date.parse(b.updated)) ? new Date(b.updated).toLocaleDateString('ru-RU') : '';
@@ -1940,6 +1955,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
           ${b.author ? html`<span>Автор: <b>${b.author}</b></span>` : null}
           <span>${dt}${days != null ? ' (' + (days === 0 ? 'сегодня' : days + ' дн. назад') + ')' : ''}${up ? ', обновлена ' + up : ''}</span>
           ${b.patch ? html`<span>патч ${b.patch}</span>` : null}
+          ${tags.map(k => html`<span key=${k} className="chip" style=${{color:'var(--s-' + k + ')',borderColor:'var(--s-' + k + ')'}}>${TAG_RU[k]}</span>`)}
           ${fresh ? html`<span className="chip" style=${{color:fresh[1],borderColor:fresh[1]}}>${fresh[0]}</span>` : null}
           ${SHOW_BUILD_PRICE && total ? html`<span className="chip num" title="Цена обязательных предметов"><${Soul}/> ${total}</span>` : null}
         </div>
@@ -1966,7 +1982,7 @@ function BuildCard({b, heroName, weekly, focus, anchor}){
 function Builds(){
   const {nameLang} = useContext(PrefCtx);
   const [st, setSt] = useState({loading:true, heroes:[], builds:[]});
-  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(true);
+  const [sel, setSel] = useState(null), [q, setQ] = useState(''), [onlyB, setOnlyB] = useState(true), [tag, setTag] = useState('all');
   const [hash, setHash] = useState(location.hash);
   useEffect(() => { const h = () => setHash(location.hash); window.addEventListener('hashchange', h); return () => window.removeEventListener('hashchange', h); }, []);
   const hm = /^#builds-(.+)$/.exec(hash); let focusId = ''; try { focusId = hm ? decodeURIComponent(hm[1]) : ''; } catch (e){ focusId = hm ? hm[1] : ''; }
@@ -1994,9 +2010,10 @@ function Builds(){
     return () => clearTimeout(t);
   }, [st.loading, focusId]);
   const heroNm = b => { const h = st.heroes.find(x => sameHero(x.key, b.hero)); return h ? h.name[nameLang] : b.hero; };
-  const cnt = h => st.builds.filter(b => sameHero(b.hero, h.key)).length;
+  const bOk = b => tag === 'all' || buildTags(b).includes(tag);
+  const cnt = h => st.builds.filter(b => sameHero(b.hero, h.key) && bOk(b)).length;
   const list = st.heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)) && (!onlyB || cnt(h)));
-  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => sameHero(b.hero, hero.key)).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0)) : [];
+  const hero = sel && st.heroes.find(h => h.key === sel), hb = hero ? st.builds.filter(b => sameHero(b.hero, hero.key) && bOk(b)).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0)) : [];
   const weekly = st.builds.filter(b => b.weekly === true).sort((x, y) => (Date.parse(bStamp(y)) || 0) - (Date.parse(bStamp(x)) || 0))[0];
   return html`<div className="flex flex-col gap-5">
     <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Сборки героев</h2>
@@ -2006,6 +2023,7 @@ function Builds(){
       <div className="flex flex-wrap items-center gap-3">
         <input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
         <${Seg} value=${onlyB} options=${[{v:true, l:'Только со сборками'}, {v:false, l:'Все герои'}]} onChange=${setOnlyB}/>
+        <${Seg} value=${tag} options=${[{v:'all', l:'Все'}, {v:'spirit', l:'Спирит'}, {v:'weapon', l:'Оружие'}, {v:'vitality', l:'Живучесть'}]} onChange=${setTag}/>
       </div>
       ${st.loading ? html`<div className="muted">Загружаем героев…</div>` : null}
       ${!st.loading && !st.heroes.length ? html`<div className="muted">Список героев не загрузился. Обнови страницу или проверь интернет.</div>` : null}
@@ -2609,12 +2627,21 @@ function BudgetBoard({st, controls, dispatch, onExit}){
   const {nameLang} = useContext(PrefCtx);
   const me = controls[0], cfg = st.cfg, picks = st.picks || {}, ready = st.ready || {}, sc = st.score || {A:0, B:0};
   const nm = x => (st.seats[x] && st.seats[x].name) || 'Игрок';
-  const [draft, setDraft] = useState([]), [q, setQ] = useState(''), [slot, setSlot] = useState('all'), [copied, setCopied] = useState(false);
+  const [draft, setDraft] = useState([]), [q, setQ] = useState(''), [slot, setSlot] = useState('all'), [tier, setTier] = useState(0), [copied, setCopied] = useState(false);
   const list = useMemo(() => ITEMS.filter(i => !i.missing).sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en)), []);
   const items = draft.map(id => BY_ID[id]), spent = items.reduce((t, i) => t + i.price, 0), acts = items.filter(i => i.active).length, left = cfg.budget - spent;
   const ui = useContext(UiCtx), bl = blockedSet(draft);
   const can = it => !bl.has(it.id) && draft.length < cfg.max && it.price <= left && !(it.active && acts >= 4);
-  const ql = q.trim().toLowerCase(), shown = list.filter(i => (slot === 'all' || i.slot === slot) && (!ql || (i.name.ru + ' ' + i.name.en).toLowerCase().includes(ql)));
+  const shown = list.filter(i => (slot === 'all' || i.slot === slot) && (!tier || i.tier === tier) && matchItem(i, q));
+  const stateOf = it => {
+    if (draft.includes(it.id)) return ['sel', 'В БИЛДЕ'];
+    if (bl.has(it.id)) return ['banned', 'КОНФЛИКТ'];
+    if (draft.length >= cfg.max) return ['banned', 'ЛИМИТ'];
+    if (it.price > left) return ['banned', 'ДОРОГО'];
+    if (it.active && acts >= 4) return ['banned', '4 АКТИВНЫХ'];
+    return ['', null];
+  };
+  const toggle = it => setDraft(d => d.includes(it.id) ? d.filter(x => x !== it.id) : (can(it) ? d.concat(it.id) : d));
   const sum = ids => (ids || []).reduce((t, id) => t + BY_ID[id].price, 0);
   const rows = ids => (ids || []).map(id => { const it = BY_ID[id]; return html`<div key=${id} ...${tipHandlers(ui, it)} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num"><${Soul} size=${9}/> ${it.price}</span></div>`; });
   const head = html`<div className="panel p-3 flex flex-wrap items-center justify-between gap-3"><span className="muted disp" style=${{fontSize:'13px'}}>Бюджетный билд · бюджет ${cfg.budget} · до ${cfg.max} предметов</span><div className="flex gap-3">${['A', 'B'].map(x => html`<span key=${x} className="chip" style=${me === x ? {borderColor:'var(--gold2)',color:'var(--gold2)'} : null}>${nm(x)}: <b className="num">${sc[x]}</b></span>`)}</div></div>`;
@@ -2632,16 +2659,27 @@ function BudgetBoard({st, controls, dispatch, onExit}){
   if (!me) return html`<div className="panel p-6 text-center">Ты наблюдатель.<div className="mt-3"><button className="btn" onClick=${onExit}>Выйти</button></div></div>`;
   if (ready[me]) return html`<div className="flex flex-col gap-4">${head}<div className="panel p-6 text-center"><div className="spin" style=${{margin:'0 auto'}}></div><p className="mt-3">Билд отправлен. Ждём соперника…</p></div></div>`;
   return html`<div className="flex flex-col gap-4">${head}
-    <div className="grid gap-4 md:grid-cols-2">
-      <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Предметы</div>
-        <${SlotTabs} value=${slot} onChange=${setSlot}/>
-        <input className="fld" placeholder="Поиск по названию" value=${q} onChange=${e => setQ(e.target.value)}/>
-        <div className="grid gap-2" style=${{maxHeight:'420px',overflowY:'auto'}}>${shown.map(it => html`<button key=${it.id} ...${tipHandlers(ui, it)} className="gu-opt" style=${{display:'flex',alignItems:'center',gap:'10px',textAlign:'left',opacity:can(it) ? 1 : .4}} onClick=${() => { if (can(it)) setDraft(d => d.concat(it.id)); }}><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">Т${it.tier} · ${it.price}</span></button>`)}</div></div>
-      <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Твой билд</div>
-        <div className="flex flex-wrap gap-2"><span className="chip">Осталось ${left}</span><span className="chip">${draft.length} из ${cfg.max}</span><span className="chip">Активных ${acts} из 4</span></div>
-        <div className="muted" style=${{fontSize:'12px'}}>Как в игре: улучшение съедает свои компоненты, поэтому предмет и его компонент вместе взять нельзя (такие предметы в списке затемнены).</div>
-        ${items.length ? items.map(it => html`<div key=${it.id} ...${tipHandlers(ui, it)} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">${it.price}</span><button className="btn sm" onClick=${() => setDraft(d => d.filter(x => x !== it.id))}>Убрать</button></div>`) : html`<div className="muted">Пока пусто. Выбери предметы слева.</div>`}
-        <button className="btn gold" disabled=${!draft.length} onClick=${() => dispatch({t:'ready', ids:draft})}>Готово, отправить билд</button></div>
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="panel p-4 flex flex-col gap-3 lg:order-2 lg:sticky lg:top-2 self-start">
+        <div className="panel-h">Твой билд</div>
+        <div className="flex flex-wrap gap-2"><span className="chip gold num">Осталось <${Soul}/> ${left}</span><span className="chip">${draft.length} из ${cfg.max}</span><span className="chip">Активных ${acts} из 4</span></div>
+        <div className="flex flex-wrap gap-2">${Array.from({length:cfg.max}, (_, i) => items[i]
+          ? html`<${Card} key=${items[i].id} item=${items[i]} size="s" onClick=${() => toggle(items[i])}/>`
+          : html`<div key=${'e' + i} className="trayslot" style=${{width:'78px'}}>${i + 1}</div>`)}</div>
+        <div className="muted" style=${{fontSize:'12px'}}>Нажми на карточку, чтобы убрать. Как в игре: улучшение съедает свои компоненты, поэтому предмет и его компонент вместе взять нельзя.</div>
+        <button className="btn gold" disabled=${!draft.length} onClick=${() => dispatch({t:'ready', ids:draft})}>Готово, отправить билд</button>
+      </div>
+      <div className="panel p-4 flex flex-col gap-3 lg:order-1" style=${{minWidth:0}}>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <${SlotTabs} value=${slot} onChange=${setSlot}/>
+          <div style=${{flex:'1 1 200px',maxWidth:'340px'}}><input className="fld" type="search" placeholder="Поиск: название или характеристика" aria-label="Поиск предметов" value=${q} onInput=${e => setQ(e.target.value)}/></div>
+        </div>
+        <${Seg} value=${tier} options=${[{v:0, l:'Все тиры'}, {v:1, l:'Т1'}, {v:2, l:'Т2'}, {v:3, l:'Т3'}, {v:4, l:'Т4'}]} onChange=${setTier}/>
+        <div className="cgrid" style=${{paddingBottom:'10px'}}>
+          ${!shown.length ? html`<div className="muted py-6">Ничего не найдено. Попробуй другое слово, вкладку или тир.</div>` : null}
+          ${shown.map(it => { const [state, tag] = stateOf(it); return html`<${Card} key=${it.id} item=${it} size="g" state=${state} tag=${tag} onClick=${() => toggle(it)}/>`; })}
+        </div>
+      </div>
     </div>
     <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
 }
@@ -2822,6 +2860,9 @@ function SlotTabs({value, onChange}){
 }
 
 /* ---------- приложение ---------- */
+function Footer(){
+  return html`<footer className="foot"><div>Неофициальный фанатский проект, некоммерческий. Не связан с Valve Corporation и не одобрен ею.</div><div>Deadlock, названия, изображения предметов и героев принадлежат Valve. Данные предметов и героев загружаются из открытого сообщественного Deadlock API (deadlock-api.com).</div></footer>`;
+}
 function App(){
   const [prefs, setPrefsS] = useState(() => ({...PREF_DEF, ...store.get('bd_prefs2', {})}));
   const setPrefs = p => { setPrefsS(p); store.set('bd_prefs2', p); };
@@ -2906,6 +2947,7 @@ function App(){
       </div>
       ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
       <div key=${game || 'hub'} className="view-in">${body}</div>
+      <${Footer}/>
     </div>
   <//><//>`;
 }
