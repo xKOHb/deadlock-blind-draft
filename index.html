@@ -283,6 +283,81 @@ pre.err{white-space:pre-wrap;word-break:break-all;text-align:left;font:12px/1.5 
 .foot{margin-top:28px;padding:16px 20px;font-size:12.5px;line-height:1.55;color:var(--muted);display:grid;gap:14px;grid-template-columns:1fr}
 @media (min-width:760px){.foot{grid-template-columns:1fr 1fr}}
 .foot b{display:block;margin-bottom:2px;font-family:var(--f-head);font-weight:700;font-size:14px;color:var(--gold2)}
+/* ===== анимации ===== */
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes okPulse{0%{box-shadow:0 0 0 0 rgba(80,160,140,.7)}100%{box-shadow:0 0 0 14px rgba(80,160,140,0)}}
+@keyframes titleGlow{0%,100%{text-shadow:0 3px 0 #000,0 0 22px rgba(var(--acc),.22)}50%{text-shadow:0 3px 0 #000,0 0 40px rgba(var(--acc),.5)}}
+.view-in{animation:viewIn .45s cubic-bezier(.2,.8,.2,1) backwards}
+.hub-card.panel{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0)*80ms)}
+.panel{animation:panelIn .35s ease backwards}
+.modal-bg{animation:fadeIn .2s ease}
+.modal,.modal-bg>.panel{animation:popIn .28s cubic-bezier(.2,.9,.3,1.15)}
+.hero-t{animation:titleGlow 4.5s ease-in-out infinite}
+button.btn{position:relative;overflow:hidden}
+button.btn.gold::after{content:"";position:absolute;top:0;bottom:0;left:0;width:55%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-140%) skewX(-18deg);transition:transform .7s;pointer-events:none}
+button.btn.gold:hover:not(:disabled)::after{transform:translateX(260%) skewX(-18deg)}
+.faq-body,.bbody{animation:panelIn .28s ease}
+button.seg-b{transition:background .2s,color .2s}
+.tab{transition:opacity .2s,padding .2s}
+.chip{transition:border-color .3s,color .3s}
+.step{transition:color .3s,border-color .3s}
+.pbar i{transition:background .4s}
+.htile{transition:transform .15s,border-color .15s}.htile:hover{transform:translateY(-3px)}
+.cgrid>.card{animation:cardIn .32s ease backwards}
+.gu-opt{transition:transform .15s,border-color .15s,background .2s}
+.gu-opt:hover:not(.ok):not(.bad){transform:translateY(-2px)}
+.gu-opt.ok{animation:okPulse .6s ease-out}
+.gu-opt.bad{animation:shake .4s}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* ===== правила ===== */
+.rules-l{margin:0 0 4px;padding-left:20px;font-size:14px;line-height:1.5;color:var(--muted)}
+.rules-l li{margin-bottom:3px}.rules-l b{color:var(--text)}
+
+/* ===== выбор героя ===== */
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.mcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--edge2);background:var(--bg2);clip-path:var(--step);transition:transform .15s,background .2s,border-color .2s}
+.mcard:hover:not(:disabled){transform:translateY(-2px);border-color:var(--gold2)}
+.mcard:disabled{cursor:default;opacity:.8}
+.mcard:focus-visible{outline:2px solid var(--gold2);outline-offset:2px}
+.mcard.on{border-color:var(--gold2);background:linear-gradient(160deg,rgba(var(--acc),.3),var(--bg2) 75%);box-shadow:inset 0 0 0 1px var(--gold2)}
+.mcard .mt{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase;font-size:14px;font-weight:600;color:var(--gold2)}
+.mcard .md{font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:18px 12px}
+.hcard{all:unset;box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:transform .2s,filter .2s;animation:cardIn .4s ease backwards}
+.hcard:focus-visible{outline:2px solid var(--gold2);outline-offset:3px}
+.hf{width:100%;aspect-ratio:3/4;background:linear-gradient(160deg,var(--gold2),var(--goldDim));clip-path:var(--step);padding:2px;transition:background .25s}
+.hf-in{width:100%;height:100%;clip-path:var(--step);background:radial-gradient(circle at 50% 28%,var(--panel2),var(--bg));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hf-in img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transition:transform .4s}
+.hph{font:800 46px var(--f-head);color:var(--gold2)}
+.hn{font-family:var(--f-display);font-size:13px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-align:center;line-height:1.15;color:var(--muted);transition:color .2s;min-height:30px}
+.hcard:hover{transform:translateY(-6px) scale(1.04);filter:drop-shadow(0 0 12px rgba(var(--acc),.55))}
+.hcard:hover .hf-in img{transform:scale(1.08)}.hcard:hover .hn{color:var(--text)}
+.hcard.on{transform:translateY(-6px);filter:drop-shadow(0 0 16px rgba(var(--acc),.95))}
+.hcard.on .hf{background:linear-gradient(160deg,var(--btn3),var(--gold2))}.hcard.on .hn{color:var(--gold2)}
+.hcard.on::after{content:"✓";position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--gold2);color:#1a1409;font:700 14px/22px var(--f-body);text-align:center;animation:popIn .25s}
+.hprev{width:176px;flex:none;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.hprev .hf{width:150px}
+.hn2{font-family:var(--f-head);font-weight:800;font-size:22px;line-height:1.1;color:var(--gold2);text-shadow:0 2px 0 #000}
+.hrev{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:22px}
+.hside{width:150px;text-align:center;display:flex;flex-direction:column;gap:8px;animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+.hside.a .hf{background:linear-gradient(160deg,#ffb55a,#a85a10)}.hside.b .hf{background:linear-gradient(160deg,#8cc8ee,#2a6a96)}
+.hside.win .hf{background:linear-gradient(160deg,var(--btn3),var(--gold2))}
+.hside.win{filter:drop-shadow(0 0 18px rgba(var(--acc),.9))}
+.hvs{font:800 38px var(--f-head);color:var(--gold2);text-shadow:0 3px 0 #000;animation:popIn .5s .3s backwards}
+.hwheel-w{position:relative;width:130px;height:130px;flex:none}
+.hwheel-p{position:absolute;left:50%;top:-12px;transform:translateX(-50%);border:9px solid transparent;border-top:17px solid var(--gold2);z-index:2}
+.hwheel{width:100%;height:100%;border-radius:50%;border:4px solid var(--gold);background:conic-gradient(#e58a1f 0 180deg,#5aa8d6 180deg 360deg);transform:rotate(var(--end));animation:wspin 3s cubic-bezier(.15,.7,.2,1);box-shadow:0 0 26px rgba(var(--acc),.4)}
+.hfin{font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase;font-size:18px;color:var(--gold2);text-align:center}
+.hlate{animation:popIn .55s 3.1s backwards}
+.hmini{width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--gold)}
+.hchip{padding:2px 12px 2px 4px}
 @media (prefers-reduced-motion:reduce){.card-inner,.card,.slot.new,.spin{transition:none;animation:none}}
 </style>
 </head>
@@ -839,13 +914,14 @@ function getUid(){
    games/{CODE}/seats/A|B       {uid, name, joinedAt}
    games/{CODE}/moves/{A1,B3..} {seat, round, hide:[id,id,id], tier, pick:{idx,id}, ready}  */
 function useRoom(db, code){
-  const [st, setSt] = useState({meta:null, seats:{}, moves:{A:{}, B:{}}, got:{meta:false, seats:false, moves:false}, error:null, slow:false});
+  const [st, setSt] = useState({meta:null, seats:{}, hero:{}, moves:{A:{}, B:{}}, got:{meta:false, seats:false, moves:false}, error:null, slow:false});
   useEffect(() => {
     if (!db || !code) return;
     const base = db.ref('games/' + code);
     const err = e => setSt(s => ({...s, error:(e && e.message) || 'Ошибка связи с Firebase'}));
     const timer = setTimeout(() => setSt(s => (s.got.meta && s.got.seats && s.got.moves) ? s : {...s, slow:true}), 10000);
-    const rMeta = base.child('meta'), rSeats = base.child('seats'), rMoves = base.child('moves');
+    const rMeta = base.child('meta'), rSeats = base.child('seats'), rMoves = base.child('moves'), rHero = base.child('hero');
+    const onHero = rHero.on('value', snap => setSt(s => ({...s, hero:snap.val() || {}})), err);
     const onMeta = rMeta.on('value', snap => setSt(s => ({...s, meta:snap.val(), got:{...s.got, meta:true}})), err);
     const onSeats = rSeats.on('value', snap => setSt(s => ({...s, seats:snap.val() || {}, got:{...s.got, seats:true}})), err);
     const onMoves = rMoves.on('value', snap => {
@@ -855,7 +931,7 @@ function useRoom(db, code){
     }, err);
     return () => {
       clearTimeout(timer);
-      rMeta.off('value', onMeta); rSeats.off('value', onSeats); rMoves.off('value', onMoves);
+      rMeta.off('value', onMeta); rSeats.off('value', onSeats); rMoves.off('value', onMoves); rHero.off('value', onHero);
     };
   }, [db, code]);
   return {...st, loaded: st.got.meta && st.got.seats && st.got.moves};
@@ -880,7 +956,8 @@ function useOnlineSession(db, uid, code){
     ready:(seat, round) => write(seat, round, {ready:true}),
     vote:(seat, round, v) => write(seat, round, {vote:v}),
     choose:(seat, round, key, id) => db.ref('games/' + code + '/moves/' + seat + round + '/repl/' + key).set(id).catch(fail),
-    updateMeta:p => db.ref('games/' + code + '/meta').update(p).catch(fail)
+    updateMeta:p => db.ref('games/' + code + '/meta').update(p).catch(fail),
+    heroPick:(seat, key) => db.ref('games/' + code + '/hero/' + seat).set(key).catch(fail)
   };
 }
 
@@ -888,7 +965,7 @@ async function createRoom(db, uid, name, cfg){
   for (let i = 0; i < 6; i++){
     const code = genCode();
     const res = await db.ref('games/' + code + '/meta').transaction(cur => (
-      cur === null ? {code, ver:CAT_VER, seed:Math.random().toString(36).slice(2, 10), hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, hm:cfg.hm || 'none', hA:cfg.hA || '', hB:cfg.hB || '', createdAt:Date.now()} : undefined
+      cur === null ? {code, ver:CAT_VER, seed:Math.random().toString(36).slice(2, 10), hostId:uid, status:'lobby', rounds:cfg.rounds, mode:cfg.mode, order:cfg.order, hm:cfg.hm || 'same', createdAt:Date.now()} : undefined
     ));
     if (!res.committed) continue;            // код уже занят, пробуем другой
     await db.ref('games/' + code + '/seats/A').set({uid, name, joinedAt:Date.now()});
@@ -1253,10 +1330,10 @@ function useDebouncedFn(fn, ms){
 function RoomLobby({session, onLeave, canWrite}){
   const {meta, seats, mySeat} = session;
   const isHost = mySeat === 'A';
-  const [cfg, setCfg] = useState({rounds:meta.rounds, mode:meta.mode, order:meta.order, hm:meta.hm || 'none', hA:meta.hA || '', hB:meta.hB || ''});
+  const [cfg, setCfg] = useState({rounds:meta.rounds, mode:meta.mode, order:meta.order, hm:meta.hm || 'same'});
   const [copied, setCopied] = useState(false);
   const save = useDebouncedFn(c => session.updateMeta(c), 350);
-  const view = isHost ? cfg : {rounds:meta.rounds, mode:meta.mode, order:meta.order, hm:meta.hm || 'none', hA:meta.hA || '', hB:meta.hB || ''};
+  const view = isHost ? cfg : {rounds:meta.rounds, mode:meta.mode, order:meta.order, hm:meta.hm || 'same'};
   const change = c => { setCfg(c); save(c); };
   const bIn = !!(seats.B && seats.B.uid);
   return html`<div className="wide flex flex-col gap-4">
@@ -1282,7 +1359,7 @@ function RoomLobby({session, onLeave, canWrite}){
     </div>
     ${isHost ? html`<div className="text-center">
       <button className="btn gold" style=${{fontSize:'17px',padding:'14px 34px'}} disabled=${!bIn || canWrite === false}
-        onClick=${() => session.updateMeta({status:'playing', ...resolveHeroCfg(cfg, getHeroesCache())})}>Начать игру</button>
+        onClick=${() => session.updateMeta({status:'heroes', hm:cfg.hm || 'same'})}>К выбору героев</button>
       ${!bIn ? html`<div className="muted mt-2" style=${{fontSize:'12px'}}>Кнопка включится, когда подключится Игрок Б.</div>` : null}
     </div>` : html`<div className="text-center muted">Ждём, пока хост начнёт игру…</div>`}
   </div>`;
@@ -1301,11 +1378,17 @@ function OnlineRoom({db, uid, code, canWrite, onLeave}){
     if (!s.mySeat) return html`<div className="panel p-5 text-center mx-auto" style=${{maxWidth:'520px'}}><div className="panel-h">Ты не в этой комнате</div><button className="btn mt-3" onClick=${onLeave}>В лобби</button></div>`;
     return html`<${RoomLobby} session=${s} onLeave=${onLeave} canWrite=${canWrite}/>`;
   }
+  if (s.meta.status === 'heroes') return html`<${DraftHeroes} session=${s} onLeave=${onLeave}/>`;
   return html`<${GameView} session=${s} onExit=${onLeave}/>`;
 }
-function LocalGame({run, onExit}){
+function LocalGameInner({run, onExit}){
   const session = useLocalSession(run.cfg, run.names);
   return html`<${GameView} session=${session} onExit=${onExit}/>`;
+}
+function LocalGame({run, onExit}){
+  const [run2, setRun2] = useState(null);
+  if (!run2) return html`<${LocalHeroStage} cfg=${run.cfg} names=${run.names} onExit=${onExit} onDone=${r => setRun2({...run, cfg:{...run.cfg, hm:run.cfg.hm === 'diff' ? 'diff' : 'same', hA:r.A, hB:r.B}})}/>`;
+  return html`<${LocalGameInner} run=${run2} onExit=${onExit}/>`;
 }
 
 /* ---------- лобби ---------- */
@@ -1521,22 +1604,27 @@ const Music = (() => {
 
 function RulesModal({onClose}){
   useEffect(() => { const k = e => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
+  const md = t => t.split(/\*\*(.+?)\*\*/g).map((x, i) => i % 2 ? html`<b key=${i}>${x}</b>` : x);
   const H = t => html`<div className="panel-h mt-4 mb-1" style=${{fontSize:'17px'}}>${t}</div>`;
-  const P = t => html`<p className="muted" style=${{fontSize:'14px',lineHeight:1.55,marginBottom:'6px'}}>${t}</p>`;
+  const L = items => html`<ul className="rules-l">${items.map((x, i) => html`<li key=${i}>${md(x)}</li>`)}</ul>`;
   return html`<div className="modal-bg" onClick=${onClose}>
-    <div className="panel p-5" style=${{width:'min(560px,100%)',maxHeight:'90vh',overflow:'auto'}} onClick=${e => e.stopPropagation()} role="dialog" aria-label="Правила">
-      <div className="flex items-center justify-between"><div className="panel-h" style=${{fontSize:'22px'}}>Правила</div><button className="btn sm" onClick=${onClose}>Закрыть</button></div>
-      ${P('Сайт только помогает собрать билды. Победителя он не определяет: после драфта или торгов идите в игру и бейтесь 1 на 1.')}
+    <div className="panel p-5" style=${{width:'min(560px,100%)',maxHeight:'90vh',overflow:'auto'}} onClick=${e => e.stopPropagation()} role="dialog" aria-label="Как играть">
+      <div className="flex items-center justify-between"><div className="panel-h" style=${{fontSize:'22px'}}>Как играть</div><button className="btn sm" onClick=${onClose}>Закрыть</button></div>
+      <p className="muted" style=${{fontSize:'14px',margin:'6px 0 0'}}>Сайт собирает билды, а бой 1 на 1 вы играете в Deadlock. Победителя сайт не определяет.</p>
+      ${H('Перед игрой')}
+      ${L(['**Комната:** один создаёт её и шлёт код или ссылку другу.', '**Герой:** хост выбирает режим (один на двоих или у каждого свой), каждый выбирает героя сам. Если нужен один, а выбор разный, решает рулетка 50/50.'])}
       ${H('Слепой драфт')}
-      ${P('Каждый раунд идёт на своём тире. В режиме «Баланс» тир общий для обоих, в «Хаосе» каждый выбирает тир сам, а соперник видит его только в конце раунда.')}
-      ${P('Оба загадывают сопернику три предмета этого тира (можно одновременно). Потом каждый вслепую выбирает одну из трёх карт соперника. Порядок выбора любой.')}
+      ${L(['Каждый раунд оба **загадывают сопернику 3 предмета** одного тира.', 'Потом каждый **вслепую берёт одну** из трёх карт соперника.', '**Баланс:** тир раунда общий. **Хаос:** тир выбираете сами.'])}
       ${H('Чёрный аукцион')}
-      ${P('Игрок выставляет предмет, соперник ставит первым, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета; победитель платит свою последнюю ставку. Если никто не ставил, предмет бесплатно достаётся выставившему. Потом выставляет второй игрок. Если включён таймер, по его окончании игрок автоматически пасует.')}
-      ${H('Правила сборок (как в игре)')}
-      ${P('В игре у каждого предмета один экземпляр, а улучшение съедает свои компоненты. Если в драфте тебе достался предмет, который это нарушает (улучшение того, что у тебя есть, или второе улучшение одного предмета), начинается спор: лишний предмет пропадает, а вместо него игрок получает другой предмет того же тира и типа (активный или пассивный). Как подобрать замену, решают голосованием: случайно, выбирает потерявший или выбирает соперник. Если голоса разошлись, решает рулетка 50/50. В аукционе всё работает так же: если выигранный предмет вызывает конфликт, начинается такой же спор (голосование, рулетка, замена того же тира и типа, которой ещё не было в торгах).')}
-      ${P('Активных предметов не больше четырёх. Лишний активный предмет заменяется на пассивный того же тира (тем же спором).')}
-      ${P('Предметы с пометкой «Усиление» усиливают выбранное умение. Что усиливать, решаете сами, как при покупке в игре. Ультимейт усилить нельзя, а на часть умений (например, с дополнительными зарядами) усиление не действует.')}
-      ${P('В драфте деньги считаются по цене тира (800, 1600, 3200, 6400), а не по реальной стоимости сборки с компонентами.')}
+      ${L(['Игрок **выставляет предмет**, соперник ставит первым, дальше перебиваете друг друга.', '**Пас** завершает торг: победитель платит последнюю ставку. Если ставок не было, предмет бесплатно уходит выставившему.', 'Потом роли меняются.'])}
+      ${H('Угадай предмет')}
+      ${L(['**Пиксель:** угадай запикселенную иконку, каждая ошибка делает её чётче. Первый верный забирает 3, 2 или 1 очко.', '**Статы:** угадай предмет по характеристикам. **Оригинал:** выбери набор характеристик без подделок.', 'В «Статах» и «Оригинале» верный ответ +1, ответивший первым ещё +1.'])}
+      ${H('Бюджетный билд')}
+      ${L(['У обоих **одинаковый бюджет душ** и лимит предметов (активных не больше 4).', 'Билды собираете **втайне**, открываются вместе. Победителя матча отмечаете сами.'])}
+      ${H('Челлендж-карточки')}
+      ${L(['Тебе выпадает **условие на матч**: принять, **один раз сменить** или **один раз отклонить**.', 'Когда у обоих набралось нужное число условий, играете матч и выполняете их.'])}
+      ${H('Конфликты предметов (как в игре)')}
+      ${L(['Улучшение **съедает свои компоненты**, активных предметов максимум **4**.', 'Лишний предмет пропадает, вместо него даётся **замена того же тира и типа** (активный или пассивный).', 'Кто подбирает замену, решает голосование: **случайно / выбирает потерявший / выбирает соперник**. Голоса разошлись: рулетка 50/50.', 'Предметы с пометкой **«Усиление»** усиливают умение на ваш выбор (ультимейт нельзя).', 'В драфте деньги считаются по цене тира: 800 / 1600 / 3200 / 6400.'])}
       <p className="muted mt-3" style=${{fontSize:'12px'}}>Версия каталога предметов: ${CAT_VER || '?'}. Если у друга она другая, пусть обновит страницу (Ctrl+F5).</p>
     </div>
   </div>`;
@@ -1581,6 +1669,7 @@ const FAQ = [
   ['Как играть в «Челлендж-карточки»?', 'Каждому по очереди выпадает условие на матч. Его можно принять, один раз сменить и один раз отклонить. Когда у обоих набралось нужное число условий, играете матч и выполняете их.'],
   ['Как проходит аукцион?', 'Один игрок выставляет предмет, другой делает ставку, дальше вы перебиваете друг друга. Кто спасовал, тот остаётся без предмета. Победитель платит свою последнюю ставку. Потом роли меняются. Если выигранный предмет конфликтует со сборкой (например, это улучшение того, что уже куплено), начинается спор о замене, как в драфте.'],
   ['Как сыграть с другом по сети?', 'Создай комнату и отправь другу код из пяти символов. Он вводит его на сайте и садится на второе место. Если друг рядом, можно играть вдвоём на одном экране.'],
+  ['Как выбирается герой?', 'Перед игрой в «Слепом драфте», «Аукционе», «Бюджетном билде» и «Челлендж-карточках» открывается окно выбора героя. Хост решает, один герой на двоих или у каждого свой. Каждый выбирает героя сам. Если нужен один герой, а выбор разный, решает рулетка 50/50.'],
   ['Кто побеждает в итоге?', 'Сайт победителя не объявляет. Он собирает билды, а выясняете вы это уже в игре: кто победил в бою 1 на 1, тот и молодец.'],
   ['Описание предмета не совпадает с игрой. Почему?', 'Данные берутся из сообщества Deadlock API, а сайт сделан с помощью ИИ, поэтому часть описаний могла остаться неточной. Мы их постепенно поправляем.'],
   ['Предметы не загружаются, что делать?', 'Обнови страницу. Если не помогло, значит API предметов временно недоступен, попробуй чуть позже. Сайт тогда использует сохранённую копию каталога, если она есть.'],
@@ -1609,10 +1698,10 @@ const daysAgo = d => { const t = Date.parse(d); return isFinite(t) ? Math.max(0,
 // Сопоставление героев: «The Doorman» = «Doorman», регистр, пробелы и знаки не важны.
 const hkey = x => normN(x).replace(/^the\s+/, '').replace(/[^a-z0-9а-яё]/g, '');
 const sameHero = (a, b) => hkey(a) === hkey(b);
-/* ---------- выбор героя (для драфта и аукциона) и команды кастом-матча ---------- */
-// cfg.hm: 'none' | 'same' (один герой у обоих) | 'diff' (у каждого свой); cfg.hA / cfg.hB: ключ героя или 'rnd' (случайный, выбирается при старте).
+/* ---------- выбор героя перед игрой (драфт, аукцион, бюджетный билд, челлендж-карточки) и команды кастом-матча ---------- */
+// Хост выбирает режим: hm = 'same' (один герой на двоих) или 'diff' (у каждого свой). Каждый игрок выбирает героя сам.
+// В режиме 'same' при разном выборе решает рулетка 50/50 (heroResolve, hash32 от seed: у обоих игроков результат одинаковый).
 let HEROES_CACHE = [];
-const getHeroesCache = () => HEROES_CACHE;
 function useHeroes(){
   const [h, setH] = useState(HEROES_CACHE);
   useEffect(() => {
@@ -1622,35 +1711,160 @@ function useHeroes(){
       const he = await firstJson(['heroes-en.min.json', 'heroes-en.json', HERO_API + '?language=english', HERO_API]);
       const hr = await firstJson(['heroes-ru.min.json', 'heroes-ru.json', HERO_API + '?language=russian']);
       const ruBy = {}; (hr || []).forEach(x => { ruBy[x.id] = x.name; });
-      const list = (he || []).filter(x => x && x.name && !x.disabled && x.player_selectable !== false).map(x => ({key:x.name, name:{en:x.name, ru:ruBy[x.id] || x.name}})).sort((a, b) => a.name.en.localeCompare(b.name.en));
+      const list = (he || []).filter(x => x && x.name && !x.disabled && x.player_selectable !== false).map(x => ({key:x.name, name:{en:x.name, ru:ruBy[x.id] || x.name}, img:heroImg(x)})).sort((a, b) => a.name.en.localeCompare(b.name.en));
       HEROES_CACHE = list; if (on) setH(list);
     })().catch(() => {});
     return () => { on = false; };
   }, []);
   return h;
 }
-function resolveHeroCfg(cfg, heroes){
-  if (!cfg || !cfg.hm || cfg.hm === 'none' || !heroes.length) return cfg;
-  const pick = () => heroes[Math.floor(Math.random() * heroes.length)].key, o = {...cfg};
-  if (!o.hA || o.hA === 'rnd') o.hA = pick();
-  if (o.hm === 'same') o.hB = o.hA;
-  else if (!o.hB || o.hB === 'rnd'){ o.hB = pick(); for (let i = 0; i < 6 && heroes.length > 1 && o.hB === o.hA; i++) o.hB = pick(); }
-  return o;
+const heroOf = (list, key) => list.find(h => h.key === key) || {key, name:{en:key || '?', ru:key || '?'}, img:''};
+function heroResolve(mode, pick, seed){
+  if (mode === 'diff') return {A:pick.A, B:pick.B, coin:null};
+  if (pick.A === pick.B) return {A:pick.A, B:pick.A, coin:null};
+  const coin = hash32(String(seed) + ':hero') % 2, w = coin ? pick.B : pick.A;   // coin 1 = выпал выбор Игрока Б
+  return {A:w, B:w, coin};
+}
+const heroMs = c => (c === 0 || c === 1) ? 5800 : 3800;   // сколько показываем открытие выбора
+function heroReduce(st, a){
+  const h = st && st.hero;
+  if (!h || h.done || !['A', 'B'].includes(a.seat) || typeof a.key !== 'string' || !a.key) return st;
+  if (h.pick && h.pick[a.seat]) return st;
+  const s = JSON.parse(JSON.stringify(st)); s.hero.pick = {...(s.hero.pick || {}), [a.seat]:a.key};
+  const pk = s.hero.pick;
+  if (pk.A && pk.B){ const r = heroResolve(s.hero.mode, pk, s.hero.seed || 'x'); s.hero.res = {A:r.A, B:r.B}; if (r.coin !== null) s.hero.coin = r.coin; s.hero.done = true; s.hero.t = a.now || Date.now(); }
+  return s;
+}
+// Обёртки: герой выбирается до игры, правила самих игр не трогаем.
+function withHeroInit(init){ return (cfg, seats, ...r) => { const s = init(cfg, seats, ...r); s.hero = {mode:(cfg && cfg.hm === 'diff') ? 'diff' : 'same', seed:Math.random().toString(36).slice(2, 10)}; return s; }; }
+function reduceH(reduce){
+  return (st, a) => {
+    if (!st) return st;
+    if (a.t === 'hero') return heroReduce(st, a);
+    if (st.hero && !st.hero.done && st.phase !== 'lobby') return st;
+    const r = reduce(st, a);
+    if (r && r !== st && st.hero && (a.t === 'rematch' || !r.hero)) r.hero = st.hero;
+    return r;
+  };
+}
+function HeroFace({h}){
+  const [bad, setBad] = useState(false);
+  useEffect(() => setBad(false), [h.img]);
+  return html`<div className="hf"><div className="hf-in">${h.img && !bad
+    ? html`<img src=${h.img} alt="" loading="lazy" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>`
+    : html`<div className="hph">${(h.key ? (h.name.en || '?').replace(/^the\s+/i, '') : '?').charAt(0)}</div>`}</div></div>`;
 }
 function HeroSetup({cfg, setCfg, readOnly}){
-  const heroes = useHeroes(), {nameLang} = useContext(PrefCtx), hm = cfg.hm || 'none';
-  const sel = (key, label) => html`<label className="flex items-center gap-2"><span className="muted" style=${{minWidth:'80px'}}>${label}</span><select className="fld" disabled=${readOnly} value=${cfg[key] || 'rnd'} onChange=${e => setCfg({...cfg, [key]:e.target.value})}><option value="rnd">Случайный</option>${heroes.map(h => html`<option key=${h.key} value=${h.key}>${h.name[nameLang] || h.key}</option>`)}</select></label>`;
-  return html`<div><div className="panel-h mb-2">Герой</div>
-    <${Seg} value=${hm} options=${[{v:'none', l:'Без героя'}, {v:'same', l:'Один у обоих'}, {v:'diff', l:'Разные'}]} onChange=${v => !readOnly && setCfg({...cfg, hm:v})}/>
-    ${hm === 'same' ? html`<div className="mt-2">${sel('hA', 'Герой')}</div>` : null}
-    ${hm === 'diff' ? html`<div className="mt-2 flex flex-col gap-2">${sel('hA', 'Игрок А')}${sel('hB', 'Игрок Б')}</div>` : null}
-  </div>`;
+  const hm = cfg.hm === 'diff' ? 'diff' : 'same';
+  const opt = (v, t, d, icon) => html`<button type="button" className=${cx('mcard', hm === v && 'on')} disabled=${readOnly} onClick=${() => setCfg({...cfg, hm:v})}>
+    ${icon}<span><span className="mt">${t}</span><div className="md">${d}</div></span></button>`;
+  const ic1 = html`<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" style=${{flex:'none'}}><circle cx="17" cy="17" r="12" fill="none" stroke="var(--gold2)" strokeWidth="2"/><circle cx="17" cy="14" r="4" fill="var(--gold2)"/><path d="M8 26q9-10 18 0" fill="var(--gold2)"/></svg>`;
+  const ic2 = html`<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true" style=${{flex:'none'}}><circle cx="11" cy="14" r="7" fill="none" stroke="#e58a1f" strokeWidth="2"/><circle cx="23" cy="20" r="7" fill="none" stroke="#5aa8d6" strokeWidth="2"/><circle cx="11" cy="12" r="2.5" fill="#e58a1f"/><circle cx="23" cy="18" r="2.5" fill="#5aa8d6"/></svg>`;
+  return html`<div><div className="panel-h mb-2">Герои</div>
+    <div className="mcards">
+      ${opt('same', 'Один герой на двоих', 'Каждый выбирает героя сам. Если выбор разный, решает рулетка 50/50.', ic1)}
+      ${opt('diff', 'У каждого свой', 'Каждый выбирает себе героя, за которого хочет играть.', ic2)}
+    </div>
+    <p className="muted mt-2" style=${{fontSize:'12px'}}>Героя выбирают перед началом игры, без выбора героя играть нельзя.</p></div>`;
 }
 function HeroChips({s}){
   const heroes = useHeroes(), {nameLang} = useContext(PrefCtx);
   if (!s || !s.hm || s.hm === 'none' || !s.hA) return null;
-  const nm = k => { const h = heroes.find(x => x.key === k); return h ? (h.name[nameLang] || k) : (k === 'rnd' ? 'Случайный' : k); };
-  return s.hm === 'same' ? html`<span className="chip">Герой: ${nm(s.hA)}</span>` : html`<${Fragment}><span className="chip">А: ${nm(s.hA)}</span><span className="chip">Б: ${nm(s.hB)}</span><//>`;
+  const one = (k, pre) => { const h = heroOf(heroes, k); return html`<span className="chip hchip">${h.img ? html`<img className="hmini" src=${h.img} alt="" referrerPolicy="no-referrer"/>` : html`<span style=${{width:'8px'}}></span>`}${pre}${h.name[nameLang] || k}</span>`; };
+  return s.hm === 'same' ? one(s.hA, 'Герой: ') : html`<${Fragment}>${one(s.hA, 'А: ')}${one(s.hB, 'Б: ')}<//>`;
+}
+// Окно выбора героя. hero = {mode, seed, pick:{A,B}}; controls = какие места выбирает этот экран; onPick(seat, key).
+function HeroPick({hero, names, controls, onPick, onSkip, onExit}){
+  const heroes = useHeroes(), {nameLang} = useContext(PrefCtx);
+  const mode = hero.mode === 'diff' ? 'diff' : 'same', pick = hero.pick || {};
+  const [sel, setSel] = useState(''), [q, setQ] = useState(''), [late, setLate] = useState(false);
+  useEffect(() => { if (heroes.length) return; const t = setTimeout(() => setLate(true), 6000); return () => clearTimeout(t); }, [heroes.length]);
+  const both = !!(pick.A && pick.B), res = both ? heroResolve(mode, pick, hero.seed || 'x') : null;
+  const cur = controls.filter(x => !pick[x])[0];
+  const nm = h => h.name[nameLang] || h.name.en, hf = k => heroOf(heroes, k);
+  const list = heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)));
+  const manual = !heroes.length && late;
+  const head = html`<div className="hero text-center"><div className="muted disp" style=${{fontSize:'12px'}}>Перед боем</div>
+    <h2 className="hero-t" style=${{fontSize:'clamp(30px,6vw,54px)'}}>Выбор героя</h2>
+    <p className="muted" style=${{maxWidth:'60ch',margin:'0 auto'}}>${mode === 'same' ? 'Один герой на двоих. Каждый выбирает своего, если выбор разный, решит рулетка 50/50.' : 'У каждого свой герой. Выбирай того, за кого хочешь играть.'}</p></div>`;
+  const stat = html`<div className="flex flex-wrap justify-center gap-2">${['A', 'B'].map(x => html`<span key=${x} className=${cx('chip', pick[x] && 'ok')}>${names[x]}: ${pick[x] ? 'выбрал ✓' : 'выбирает…'}</span>`)}</div>`;
+  const exit = onExit ? html`<div className="text-center"><button className="btn sm danger" onClick=${onExit}>Выйти</button></div>` : null;
+  let body;
+  if (both){
+    const side = (k, x, cls) => { const h = hf(k); return html`<div className=${cx('hside', cls)}><${HeroFace} h=${h}/><div className="hn2">${nm(h)}</div><div className="muted" style=${{fontSize:'12px'}}>${names[x]}</div></div>`; };
+    if (mode === 'diff') body = html`<div className="panel p-6 flex flex-col gap-5"><div className="hrev">${side(pick.A, 'A', 'a win')}<div className="hvs">VS</div>${side(pick.B, 'B', 'b win')}</div><div className="hfin">Каждый играет за своего героя</div></div>`;
+    else if (pick.A === pick.B) body = html`<div className="panel p-6 flex flex-col gap-5"><div className="hrev">${side(pick.A, 'A', 'win')}</div><div className="hfin">Выбор совпал, играем за ${nm(hf(pick.A))}!</div></div>`;
+    else {
+      const w = hf(res.A);
+      body = html`<div className="panel p-6 flex flex-col gap-5"><div className="hrev">${side(pick.A, 'A', 'a')}
+        <div className="hwheel-w"><div className="hwheel-p"></div><div className="hwheel" style=${{'--end':(1440 + (res.coin ? 90 : 270)) + 'deg'}}></div></div>
+        ${side(pick.B, 'B', 'b')}</div>
+        <div className="hfin">Выбор разный, крутим рулетку 50/50…</div>
+        <div className="hrev hlate"><div className="hside win" style=${{animation:'none'}}><${HeroFace} h=${w}/><div className="hn2">${nm(w)}</div></div><div className="hfin" style=${{textAlign:'left'}}>Выпало:<br/>${nm(w)}</div></div></div>`;
+    }
+    return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1100px'}}>${head}${stat}${body}
+      ${onSkip ? html`<div className="text-center"><button className="btn gold" onClick=${onSkip}>Продолжить</button></div>` : null}${exit}</div>`;
+  }
+  if (cur){
+    const prev = sel ? hf(sel) : null;
+    body = html`<div className="panel p-4 flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><div className="panel-h" style=${{fontSize:'20px'}}>${controls.length > 1 ? names[cur] + ', выбери героя' : 'Выбери героя'}</div>
+          ${controls.length > 1 ? html`<div className="muted" style=${{fontSize:'12px'}}>Выбор соперника скрыт, он откроется, когда выберут оба.</div>` : null}</div>
+        ${heroes.length ? html`<input className="fld" style=${{maxWidth:'260px'}} placeholder="Поиск героя" value=${q} onInput=${e => setQ(e.target.value)}/>` : null}
+      </div>
+      <div className="flex flex-wrap gap-6 items-start justify-center">
+        <div className="hprev">
+          ${prev ? html`<${HeroFace} h=${prev}/>` : html`<div className="hf"><div className="hf-in"><div className="hph">?</div></div></div>`}
+          <div className="hn2">${prev ? nm(prev) : 'Не выбран'}</div>
+          <button className="btn gold" disabled=${!sel.trim()} onClick=${() => { onPick(cur, sel.trim()); setSel(''); setQ(''); }}>Подтвердить</button>
+        </div>
+        <div style=${{flex:'1 1 420px',minWidth:0}}>
+          ${manual ? html`<div className="flex flex-col gap-2"><div className="muted">Список героев не загрузился. Введи название героя вручную.</div><input className="fld" placeholder="Название героя" value=${sel} onInput=${e => setSel(e.target.value)}/></div>`
+            : !heroes.length ? html`<div className="muted text-center py-6"><div className="spin mb-3"></div>Загружаем героев…</div>`
+            : html`<div className="hgrid">${list.map((h, i) => html`<button key=${h.key} className=${cx('hcard', sel === h.key && 'on')} style=${{animationDelay:Math.min(i, 24) * 20 + 'ms'}} title=${nm(h)} aria-pressed=${sel === h.key} onClick=${() => setSel(h.key)}><${HeroFace} h=${h}/><span className="hn">${nm(h)}</span></button>`)}</div>`}
+          ${heroes.length && !list.length ? html`<div className="muted text-center py-6">Герой не найден.</div>` : null}
+        </div>
+      </div></div>`;
+  } else {
+    const mine = controls.length === 1 && pick[controls[0]] ? hf(pick[controls[0]]) : null;
+    body = html`<div className="panel p-6 text-center flex flex-col gap-3 items-center">
+      ${mine ? html`<div style=${{width:'140px'}}><${HeroFace} h=${mine}/></div><div className="panel-h">Ты выбрал: ${nm(mine)}</div>` : html`<div className="panel-h">Игроки выбирают героев…</div>`}
+      <div className="spin"></div><p className="muted">Выбор соперника скрыт, он откроется, когда выберут оба.</p></div>`;
+  }
+  return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1100px'}}>${head}${stat}${body}${exit}</div>`;
+}
+// Обёртка для игр на состоянии (аукцион, бюджетный билд, карточки): до игры показывает выбор героя, потом полоску с героями и саму игру.
+function withHero(Inner){
+  return function HeroWrapped(p){
+    const st = p.st, h = st && st.hero, on = !!h && st.phase !== 'lobby';
+    const [skip, setSkip] = useState(false), [, bump] = useState(0), seen = useRef(false), t0 = useRef(0);
+    if (on && !h.done) seen.current = true;
+    if (on && h.done && seen.current && !t0.current) t0.current = Date.now();
+    const ms = on && h.done ? heroMs(h.coin) : 0, from = t0.current || h.t || 0;
+    const revealing = on && h.done && !skip && Date.now() < from + ms;
+    useEffect(() => { if (!revealing) return; const t = setTimeout(() => bump(x => x + 1), Math.max(60, from + ms - Date.now() + 60)); return () => clearTimeout(t); }, [revealing, from]);
+    if (on && (!h.done || revealing)){
+      const names = {A:(st.seats && st.seats.A && st.seats.A.name) || 'Игрок А', B:(st.seats && st.seats.B && st.seats.B.name) || 'Игрок Б'};
+      return html`<${HeroPick} hero=${h} names=${names} controls=${p.controls || []} onPick=${(seat, key) => p.dispatch({t:'hero', seat, key})} onSkip=${h.done ? () => setSkip(true) : null} onExit=${p.onExit}/>`;
+    }
+    return html`<${Fragment}>${on && h.res ? html`<div className="flex flex-wrap justify-center gap-2 mb-3"><${HeroChips} s=${{hm:h.mode, hA:h.res.A, hB:h.res.B}}/></div>` : null}<${Inner} ...${p}/><//>`;
+  };
+}
+// Драфт онлайн: статус комнаты 'heroes' между лобби и игрой. Выборы лежат в games/{код}/hero/{A|B}, результат записывает в meta тот, чей таймер сработал первым.
+function DraftHeroes({session, onLeave}){
+  const {meta, room, mySeat, names} = session, pick = room.hero || {};
+  const mode = meta.hm === 'diff' ? 'diff' : 'same', seed = meta.seed || meta.code || 'x', both = !!(pick.A && pick.B);
+  const res = both ? heroResolve(mode, pick, seed) : null;
+  const go = () => { if (res) session.updateMeta({status:'playing', hA:res.A, hB:res.B}); };
+  useEffect(() => { if (!both || !mySeat) return; const t = setTimeout(go, heroMs(res.coin) + (mySeat === 'A' ? 0 : 4000)); return () => clearTimeout(t); }, [both]);
+  return html`<${HeroPick} hero=${{mode, seed, pick}} names=${names} controls=${mySeat ? [mySeat] : []} onPick=${(x, k) => session.heroPick(x, k)} onSkip=${both && mySeat ? go : null} onExit=${onLeave}/>`;
+}
+function LocalHeroStage({cfg, names, onDone, onExit}){
+  const [pick, setPick] = useState({}), [seed] = useState(() => Math.random().toString(36).slice(2, 10));
+  const mode = cfg.hm === 'diff' ? 'diff' : 'same', both = !!(pick.A && pick.B), res = both ? heroResolve(mode, pick, seed) : null;
+  useEffect(() => { if (!both) return; const t = setTimeout(() => onDone(res), heroMs(res.coin)); return () => clearTimeout(t); }, [both]);
+  return html`<${HeroPick} hero=${{mode, seed, pick}} names=${names} controls=${['A', 'B']} onPick=${(x, k) => setPick(pp => ({...pp, [x]:k}))} onSkip=${both ? () => onDone(res) : null} onExit=${onExit}/>`;
 }
 // Команды из Deadlock Wiki (страница Console commands). Работают только в кастом-лобби с читами, могут меняться с патчами.
 const MATCH_CMDS = ['sv_cheats true', 'citadel_hero_testing_infinite_money true', 'citadel_allow_purchasing_anywhere 1'];
@@ -1808,7 +2022,7 @@ function Hub({onOpen}){
       <div className="flex flex-wrap justify-center gap-2"><span className="badge"><${Soul} size=${10}/>Бесплатно</span><span className="badge">Без регистрации</span><span className="badge">Онлайн на двоих</span></div>
     </div>
     <div className="grid gap-5 md:grid-cols-2">
-      ${games.map((g, gi) => html`<div key=${g.id} className=${'hub-card live panel p-6 flex flex-col gap-3 active' + (games.length % 2 && gi === games.length - 1 ? ' hub-last' : '')} style=${{cursor:'pointer'}} onClick=${() => onOpen(g.id)}>
+      ${games.map((g, gi) => html`<div key=${g.id} className=${'hub-card live panel p-6 flex flex-col gap-3 active' + (games.length % 2 && gi === games.length - 1 ? ' hub-last' : '')} style=${{cursor:'pointer','--i':gi}} onClick=${() => onOpen(g.id)}>
         <div className="hub-art">${g.art}</div>
         <div className="muted disp" style=${{fontSize:'12px'}}>${g.tag}</div>
         <div className="panel-h" style=${{fontSize:'26px'}}>${g.title}</div>
@@ -1819,7 +2033,7 @@ function Hub({onOpen}){
     <div>
       <div className="panel-h text-center mb-1" style=${{fontSize:'24px'}}>Справочник</div>
       <p className="muted text-center mb-3" style=${{fontSize:'13px'}}>Это не мини-режим, а подсказка для матча в игре.</p>
-      <div className="hub-card live panel p-5 flex flex-wrap items-center gap-5 active" style=${{cursor:'pointer'}} onClick=${() => onOpen('builds')}>
+      <div className="hub-card live panel p-5 flex flex-wrap items-center gap-5 active" style=${{cursor:'pointer','--i':games.length}} onClick=${() => onOpen('builds')}>
         <div className="hub-art" style=${{flex:'none'}}>${buildsArt}</div>
         <div style=${{flex:1,minWidth:'240px'}}>
           <div className="muted disp" style=${{fontSize:'12px'}}>Справочник · с датой публикации</div>
@@ -2006,7 +2220,6 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
       <div className="disp" style=${{fontSize:'clamp(22px,4.5vw,36px)',color:'var(--gold2)'}}>
         ${st.phase === 'lobby' ? 'Ждём второго игрока' : st.phase === 'done' ? 'Торги закончены' : st.phase === 'nominate' ? names[nom] + ' выставляет предмет' : st.phase === 'dispute' ? 'Спор: замена предмета' : 'Ставка: ' + (bid.by ? '$' + bid.amount + ' (' + names[bid.by] + ')' : 'пока нет')}
       </div>
-      <div className="flex flex-wrap justify-center gap-2 mt-1"><${HeroChips} s=${st.cfg}/></div>
       ${st.phase !== 'done' && controls.length === 2 ? html`<div className="mt-2"><button className="btn sm danger" onClick=${() => sure ? onExit() : setSure(true)}>${sure ? 'Точно выйти?' : 'Выйти'}</button></div>` : null}
       ${st.phase === 'done' ? html`<div className="muted mt-1">Предметы куплены. Удачи в бою!</div><${MatchCmds}/><div className="mt-3 flex justify-center gap-2"><button className="btn gold" onClick=${() => dispatch({t:'rematch'})}>Реванш</button><button className="btn" onClick=${onExit}>Выйти</button></div>` : null}
     </div>
@@ -2043,9 +2256,10 @@ function AuctionBoard({st, controls, dispatch: dispatch0, onExit}){
       </tbody></table></div>` : null}
   </div>`;
 }
+const auInitH = withHeroInit(auInit), auReduceH = reduceH(auReduce), AuctionBoardH = withHero(AuctionBoard);
 function Auction(){
-  const [cfg, setCfg] = useState({budget:100, rounds:6, timer:30, hm:'none', hA:'', hB:''});
-  const rcfg = () => resolveHeroCfg(cfg, getHeroesCache());
+  const [cfg, setCfg] = useState({budget:100, rounds:6, timer:30, hm:'same'});
+  const rcfg = () => cfg;
   const [nick, setNick] = useState(() => store.get('bd_nick', ''));
   const [code, setCode] = useState(() => hashRoom() ? null : store.get('bd_aroom', null));
   const [join, setJoin] = useState(hashRoom);
@@ -2061,13 +2275,13 @@ function Auction(){
     return () => r.off('value', h);
   }, [code]);
   const nm = n => n.trim() || 'Игрок';
-  const dispatchOnline = a => fbDb.ref('auctions/' + code + '/state').transaction(cur => (cur ? auReduce(cur, a) : undefined)).catch(e => setErr(e.message));
+  const dispatchOnline = a => fbDb.ref('auctions/' + code + '/state').transaction(cur => (cur ? auReduceH(cur, a) : undefined)).catch(e => setErr(e.message));
   const create = async () => {
     setBusy(true); setErr(null);
     try {
       for (let i = 0; i < 6; i++){
         const c = genCode();
-        const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => (cur === null ? auInit(rcfg(), {A:{uid, name:nm(nick)}}) : undefined));
+        const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => (cur === null ? auInitH(rcfg(), {A:{uid, name:nm(nick)}}) : undefined));
         if (res.committed){ store.set('bd_aroom', c); setCode(c); setBusy(false); return; }
       }
       throw new Error('Не удалось создать комнату, попробуй ещё раз');
@@ -2092,7 +2306,7 @@ function Auction(){
     setBusy(false);
   };
   const leave = () => { store.set('bd_aroom', null); setCode(null); setOnline(undefined); setLocal(null); setMode(null); };
-  if (mode === 'local' && local) return html`<${AuctionBoard} st=${local} controls=${['A', 'B']} dispatch=${a => setLocal(x => auReduce(x, a))} onExit=${leave}/>`;
+  if (mode === 'local' && local) return html`<${AuctionBoardH} st=${local} controls=${['A', 'B']} dispatch=${a => setLocal(x => auReduceH(x, a))} onExit=${leave}/>`;
   if (code){
     if (online === undefined) return html`<div className="panel p-6 text-center"><div className="spin"></div><p className="muted mt-3">Подключаемся к комнате…</p></div>`;
     if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
@@ -2100,7 +2314,7 @@ function Auction(){
     return html`<div className="flex flex-col gap-4">
       <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><button className="btn sm" onClick=${() => { copyText(code); }}>Копировать код</button><button className="btn sm" onClick=${() => { copyText(location.origin + location.pathname + '#auction-' + code); }}>Копировать ссылку-приглашение</button><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
-      <${AuctionBoard} st=${online} controls=${my ? [my] : []} dispatch=${dispatchOnline} onExit=${leave}/>
+      <${AuctionBoardH} st=${online} controls=${my ? [my] : []} dispatch=${dispatchOnline} onExit=${leave}/>
     </div>`;
   }
   return html`<div className="flex flex-col gap-5">
@@ -2113,7 +2327,7 @@ function Auction(){
         <div><div className="flex justify-between"><span>Предметов в торгах</span><b className="disp num">${cfg.rounds}</b></div><input type="range" min="2" max="12" step="2" value=${cfg.rounds} onChange=${e => setCfg({...cfg, rounds:Number(e.target.value)})}/></div>
         <div><div className="flex justify-between items-center"><span>Время на ставку</span><${Seg} value=${cfg.timer} options=${[{v:0, l:'Выкл'}, {v:15, l:'15 с'}, {v:30, l:'30 с'}, {v:60, l:'60 с'}]} onChange=${v => setCfg({...cfg, timer:v})}/></div></div>
         <${HeroSetup} cfg=${cfg} setCfg=${setCfg}/>
-        <button className="btn gold" onClick=${() => { setLocal(auInit(rcfg(), {A:{name:'Игрок А'}, B:{name:'Игрок Б'}})); setMode('local'); }}>Играть на одном экране</button>
+        <button className="btn gold" onClick=${() => { setLocal(auInitH(rcfg(), {A:{name:'Игрок А'}, B:{name:'Игрок Б'}})); setMode('local'); }}>Играть на одном экране</button>
       </div>
       <div className="panel p-5 flex flex-col gap-3">
         <div className="panel-h">Онлайн с другом</div>
@@ -2143,6 +2357,8 @@ function guMake(cfg, seed){
   const fakeV = v => { const k = [0.5, 0.7, 1.5, 2, 3][Math.floor(rnd() * 5)]; return {en:scale(v.en, k, false), ru:scale(v.ru, k, true)}; };
   const numIdx = it => guStats(it).map((x, i) => (/\d/.test(vv(x).en) ? i : -1)).filter(i => i >= 0).slice(0, 4);
   const ok = (i, k) => k === 'pixel' ? !!i.image : (k === 'stats' ? guStats(i).length >= 2 : numIdx(i).length >= 2);
+  const labs = x => new Set(guStats(x).map(y => y.l && y.l.en));
+  const sim = (a, b) => { let c = 0; if (a.slot === b.slot) c += 3; if (a.tier === b.tier) c += 3; else if (Math.abs(a.tier - b.tier) === 1) c += 1; if (!!a.active === !!b.active) c += 2; if (a.imbue && a.imbue === b.imbue) c += 1; const la = labs(a), lb = labs(b); let n = 0; la.forEach(l => { if (lb.has(l)) n++; }); return c + Math.min(3, n); };
   const kinds = GU_KINDS.includes(cfg.kind) ? [cfg.kind] : GU_KINDS;
   const qs = [];
   for (const it of shuf(pool)){
@@ -2162,9 +2378,9 @@ function guMake(cfg, seed){
       qs.push({id:it.id, kind:'fake', opts:order.map((_, j) => 'v' + j), vars, right:'v' + order.findIndex(o => o.orig)});
       continue;
     }
-    const same = pool.filter(x => x.id !== it.id && x.slot === it.slot), near = same.filter(x => x.tier === it.tier);
-    const nd = k === 'pixel' ? 5 : 3, d = shuf(near.length >= nd ? near : same).slice(0, nd);
-    shuf(pool).forEach(x => { if (d.length < nd && x.id !== it.id && !d.includes(x)) d.push(x); });
+    // ложные варианты берём самые похожие на правильный: тот же слот, тир, тип (активный/пассивный), общие характеристики
+    const nd = k === 'pixel' ? 5 : 3, ranked = shuf(pool.filter(x => x.id !== it.id)).map(x => [sim(it, x), x]).sort((p, q) => q[0] - p[0]).map(p => p[1]);
+    const d = shuf(ranked.slice(0, Math.max(nd + 3, 8))).slice(0, nd);
     qs.push({id:it.id, kind:k, opts:shuf([it].concat(d)).map(x => x.id)});
   }
   return qs;
@@ -2215,7 +2431,7 @@ function PixelImg({item, level, full, size = 170}){
     return () => { dead = true; };
   }, [item.image, level, full]);
   if (full || bad || !item.image) return html`<${ItemIcon} item=${item} size=${size}/>`;
-  return html`<canvas ref=${ref} width=${size} height=${size} style=${{width:size + 'px',height:size + 'px',imageRendering:'pixelated',filter:level < 4 ? 'grayscale(1)' : 'none'}}/>`;
+  return html`<canvas ref=${ref} width=${size} height=${size} style=${{width:size + 'px',height:size + 'px',imageRendering:'pixelated'}}/>`;
 }
 function GuessBoard({st, controls, dispatch, onExit}){
   const {nameLang, descLang} = useContext(PrefCtx);
@@ -2313,13 +2529,13 @@ function RoomShell({cfg0, path, hash, skey, title, desc, settings, init, reduce,
     setBusy(false);
   };
   const leave = () => { store.set(skey, null); setCode(null); setOnline(undefined); setLc(null); };
-  if (lc) return html`<${Board} st=${lc} controls=${['A', 'B']} dispatch=${a => setLc(x => reduce(x, a))} onExit=${leave}/>`;
+  if (lc) return html`<${Board} st=${lc} controls=${['A', 'B']} dispatch=${a => setLc(x => reduce(x, {...a, now:Date.now()}))} onExit=${leave}/>`;
   if (code){
     if (online === undefined) return html`<div className="panel p-6 text-center"><div className="spin"></div><p className="muted mt-3">Подключаемся к комнате…</p></div>`;
     if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
     const sa = online.seats || {}, my = sa.A && sa.A.uid === uid ? 'A' : (sa.B && sa.B.uid === uid ? 'B' : null);
     const link = location.origin + location.pathname + '#' + hash + '-' + code;
-    const dispatch = a => ref(code).transaction(cur => (cur ? reduce(cur, {...a, seat:my}) : undefined)).catch(e => setErr(e.message));
+    const dispatch = a => ref(code).transaction(cur => (cur ? reduce(cur, {...a, seat:my, now:Date.now()}) : undefined)).catch(e => setErr(e.message));
     return html`<div className="flex flex-col gap-4">
       <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><button className="btn sm" onClick=${() => copyText(code)}>Копировать код</button><button className="btn sm" onClick=${() => copyText(link)}>Копировать ссылку</button></span></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
@@ -2400,11 +2616,12 @@ function BudgetBoard({st, controls, dispatch, onExit}){
     </div>
     <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
 }
+const buInitH = withHeroInit(buInit), buReduceH = reduceH(buReduce), BudgetBoardH = withHero(BudgetBoard);
 function Budget(){
   const settings = ({cfg, setCfg}) => html`<${Fragment}>
-    <div><div className="flex justify-between"><span>Бюджет душ</span><b className="disp num">${cfg.budget}</b></div><input type="range" min="3000" max="30000" step="1000" value=${cfg.budget} onChange=${e => setCfg({...cfg, budget:Number(e.target.value)})}/></div>
-    <div><div className="flex justify-between"><span>Максимум предметов</span><b className="disp num">${cfg.max}</b></div><input type="range" min="4" max="12" step="1" value=${cfg.max} onChange=${e => setCfg({...cfg, max:Number(e.target.value)})}/></div><//>`;
-  return html`<${RoomShell} cfg0=${{budget:12000, max:8}} path="budget" hash="budget" skey="bd_broom" title="Бюджетный билд" desc="У обоих одинаковый бюджет душ. Соберите билд втайне, потом откройте их одновременно и сыграйте матч." settings=${settings} init=${buInit} reduce=${buReduce} start="build" Board=${BudgetBoard}/>`;
+    <div><div className="flex justify-between"><span>Бюджет душ</span><b className="disp num">${cfg.budget}</b></div><input type="range" min="3000" max="70000" step="1000" value=${cfg.budget} onChange=${e => setCfg({...cfg, budget:Number(e.target.value)})}/></div>
+    <div><div className="flex justify-between"><span>Максимум предметов</span><b className="disp num">${cfg.max}</b></div><input type="range" min="4" max="12" step="1" value=${cfg.max} onChange=${e => setCfg({...cfg, max:Number(e.target.value)})}/></div><${HeroSetup} cfg=${cfg} setCfg=${setCfg}/><//>`;
+  return html`<${RoomShell} cfg0=${{budget:12000, max:8, hm:'same'}} path="budget" hash="budget" skey="bd_broom" title="Бюджетный билд" desc="У обоих одинаковый бюджет душ. Соберите билд втайне, потом откройте их одновременно и сыграйте матч." settings=${settings} init=${buInitH} reduce=${buReduceH} start="build" Board=${BudgetBoardH}/>`;
 }
 
 /* ---------- Челлендж-карточки ---------- */
@@ -2472,9 +2689,10 @@ function CardsBoard({st, controls, dispatch, onExit}){
     </div>${lists}
     <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
 }
+const caInitH = withHeroInit(caInit), caReduceH = reduceH(caReduce), CardsBoardH = withHero(CardsBoard);
 function Cards(){
-  const settings = ({cfg, setCfg}) => html`<div><div className="flex justify-between"><span>Условий каждому</span><b className="disp num">${cfg.cards}</b></div><input type="range" min="1" max="5" step="1" value=${cfg.cards} onChange=${e => setCfg({...cfg, cards:Number(e.target.value)})}/></div>`;
-  return html`<${RoomShell} cfg0=${{cards:3}} path="cards" hash="cards" skey="bd_croom" title="Челлендж-карточки" desc="Перед матчем вам выпадают случайные условия. Можно принять, один раз сменить и один раз отклонить карточку. Потом играете матч и выполняете их." settings=${settings} init=${caInit} reduce=${caReduce} start="play" Board=${CardsBoard} local=${true}/>`;
+  const settings = ({cfg, setCfg}) => html`<${Fragment}><div><div className="flex justify-between"><span>Условий каждому</span><b className="disp num">${cfg.cards}</b></div><input type="range" min="1" max="5" step="1" value=${cfg.cards} onChange=${e => setCfg({...cfg, cards:Number(e.target.value)})}/></div><${HeroSetup} cfg=${cfg} setCfg=${setCfg}/><//>`;
+  return html`<${RoomShell} cfg0=${{cards:3, hm:'same'}} path="cards" hash="cards" skey="bd_croom" title="Челлендж-карточки" desc="Перед матчем вам выпадают случайные условия. Можно принять, один раз сменить и один раз отклонить карточку. Потом играете матч и выполняете их." settings=${settings} init=${caInitH} reduce=${caReduceH} start="play" Board=${CardsBoardH} local=${true}/>`;
 }
 function Guess(){
   const [cfg, setCfg] = useState({rounds:10, kind:'all'});
@@ -2592,7 +2810,7 @@ function App(){
   useEffect(() => { document.documentElement.setAttribute('data-theme', prefs.theme || 'gold'); Sfx.setTheme(prefs.theme || 'gold'); }, [prefs.theme]);
   useEffect(() => { const h = e => { if (e.target.closest && e.target.closest('.card:not(.banned)')) Sfx.play('tick'); }; document.addEventListener('click', h, true); return () => document.removeEventListener('click', h, true); }, []);
   const [conn, setConn] = useState('online');
-  const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp'});
+  const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp', hm:'same'});
   const [names, setNames] = useState({A:'Игрок А', B:'Игрок Б'});
   const [roomCode0] = useState(() => store.get('bd_room', null));
   const [game, setGame] = useState(() => gameFromHash(location.hash) || (roomCode0 ? 'draft' : null));
@@ -2646,7 +2864,7 @@ function App(){
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
-      onStartLocal=${() => setLocalRun({cfg:resolveHeroCfg({...cfg}, getHeroesCache()), names:{A:names.A.trim() || 'Игрок А', B:names.B.trim() || 'Игрок Б'}})}
+      onStartLocal=${() => setLocalRun({cfg:{...cfg}, names:{A:names.A.trim() || 'Игрок А', B:names.B.trim() || 'Игрок Б'}})}
       onCreate=${create} onJoin=${join} busy=${busy} error=${error}/>`;
 
   return html`<${PrefCtx.Provider} value=${prefs}><${TipHost}>
@@ -2655,10 +2873,10 @@ function App(){
       ${showSet ? html`<${SettingsModal} prefs=${prefs} setPrefs=${setPrefs} onClose=${() => setShowSet(false)}/>` : null}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <button className="brand" style=${{background:'none',border:0,cursor:'pointer',padding:0}} onClick=${() => openGame(null)} title="К выбору игры"><${Soul} size=${18}/>Deadlock Minigames${game ? html`<span className="muted" style=${{fontSize:'14px',fontWeight:400}}> / ${GAME_NAME[game]}</span>` : null}</button>
-        <span className="flex gap-2"><button className="gear" onClick=${() => setShowRules(true)} aria-label="Правила" title="Правила" style=${{fontFamily:'var(--f-head)',fontWeight:800,fontSize:'18px'}}>?</button><button className="gear" onClick=${() => setShowSet(true)} aria-label="Настройки" title="Настройки"><${GearIcon}/></button></span>
+        <span className="flex gap-2"><button className="gear" onClick=${() => setShowRules(true)} aria-label="Как играть" title="Как играть" style=${{fontFamily:'var(--f-head)',fontWeight:800,fontSize:'18px'}}>?</button><button className="gear" onClick=${() => setShowSet(true)} aria-label="Настройки" title="Настройки"><${GearIcon}/></button></span>
       </div>
       ${cat.stale ? html`<div className="panel p-3 mb-3 flex flex-wrap items-center justify-between gap-2"><span className="muted" style=${{fontSize:'13px'}}>Не удалось обновить каталог. Используется сохранённая копия от ${new Date(cat.t).toLocaleDateString('ru-RU')}.</span><button className="btn sm" onClick=${loadCat}>Обновить</button></div>` : null}
-      ${body}
+      <div key=${game || 'hub'} className="view-in">${body}</div>
     </div>
   <//><//>`;
 }
