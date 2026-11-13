@@ -3061,7 +3061,7 @@ function installEggs(){
   };
   let title = document.title;
   const vis = () => { if (document.hidden){ title = document.title; document.title = 'Вернись, души ещё ждут…'; } else document.title = title; };
-  const move = e => { const c = e.target.closest && e.target.closest('.hub-card'); if (!c) return; const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); };
+  const move = e => { const c = e.target.closest && e.target.closest('.hub-card'); if (!c) return; const r = c.getBoundingClientRect(); const z = tipZoom(); c.style.setProperty('--mx', ((e.clientX - r.left) / z) + 'px'); c.style.setProperty('--my', ((e.clientY - r.top) / z) + 'px'); };
   window.addEventListener('keydown', key); document.addEventListener('click', click, true); document.addEventListener('visibilitychange', vis); document.addEventListener('pointermove', move, {passive:true});
   try { console.log('%cDeadlock Minigames', 'font:700 18px Georgia;color:#e0c58a', '\nИщешь секреты? Попробуй старый добрый код Konami.'); } catch (e){}
   return () => { window.removeEventListener('keydown', key); document.removeEventListener('click', click, true); document.removeEventListener('visibilitychange', vis); document.removeEventListener('pointermove', move); };
