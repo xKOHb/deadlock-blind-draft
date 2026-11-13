@@ -1827,7 +1827,7 @@ function HeroPick({hero, names, controls, onPick, onSkip, onExit}){
         <div className="hfin">Выбор разный, крутим рулетку 50/50…</div>
         <div className="hrev hlate"><div className="hside win" style=${{animation:'none'}}><${HeroFace} h=${w}/><div className="hn2">${nm(w)}</div></div><div className="hfin" style=${{textAlign:'left'}}>Выпало:<br/>${nm(w)}</div></div></div>`;
     }
-    return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1100px'}}>${head}${stat}${body}
+    return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1320px',width:'100%'}}>${head}${stat}${body}
       ${onSkip ? html`<div className="text-center"><button className="btn gold" onClick=${onSkip}>Продолжить</button></div>` : null}${exit}</div>`;
   }
   if (cur){
@@ -1857,7 +1857,7 @@ function HeroPick({hero, names, controls, onPick, onSkip, onExit}){
       ${mine ? html`<div style=${{width:'140px'}}><${HeroFace} h=${mine}/></div><div className="panel-h">Ты выбрал: ${nm(mine)}</div>` : html`<div className="panel-h">Игроки выбирают героев…</div>`}
       <div className="spin"></div><p className="muted">Выбор соперника скрыт, он откроется, когда выберут оба.</p></div>`;
   }
-  return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1320px'}}>${head}${stat}${body}${exit}</div>`;
+  return html`<div className="flex flex-col gap-5 mx-auto" style=${{maxWidth:'1320px',width:'100%'}}>${head}${stat}${body}${exit}</div>`;
 }
 // Обёртка для игр на состоянии (аукцион, бюджетный билд, карточки): до игры показывает выбор героя, потом полоску с героями и саму игру.
 function withHero(Inner){
