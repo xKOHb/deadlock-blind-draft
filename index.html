@@ -19,7 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://deadlock-games.vercel.app/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&family=Russo+One&family=Rubik:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800&family=Oswald:wght@400;500;600&family=Barlow:wght@400;500;600&family=Russo+One&family=Rubik:wght@400;500;600&family=Cinzel:wght@600;800&family=Orbitron:wght@600;800&family=Cormorant+Garamond:wght@600;700&display=swap">
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'none'">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <style>
@@ -178,42 +178,82 @@ html{min-height:100%}#root{zoom:.85}/* масштаб интерфейса по 
 .faq-btn:focus-visible{outline:2px solid var(--gold2);outline-offset:-4px}.faq-btn .faq-q{margin:0}
 .faq-ch{color:var(--gold2);transition:transform .2s;font-size:14px}.faq-ch.o{transform:rotate(180deg)}.faq-body{padding:0 16px 14px}
 
-/* ===== темы оформления: меняют цвета, фон и узор всего сайта ===== */
-html[data-theme="sapphire"]{--bg:#0d1218;--bg2:#121a23;--panel:#16212c;--panel2:#1c2a38;--edge:#2c4559;--edge2:#46698a;--text:#dcebf7;--muted:#8ea9bf;--gold:#5f93b8;--gold2:#a9d4ee;--goldDim:#34556e;--acc:95,147,184;--btn1:#c4e6fa;--btn2:#4f86ad;--btn3:#d6f0ff;--btn4:#9fcbe6;--soul:#8fd3ff}
-html[data-theme="sapphire"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(95,147,184,.24),transparent 70%),repeating-linear-gradient(135deg,rgba(95,147,184,.06) 0 1px,transparent 1px 16px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="crimson"]{--bg:#130a0b;--bg2:#1a0f10;--panel:#251416;--panel2:#2e191c;--edge:#5a2c30;--edge2:#834349;--text:#f1dcd8;--muted:#b79691;--gold:#b85a5a;--gold2:#ee9f9f;--goldDim:#6e3434;--acc:184,90,90;--btn1:#f2b0aa;--btn2:#a84646;--btn3:#ffc9c2;--btn4:#e08a85;--soul:#f0a0a0}
-html[data-theme="crimson"] body{background-image:radial-gradient(900px 520px at 50% 115%,rgba(184,90,90,.24),transparent 70%),repeating-linear-gradient(90deg,rgba(184,90,90,.06) 0 2px,transparent 2px 24px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="jade"]{--bg:#0b130f;--bg2:#101a14;--panel:#15241b;--panel2:#1a2d22;--edge:#2f5a42;--edge2:#4a8a68;--text:#def0e4;--muted:#93b5a0;--gold:#5ab88c;--gold2:#a0e8c8;--goldDim:#346e55;--acc:90,184,140;--btn1:#b4f0d4;--btn2:#3f9a73;--btn3:#c8ffe6;--btn4:#8fdcb8;--soul:#8fe6c0}
-html[data-theme="jade"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(90,184,140,.2),transparent 70%),radial-gradient(rgba(90,184,140,.14) 1.6px,transparent 1.8px);background-size:auto,24px 24px;background-position:0 0,0 0}
-html[data-theme="graphite"]{--bg:#0f1011;--bg2:#151718;--panel:#1d2022;--panel2:#25292c;--edge:#3a4046;--edge2:#5a636c;--text:#e6e9ec;--muted:#9aa3ab;--gold:#8d97a1;--gold2:#c9d1d8;--goldDim:#4a525a;--acc:141,151,161;--btn1:#d8dee4;--btn2:#7b858f;--btn3:#eef2f5;--btn4:#b9c1c8;--soul:#b8d4ea}
-html[data-theme="graphite"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(141,151,161,.16),transparent 70%),repeating-linear-gradient(45deg,rgba(141,151,161,.05) 0 2px,transparent 2px 9px),repeating-linear-gradient(-45deg,rgba(141,151,161,.035) 0 2px,transparent 2px 9px);background-size:auto,auto,auto;background-position:0 0,0 0,0 0}
-html[data-theme="violet"]{--bg:#110c18;--bg2:#171021;--panel:#20162d;--panel2:#291c3a;--edge:#4b3569;--edge2:#6f4f9a;--text:#eadff7;--muted:#a899c0;--gold:#9a62d6;--gold2:#cfa8f5;--goldDim:#5a3a85;--acc:154,98,214;--btn1:#dcc0fa;--btn2:#8250c0;--btn3:#ead5ff;--btn4:#c49af0;--soul:#d2b0ff}
-html[data-theme="violet"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(154,98,214,.22),transparent 70%),repeating-radial-gradient(circle at 50% -20%,rgba(154,98,214,.09) 0 2px,transparent 2px 46px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="amber"]{--bg:#140e08;--bg2:#1c130a;--panel:#271a0e;--panel2:#312114;--edge:#5e3d1c;--edge2:#8c5c2c;--text:#f6e6d2;--muted:#bf9f7e;--gold:#d98a3a;--gold2:#f5be82;--goldDim:#7a4c1e;--acc:217,138,58;--btn1:#fad2a2;--btn2:#c07428;--btn3:#ffe6c6;--btn4:#e8a05a;--soul:#ffc890}
-html[data-theme="amber"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(217,138,58,.22),transparent 70%),repeating-linear-gradient(120deg,rgba(217,138,58,.06) 0 1px,transparent 1px 20px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="rose"]{--bg:#170c12;--bg2:#1f1018;--panel:#2c1520;--panel2:#371b29;--edge:#6a2f4a;--edge2:#9a4a6c;--text:#f8e0ea;--muted:#c49aac;--gold:#d96a9a;--gold2:#f5a8c8;--goldDim:#80365a;--acc:217,106,154;--btn1:#fbbad4;--btn2:#c4507f;--btn3:#ffd8e8;--btn4:#e888b0;--soul:#ffb8d4}
-html[data-theme="rose"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(217,106,154,.2),transparent 70%),radial-gradient(rgba(217,106,154,.13) 1.5px,transparent 1.7px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="lime"]{--bg:#10130a;--bg2:#161b0d;--panel:#1f2712;--panel2:#273217;--edge:#46591f;--edge2:#6e8a2e;--text:#eaf3d6;--muted:#a3b583;--gold:#a8cc3a;--gold2:#d4ee82;--goldDim:#586e1c;--acc:168,204,58;--btn1:#e0f4a2;--btn2:#8fb028;--btn3:#f0fcc6;--btn4:#bcd95a;--soul:#d8f08a}
-html[data-theme="lime"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(168,204,58,.18),transparent 70%),repeating-linear-gradient(0deg,rgba(168,204,58,.05) 0 1px,transparent 1px 28px),repeating-linear-gradient(90deg,rgba(168,204,58,.05) 0 1px,transparent 1px 28px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="indigo"]{--bg:#0c0e1a;--bg2:#121530;--panel:#181c3a;--panel2:#1f2447;--edge:#343b78;--edge2:#4f58b0;--text:#e0e4fa;--muted:#9aa2d4;--gold:#6a74e0;--gold2:#aab2f8;--goldDim:#3a4296;--acc:106,116,224;--btn1:#c4caff;--btn2:#4f5ac8;--btn3:#dde0ff;--btn4:#8a94f0;--soul:#b8c0ff}
-html[data-theme="indigo"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(106,116,224,.22),transparent 70%),repeating-linear-gradient(60deg,rgba(106,116,224,.07) 0 1px,transparent 1px 22px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="teal"]{--bg:#07151a;--bg2:#0c1e24;--panel:#112a31;--panel2:#16353d;--edge:#1f5a66;--edge2:#2f8c9c;--text:#d8f5f8;--muted:#82bcc6;--gold:#27b5c9;--gold2:#7ee4f2;--goldDim:#17697a;--acc:39,181,201;--btn1:#a6f0fa;--btn2:#1d9aae;--btn3:#d0f9fd;--btn4:#4dd0e2;--soul:#8eecf8}
-html[data-theme="teal"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(39,181,201,.2),transparent 70%),radial-gradient(rgba(39,181,201,.12) 1.4px,transparent 1.6px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="coffee"]{--bg:#140f0b;--bg2:#1c1510;--panel:#271d16;--panel2:#31251c;--edge:#53402f;--edge2:#7d604a;--text:#f0e4d8;--muted:#b09a86;--gold:#b08968;--gold2:#dcbc9c;--goldDim:#6e5440;--acc:176,137,104;--btn1:#ecd0b4;--btn2:#94704f;--btn3:#f6e2cc;--btn4:#c9a584;--soul:#e6c8a8}
-html[data-theme="coffee"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(176,137,104,.2),transparent 70%),repeating-linear-gradient(45deg,rgba(176,137,104,.06) 0 2px,transparent 2px 14px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="sky"]{--bg:#0a1320;--bg2:#0f1b2d;--panel:#14233a;--panel2:#1a2d4a;--edge:#2a4a78;--edge2:#4073b8;--text:#dfeaff;--muted:#8fa8cc;--gold:#4da3ff;--gold2:#9ccaff;--goldDim:#265a99;--acc:77,163,255;--btn1:#bcdcff;--btn2:#3b82d8;--btn3:#d6e9ff;--btn4:#7db8f5;--soul:#9ccaff}
-html[data-theme="sky"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(77,163,255,.22),transparent 70%),repeating-linear-gradient(0deg,rgba(77,163,255,.06) 0 1px,transparent 1px 26px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="ember"]{--bg:#160a07;--bg2:#1f0f0a;--panel:#2b140d;--panel2:#371a11;--edge:#6a2c1a;--edge2:#9c4529;--text:#f7e0d6;--muted:#c09a8a;--gold:#e0543a;--gold2:#ff9a7e;--goldDim:#85301f;--acc:224,84,58;--btn1:#ffbba5;--btn2:#c4402a;--btn3:#ffd3c4;--btn4:#ee7a5e;--soul:#ffa58c}
-html[data-theme="ember"] body{background-image:radial-gradient(900px 520px at 50% 115%,rgba(224,84,58,.26),transparent 70%),repeating-linear-gradient(135deg,rgba(224,84,58,.06) 0 2px,transparent 2px 18px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="orchid"]{--bg:#150b19;--bg2:#1d1024;--panel:#29162f;--panel2:#341c3b;--edge:#62306e;--edge2:#8f4aa2;--text:#f5e0f8;--muted:#bc9cc4;--gold:#c45ad6;--gold2:#e8a4f4;--goldDim:#75367f;--acc:196,90,214;--btn1:#f0c2fa;--btn2:#a843ba;--btn3:#f9dcff;--btn4:#da86e8;--soul:#eab0f5}
-html[data-theme="orchid"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(196,90,214,.22),transparent 70%),radial-gradient(rgba(196,90,214,.13) 1.5px,transparent 1.7px);background-size:auto,22px 22px;background-position:0 0,0 0}
-html[data-theme="olive"]{--bg:#11120a;--bg2:#181a0e;--panel:#222515;--panel2:#2b3019;--edge:#4e5528;--edge2:#7a8440;--text:#eef0d8;--muted:#a8ad84;--gold:#9aa04a;--gold2:#cfd685;--goldDim:#565c26;--acc:154,160,74;--btn1:#dfe5a0;--btn2:#818838;--btn3:#eff4c2;--btn4:#b9c070;--soul:#d6dd8f}
-html[data-theme="olive"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(154,160,74,.18),transparent 70%),repeating-linear-gradient(45deg,rgba(154,160,74,.06) 0 2px,transparent 2px 12px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="sand"]{--bg:#151410;--bg2:#1d1b15;--panel:#28251c;--panel2:#322f24;--edge:#585139;--edge2:#8a8058;--text:#f2ecd8;--muted:#b3aa8c;--gold:#cdbd94;--gold2:#eee0b8;--goldDim:#7a6f4c;--acc:205,189,148;--btn1:#f6ebcc;--btn2:#b0a070;--btn3:#fff6dc;--btn4:#d6c797;--soul:#efe2bb}
-html[data-theme="sand"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(205,189,148,.16),transparent 70%),repeating-linear-gradient(90deg,rgba(205,189,148,.05) 0 1px,transparent 1px 30px);background-size:auto,auto;background-position:0 0,0 0}
-html[data-theme="lavender"]{--bg:#100e1c;--bg2:#171428;--panel:#201c36;--panel2:#29244a;--edge:#453f78;--edge2:#6b63b0;--text:#e8e4fa;--muted:#a8a2cf;--gold:#9b8ee6;--gold2:#c9c0fa;--goldDim:#544a9a;--acc:155,142,230;--btn1:#dcd6ff;--btn2:#7a6dd0;--btn3:#ece8ff;--btn4:#b3a8f2;--soul:#cfc8ff}
-html[data-theme="lavender"] body{background-image:radial-gradient(900px 480px at 50% -80px,rgba(155,142,230,.22),transparent 70%),repeating-radial-gradient(circle at 50% -20%,rgba(155,142,230,.08) 0 2px,transparent 2px 40px);background-size:auto,auto;background-position:0 0,0 0}
+/* ===== темы оформления: свои цвета, фон, шрифт заголовков и звуки у каждой ===== */
+.shell{position:relative;z-index:1}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0}
+::selection{background:rgba(var(--acc),.38);color:var(--text)}
+html{scroll-behavior:smooth;scrollbar-color:var(--edge2) var(--bg)}
+@keyframes fxUp{from{background-position:0 0,40px 70px}to{background-position:0 -280px,40px -210px}}
+@keyframes fxSweep{from{background-position:120% 0}to{background-position:-20% 0}}
+@keyframes fxDrift{from{background-position:0 0,100% 0}to{background-position:100% 24px,0 -24px}}
+@keyframes fxSpin{to{transform:rotate(360deg)}}
+@keyframes fxWind{from{background-position:0 0,100px 60px}to{background-position:600px 200px,700px 260px}}
+@keyframes fxTwinkle{from{opacity:.12}to{opacity:1}}
+@keyframes fxGrid{from{background-position:0 0,0 0}to{background-position:0 56px,0 0}}
+@keyframes fxBeat{0%,100%{opacity:.14}8%{opacity:.7}16%{opacity:.24}26%{opacity:.6}40%{opacity:.14}}
+@keyframes fxScan{from{background-position:0 -260px,0 0}to{background-position:0 110vh,0 0}}
+/* Золото: чёрный арт-деко, золотая пыль */
+html:not([data-theme]) body::before,html[data-theme="gold"] body::before{opacity:.55;background-image:radial-gradient(circle,rgba(240,217,160,.6) 1px,transparent 1.8px),radial-gradient(circle,rgba(224,197,138,.4) 1.4px,transparent 2.4px);background-size:140px 140px;animation:fxUp 46s linear infinite}
+/* Уголь: монохром, карбон и летящие угольки */
+html[data-theme="graphite"]{--bg:#0e0e0f;--bg2:#141415;--panel:#1c1c1e;--panel2:#252527;--edge:#38383b;--edge2:#5b5b60;--text:#ececec;--muted:#9c9ca2;--gold:#b9bcc4;--gold2:#eef0f4;--goldDim:#55565c;--acc:200,203,212;--btn1:#f2f3f6;--btn2:#9a9da6;--btn3:#fff;--btn4:#d4d6dc;--soul:#ff6a3a;--f-head:'Russo One','Oswald',Arial,sans-serif}
+html[data-theme="graphite"] body{background-image:radial-gradient(1000px 420px at 50% 118%,rgba(255,90,40,.2),transparent 70%),repeating-linear-gradient(45deg,rgba(255,255,255,.028) 0 3px,transparent 3px 6px),repeating-linear-gradient(-45deg,rgba(0,0,0,.4) 0 3px,transparent 3px 6px);background-size:auto;background-position:0 0}
+html[data-theme="graphite"] body::before{opacity:.85;background-image:radial-gradient(circle,rgba(255,130,60,.95) 1px,transparent 2px),radial-gradient(circle,rgba(255,80,30,.7) 1.6px,transparent 2.8px);background-size:140px 140px;animation:fxUp 20s linear infinite}
+/* Сапфир: холодные грани кристалла и блик */
+html[data-theme="sapphire"]{--bg:#070d1c;--bg2:#0b1530;--panel:#0f1d3d;--panel2:#142750;--edge:#1f3f7a;--edge2:#3a68b8;--text:#e3eeff;--muted:#8ba6d4;--gold:#3d9be9;--gold2:#8fcbff;--goldDim:#1e4f86;--acc:61,155,233;--btn1:#b5dcff;--btn2:#2f7fc9;--btn3:#d9eeff;--btn4:#7fbaf2;--soul:#6ad4ff;--f-head:'Cinzel','Playfair Display',Georgia,serif}
+html[data-theme="sapphire"] body{background-image:conic-gradient(from 200deg at 22% 30%,transparent 0 30deg,rgba(61,155,233,.14) 30deg 80deg,transparent 80deg 150deg,rgba(143,203,255,.08) 150deg 210deg,transparent 210deg),conic-gradient(from 20deg at 80% 70%,transparent 0 40deg,rgba(61,155,233,.12) 40deg 90deg,transparent 90deg 170deg,rgba(143,203,255,.07) 170deg 230deg,transparent 230deg),linear-gradient(170deg,rgba(61,155,233,.09),transparent 45%);background-size:auto;background-position:0 0}
+html[data-theme="sapphire"] body::before{opacity:1;background-image:linear-gradient(115deg,transparent 42%,rgba(160,215,255,.09) 50%,transparent 58%);background-size:260% 100%;background-repeat:no-repeat;animation:fxSweep 11s ease-in-out infinite}
+/* Нефрит: бамбук и туман */
+html[data-theme="jade"]{--bg:#07130d;--bg2:#0c1d14;--panel:#102a1c;--panel2:#153523;--edge:#23563a;--edge2:#3d8a5e;--text:#e2f6ea;--muted:#8fbfa3;--gold:#3fc58a;--gold2:#9af0c6;--goldDim:#1f6b47;--acc:63,197,138;--btn1:#b8f5d6;--btn2:#2ea872;--btn3:#d8fbe8;--btn4:#7edcaf;--soul:#9af0c6;--f-head:'Cormorant Garamond','Playfair Display',Georgia,serif}
+html[data-theme="jade"] body{background-image:radial-gradient(900px 420px at 50% -90px,rgba(63,197,138,.2),transparent 70%),repeating-linear-gradient(90deg,transparent 0 70px,rgba(63,197,138,.06) 70px 73px,transparent 73px 76px,rgba(0,0,0,.18) 76px 78px),repeating-linear-gradient(0deg,transparent 0 220px,rgba(154,240,198,.05) 220px 223px);background-size:auto;background-position:0 0}
+html[data-theme="jade"] body::before{opacity:1;background-image:radial-gradient(ellipse 520px 140px at 25% 30%,rgba(154,240,198,.11),transparent 70%),radial-gradient(ellipse 600px 160px at 75% 65%,rgba(154,240,198,.09),transparent 70%);background-size:130% 100%;background-repeat:no-repeat;animation:fxDrift 26s ease-in-out infinite alternate}
+/* Спиритизм: спиритический сеанс, кольца и призрачное свечение */
+html[data-theme="violet"]{--bg:#0f0a1a;--bg2:#160f26;--panel:#1f1535;--panel2:#291c45;--edge:#47307a;--edge2:#7550b8;--text:#efe6ff;--muted:#ae9ccf;--gold:#a56bf0;--gold2:#d6b3ff;--goldDim:#59338f;--acc:165,107,240;--btn1:#e4cfff;--btn2:#8a4fd6;--btn3:#f2e6ff;--btn4:#c59df5;--soul:#7dffc2;--f-head:'Cinzel','Playfair Display',Georgia,serif}
+html[data-theme="violet"] body{background-image:radial-gradient(900px 500px at 50% 35%,rgba(165,107,240,.2),transparent 72%),repeating-radial-gradient(circle at 50% 38%,transparent 0 62px,rgba(165,107,240,.1) 62px 64px);background-size:auto;background-position:0 0}
+html[data-theme="violet"] body::before{inset:-40%;opacity:1;background:conic-gradient(from 0deg at 50% 50%,transparent 0,rgba(125,255,194,.07) 12%,transparent 25%,rgba(165,107,240,.1) 55%,transparent 70%);animation:fxSpin 120s linear infinite}
+/* Песок: тёплые дюны и ветер */
+html[data-theme="sand"]{--bg:#1f140f;--bg2:#291b14;--panel:#34231a;--panel2:#412d21;--edge:#6b4a35;--edge2:#a07750;--text:#f7e8d4;--muted:#c4a688;--gold:#e0a56a;--gold2:#f6cf9d;--goldDim:#85572b;--acc:224,165,106;--btn1:#f8d9ae;--btn2:#c98a4a;--btn3:#ffe8c9;--btn4:#ecb97c;--soul:#ffd79a}
+html[data-theme="sand"] body{background-image:radial-gradient(1100px 380px at 50% 112%,rgba(224,165,106,.3),transparent 70%),radial-gradient(800px 360px at 50% -80px,rgba(255,200,140,.12),transparent 70%),repeating-radial-gradient(ellipse 600px 90px at 30% 100%,transparent 0 28px,rgba(224,165,106,.05) 28px 30px),repeating-linear-gradient(172deg,rgba(224,165,106,.05) 0 2px,transparent 2px 24px);background-size:auto;background-position:0 0}
+html[data-theme="sand"] body::before{opacity:.65;background-image:radial-gradient(circle,rgba(255,215,154,.55) 1px,transparent 1.6px),radial-gradient(circle,rgba(224,165,106,.4) 1px,transparent 1.8px);background-size:200px 200px;animation:fxWind 30s linear infinite}
+/* Индиго: звёздное небо и сияние */
+html[data-theme="indigo"]{--bg:#080a1f;--bg2:#0e1230;--panel:#141a44;--panel2:#1b2358;--edge:#2f3a8c;--edge2:#5560d8;--text:#e8ebff;--muted:#9ba4e0;--gold:#7a85ff;--gold2:#b7beff;--goldDim:#3a44b0;--acc:122,133,255;--btn1:#d0d5ff;--btn2:#5963e8;--btn3:#e6e9ff;--btn4:#a2aaff;--soul:#c4a6ff;--f-head:'Rubik','Barlow',system-ui,sans-serif}
+html[data-theme="indigo"] body{background-image:radial-gradient(800px 300px at 20% 0%,rgba(140,90,255,.28),transparent 70%),radial-gradient(700px 260px at 85% 10%,rgba(60,200,255,.16),transparent 70%),radial-gradient(1.2px 1.2px at 40px 60px,#fff,transparent),radial-gradient(1px 1px at 180px 140px,#cfd4ff,transparent),radial-gradient(1.5px 1.5px at 320px 90px,#fff,transparent),radial-gradient(1px 1px at 90px 300px,#cfd4ff,transparent),radial-gradient(1.3px 1.3px at 260px 340px,#fff,transparent);background-size:auto,auto,400px 400px,400px 400px,400px 400px,400px 400px,400px 400px;background-position:0 0}
+html[data-theme="indigo"] body::before{opacity:1;background-image:radial-gradient(1.6px 1.6px at 70px 120px,#fff,transparent),radial-gradient(1.4px 1.4px at 230px 40px,#bfc6ff,transparent),radial-gradient(1.8px 1.8px at 340px 260px,#fff,transparent);background-size:380px 380px;animation:fxTwinkle 4s ease-in-out infinite alternate}
+/* Неон: ретровейв, сетка и синтезаторный шрифт */
+html[data-theme="neon"]{--bg:#0a0514;--bg2:#10081f;--panel:#190d30;--panel2:#221242;--edge:#4b1f86;--edge2:#a03cff;--text:#f4eaff;--muted:#b496e0;--gold:#ff3df2;--gold2:#ff9cf8;--goldDim:#8a1f84;--acc:255,61,242;--btn1:#ffc2fb;--btn2:#e020d4;--btn3:#ffe0fd;--btn4:#ff7cf5;--soul:#27f4ff;--f-head:'Orbitron','Russo One',Arial,sans-serif}
+html[data-theme="neon"] .hero-t{letter-spacing:.02em}
+html[data-theme="neon"] body{background-image:radial-gradient(520px 520px at 50% 58%,rgba(255,61,242,.28),transparent 70%),linear-gradient(180deg,#0a0514 0,#1a0838 58%,#2d0a52 100%);background-size:auto;background-position:0 0}
+html[data-theme="neon"] body::before{inset:56% -60% -60% -60%;opacity:.75;background-image:linear-gradient(rgba(255,61,242,.55) 1.5px,transparent 1.5px),linear-gradient(90deg,rgba(39,244,255,.45) 1.5px,transparent 1.5px);background-size:56px 56px;transform:perspective(380px) rotateX(64deg);transform-origin:50% 0;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 35%);mask-image:linear-gradient(to bottom,transparent,#000 35%);animation:fxGrid 2.4s linear infinite}
+/* Океан: глубина, коралловый акцент и пузыри */
+html[data-theme="ocean"]{--bg:#041a1f;--bg2:#07262d;--panel:#0b343d;--panel2:#104450;--edge:#17636f;--edge2:#26a0ad;--text:#e0fbff;--muted:#8cc7d1;--gold:#ff8a73;--gold2:#ffbfb0;--goldDim:#b04a38;--acc:255,138,115;--btn1:#ffd3c9;--btn2:#ef6a50;--btn3:#ffe8e2;--btn4:#ff9f8b;--soul:#5ff0e6;--f-head:'Cormorant Garamond','Playfair Display',Georgia,serif}
+html[data-theme="ocean"] body{background-image:radial-gradient(1000px 500px at 50% 120%,rgba(255,138,115,.14),transparent 70%),repeating-radial-gradient(ellipse 700px 120px at 50% 105%,transparent 0 36px,rgba(95,240,230,.07) 36px 38px),linear-gradient(180deg,rgba(95,240,230,.05),transparent 50%);background-size:auto;background-position:0 0}
+html[data-theme="ocean"] body::before{opacity:.8;background-image:radial-gradient(circle,transparent 4px,rgba(95,240,230,.4) 4.6px,transparent 6px),radial-gradient(circle,transparent 2.5px,rgba(180,255,250,.35) 3px,transparent 4.2px);background-size:140px 140px;animation:fxUp 30s linear infinite}
+/* Рубин: чёрно-красный, клинки и пульс сердца */
+html[data-theme="ruby"]{--bg:#12060a;--bg2:#1b090f;--panel:#280d16;--panel2:#33111d;--edge:#661a30;--edge2:#a8294a;--text:#fbe3e8;--muted:#c6909c;--gold:#e8344f;--gold2:#ff8fa0;--goldDim:#7c1830;--acc:232,52,79;--btn1:#ffb3c0;--btn2:#c91f3c;--btn3:#ffd5dc;--btn4:#f2607a;--soul:#ff6b86;--f-head:'Cinzel','Playfair Display',Georgia,serif}
+html[data-theme="ruby"] body{background-image:radial-gradient(1000px 520px at 50% -100px,rgba(232,52,79,.22),transparent 70%),repeating-linear-gradient(115deg,transparent 0 140px,rgba(232,52,79,.06) 140px 143px,transparent 143px 146px,rgba(0,0,0,.25) 146px 150px);background-size:auto;background-position:0 0}
+html[data-theme="ruby"] body::before{background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(232,52,79,.35) 100%);animation:fxBeat 3.6s ease-in-out infinite}
+/* Токсин: кислотный зелёный, полосы опасности и скан-линии */
+html[data-theme="toxic"]{--bg:#0a0f06;--bg2:#10170a;--panel:#18220e;--panel2:#202e12;--edge:#3b5a14;--edge2:#6aa11f;--text:#eefad8;--muted:#a3c274;--gold:#b6ff3b;--gold2:#d9ff8a;--goldDim:#5a8a14;--acc:182,255,59;--btn1:#e2ffa8;--btn2:#8fd41c;--btn3:#f2ffd0;--btn4:#c4f45f;--soul:#b6ff3b;--f-head:'Russo One','Oswald',Arial,sans-serif}
+html[data-theme="toxic"] body{background-image:radial-gradient(900px 420px at 50% 118%,rgba(182,255,59,.16),transparent 70%),repeating-linear-gradient(45deg,rgba(182,255,59,.045) 0 16px,transparent 16px 32px);background-size:auto;background-position:0 0}
+html[data-theme="toxic"] body::before{opacity:1;background-image:linear-gradient(180deg,transparent,rgba(182,255,59,.1) 50%,transparent),repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px);background-size:100% 260px,100% 100%;background-repeat:no-repeat,repeat;animation:fxScan 7s linear infinite}
 .theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.theme-grid .theme-b{justify-content:flex-start;padding:6px 10px;min-width:0;white-space:nowrap}
+.theme-b i{background:var(--sw1);box-shadow:inset -6px -6px 0 var(--sw2)}
+.theme-b{transition:transform .15s,border-color .2s}.theme-b:hover{transform:translateY(-2px)}
+/* общая полировка и анимации */
+button.btn:active:not(:disabled){transform:translateY(1px) scale(.98)}
+.hub-card.live{background:radial-gradient(280px circle at var(--mx,50%) var(--my,-60%),rgba(var(--acc),.18),transparent 62%),linear-gradient(180deg,var(--panel2),var(--panel))}
+.hub-card .hub-art{transition:transform .35s cubic-bezier(.2,.9,.3,1.3)}.hub-card:hover .hub-art{transform:scale(1.07) rotate(-2deg)}
+.bump{display:inline-block;animation:bump .3s cubic-bezier(.2,.9,.3,1.5)}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.45)}100%{transform:scale(1)}}
+.theme-ov{position:fixed;inset:0;z-index:95;pointer-events:none;animation:ovOut .65s ease forwards}
+@keyframes ovOut{to{opacity:0}}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:90;max-width:calc(100% - 32px);padding:10px 18px;background:var(--panel2);border:1px solid var(--gold);color:var(--gold2);font-family:var(--f-display);letter-spacing:.06em;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.55),0 0 0 3px rgba(var(--acc),.12);animation:toastIn .4s cubic-bezier(.2,.9,.3,1.2),toastOut .4s ease 3.2s forwards}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,18px) scale(.96)}}
+@keyframes toastOut{to{opacity:0;transform:translate(-50%,10px)}}
+.fxrain{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.soulfall{position:absolute;top:-30px;width:var(--s);height:var(--s);background:var(--soul);opacity:.9;box-shadow:0 0 10px var(--soul);animation:soulfall var(--d) linear var(--dl) forwards}
+@keyframes soulfall{from{transform:translateY(0) rotate(45deg)}to{transform:translateY(112vh) rotate(405deg);opacity:.25}}
+.glitch{animation:glitch .16s steps(2) 8!important}
+@keyframes glitch{0%{transform:translate(0)}25%{transform:translate(-3px,1px);text-shadow:3px 0 #f0f,-3px 0 #0ff}50%{transform:translate(3px,-1px);text-shadow:-3px 0 #f0f,3px 0 #0ff}100%{transform:translate(0)}}
 .theme-b{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--edge2);background:var(--bg2);color:var(--text);cursor:pointer;font-family:var(--f-display);letter-spacing:.06em;font-size:12px;text-transform:uppercase}
 .theme-b i{width:12px;height:12px;transform:rotate(45deg);display:inline-block}.theme-b.on{border-color:var(--gold2);box-shadow:inset 0 0 0 1px var(--gold2)}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,104px);gap:16px 8px;justify-content:center}
@@ -1509,41 +1549,36 @@ function CatalogError({err, onRetry}){
    Настоящие саундтреки Deadlock мы не вшиваем (авторские права). Свои mp3 можно добавить в FILE_TRACKS: {id:'my', name:'Мой трек', src:'music/my.mp3'}. */
 const FILE_TRACKS = [];
 const THEMES = [
-  {id:'rose', name:'Роза', sw:'#d96a9a'}, {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'ember', name:'Угли', sw:'#e0543a'},
-  {id:'coffee', name:'Кофе', sw:'#b08968'}, {id:'amber', name:'Янтарь', sw:'#d98a3a'}, {id:'gold', name:'Золото', sw:'#e0c58a'},
-  {id:'sand', name:'Песок', sw:'#cdbd94'}, {id:'olive', name:'Олива', sw:'#9aa04a'}, {id:'lime', name:'Лайм', sw:'#a8cc3a'},
-  {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'teal', name:'Бирюза', sw:'#27b5c9'}, {id:'sapphire', name:'Сапфир', sw:'#5f93b8'},
-  {id:'sky', name:'Небо', sw:'#4da3ff'}, {id:'indigo', name:'Индиго', sw:'#6a74e0'}, {id:'lavender', name:'Лаванда', sw:'#9b8ee6'},
-  {id:'violet', name:'Спиритизм', sw:'#9a62d6'}, {id:'orchid', name:'Орхидея', sw:'#c45ad6'}, {id:'graphite', name:'Уголь', sw:'#8d97a1'}
+  {id:'gold', name:'Золото', sw:'#e0c58a', sw2:'#b8975a'}, {id:'graphite', name:'Уголь', sw:'#d4d6dc', sw2:'#ff6a3a'}, {id:'sapphire', name:'Сапфир', sw:'#3d9be9', sw2:'#8fcbff'},
+  {id:'jade', name:'Нефрит', sw:'#3fc58a', sw2:'#9af0c6'}, {id:'violet', name:'Спиритизм', sw:'#a56bf0', sw2:'#7dffc2'}, {id:'sand', name:'Песок', sw:'#e0a56a', sw2:'#6b4a35'},
+  {id:'indigo', name:'Индиго', sw:'#7a85ff', sw2:'#c4a6ff'}, {id:'neon', name:'Неон', sw:'#ff3df2', sw2:'#27f4ff'}, {id:'ocean', name:'Океан', sw:'#ff8a73', sw2:'#5ff0e6'},
+  {id:'ruby', name:'Рубин', sw:'#e8344f', sw2:'#661a30'}, {id:'toxic', name:'Токсин', sw:'#b6ff3b', sw2:'#3b5a14'}
 ];
-// Звуки меняются вместе с темой. tick/bid: [f1, f2, длительность, форма, громкость]; gavel: [f1, f2, длительность, форма, громкость, шум]
+// Звуки у каждой темы свои: другой тембр, высота, «комната» (эхо) и тон фильтра.
+// lp: срез низких частот (чем меньше, тем глуше); echo: [задержка с, повтор]; tick/bid: [f1, f2, длит., форма, громкость, (f3 третья нота у bid)];
+// gavel: [f1, f2, длит., форма, громкость, шум, тип шума, частота шума]
 const SFX_BANK = {
-  gold:{tick:[520, 420, .05, 'sine', .05], bid:[880, 1320, .1, 'sine', .08], gavel:[170, 60, .24, 'sine', .26, .08]},
-  sapphire:{tick:[1250, 1000, .07, 'sine', .04], bid:[1568, 2093, .14, 'sine', .06], gavel:[420, 220, .3, 'triangle', .14, .04]},
-  crimson:{tick:[190, 120, .07, 'triangle', .07], bid:[220, 330, .12, 'triangle', .1], gavel:[110, 45, .34, 'sine', .32, .1]},
-  jade:{tick:[700, 900, .05, 'sine', .05], bid:[523, 784, .11, 'sine', .08], gavel:[300, 190, .2, 'sine', .2, .05]},
-  graphite:{tick:[300, 240, .05, 'triangle', .06], bid:[440, 660, .1, 'triangle', .09], gavel:[140, 55, .26, 'sine', .28, .09]},
-  violet:{tick:[760, 1050, .08, 'sine', .04], bid:[659, 988, .16, 'sine', .07], gavel:[130, 95, .55, 'sine', .22, .03]},
-  amber:{tick:[420, 330, .06, 'triangle', .06], bid:[392, 587, .12, 'triangle', .09], gavel:[150, 70, .3, 'sine', .27, .07]},
-  rose:{tick:[880, 740, .05, 'sine', .04], bid:[784, 1175, .12, 'sine', .07], gavel:[260, 130, .28, 'triangle', .16, .04]},
-  lime:{tick:[610, 800, .05, 'sine', .05], bid:[587, 880, .1, 'sine', .08], gavel:[240, 150, .22, 'sine', .21, .05]},
-  indigo:{tick:[500, 640, .06, 'sine', .05], bid:[494, 740, .13, 'sine', .08], gavel:[200, 110, .32, 'triangle', .18, .04]},
-  teal:{tick:[940, 780, .05, 'sine', .04], bid:[698, 1047, .11, 'sine', .07], gavel:[310, 170, .24, 'sine', .17, .04]},
-  coffee:{tick:[260, 210, .06, 'triangle', .06], bid:[330, 494, .12, 'triangle', .09], gavel:[120, 60, .3, 'sine', .26, .08]}
-  ,sky:{tick:[1100, 900, .06, 'sine', .04], bid:[1319, 1760, .13, 'sine', .06], gavel:[380, 200, .28, 'triangle', .15, .04]},
-  ember:{tick:[210, 140, .07, 'triangle', .07], bid:[247, 370, .12, 'triangle', .1], gavel:[105, 48, .34, 'sine', .3, .1]},
-  orchid:{tick:[820, 1000, .06, 'sine', .04], bid:[740, 1109, .14, 'sine', .07], gavel:[230, 120, .3, 'triangle', .16, .04]},
-  olive:{tick:[360, 290, .05, 'triangle', .06], bid:[349, 523, .11, 'triangle', .09], gavel:[160, 80, .26, 'sine', .24, .07]},
-  sand:{tick:[480, 400, .05, 'sine', .05], bid:[587, 880, .1, 'sine', .08], gavel:[180, 90, .24, 'sine', .22, .06]},
-  lavender:{tick:[900, 700, .06, 'sine', .04], bid:[831, 1245, .15, 'sine', .07], gavel:[280, 140, .32, 'triangle', .15, .04]}
+  gold:{lp:2600, tick:[520, 420, .05, 'sine', .05], bid:[880, 1320, .1, 'sine', .08], gavel:[170, 60, .24, 'sine', .26, .08, 'lowpass', 900]},
+  graphite:{lp:3600, tick:[190, 150, .035, 'square', .035], bid:[330, 495, .09, 'triangle', .09], gavel:[90, 40, .3, 'sine', .3, .12, 'bandpass', 1800], echo:[.07, .12]},
+  sapphire:{lp:7000, tick:[2093, 1760, .06, 'sine', .035], bid:[1568, 2093, .16, 'sine', .06, 2637], gavel:[880, 440, .5, 'triangle', .12, .03, 'highpass', 6000], echo:[.18, .38]},
+  jade:{lp:3200, tick:[784, 776, .08, 'sine', .07], bid:[523, 784, .12, 'triangle', .09], gavel:[220, 180, .35, 'sine', .22, .05, 'bandpass', 1200]},
+  violet:{lp:2400, tick:[1047, 1400, .1, 'sine', .035], bid:[659, 988, .22, 'sine', .07], gavel:[120, 90, .7, 'sine', .2, .05, 'lowpass', 400], echo:[.3, .48]},
+  sand:{lp:2200, tick:[392, 330, .06, 'triangle', .06], bid:[440, 659, .14, 'sine', .09], gavel:[150, 70, .26, 'sine', .26, .14, 'lowpass', 700], echo:[.12, .14]},
+  indigo:{lp:4200, tick:[1318, 1568, .07, 'sine', .04], bid:[880, 1175, .1, 'sine', .07, 1568], gavel:[247, 123, .45, 'triangle', .16, .04, 'lowpass', 500], echo:[.24, .32]},
+  neon:{lp:8000, tick:[1200, 900, .04, 'square', .03], bid:[440, 880, .08, 'sawtooth', .045, 1320], gavel:[200, 40, .3, 'sawtooth', .11, .12, 'highpass', 3000], echo:[.14, .3]},
+  ocean:{lp:2800, tick:[600, 920, .06, 'sine', .06], bid:[400, 700, .18, 'sine', .08], gavel:[180, 70, .4, 'sine', .22, .1, 'lowpass', 600], echo:[.2, .26]},
+  ruby:{lp:1800, tick:[110, 85, .08, 'sine', .14], bid:[98, 147, .16, 'triangle', .12], gavel:[70, 38, .4, 'sine', .4, .2, 'lowpass', 300]},
+  toxic:{lp:5200, tick:[800, 300, .04, 'sawtooth', .04], bid:[300, 600, .06, 'square', .045, 900], gavel:[120, 30, .25, 'square', .1, .15, 'bandpass', 2500]}
 };
 const Sfx = (() => {
-  let ctx = null, out = null, on = true, theme = 'gold';
+  let ctx = null, out = null, lp = null, dly = null, fb = null, wet = null, on = true, theme = 'gold';
   const C = () => {
     if (!ctx){
       const A = window.AudioContext || window.webkitAudioContext; if (!A) return null;
-      ctx = new A(); const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2600;
+      ctx = new A(); lp = ctx.createBiquadFilter(); lp.type = 'lowpass';
       out = ctx.createGain(); out.gain.value = .9; out.connect(lp); lp.connect(ctx.destination);
+      dly = ctx.createDelay(1); fb = ctx.createGain(); wet = ctx.createGain();
+      lp.connect(dly); dly.connect(fb); fb.connect(dly); dly.connect(wet); wet.connect(ctx.destination);
     }
     if (ctx.state === 'suspended') ctx.resume();
     return ctx;
@@ -1553,19 +1588,21 @@ const Sfx = (() => {
     e.gain.setValueAtTime(0.0001, t0); e.gain.linearRampToValueAtTime(g, t0 + .008); e.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
     o.connect(e); e.connect(out); o.start(t0); o.stop(t0 + dur + .03);
   };
-  const noise = (c, t0, dur, g) => {
+  const noise = (c, t0, dur, g, type, freq) => {
     const n = Math.floor(c.sampleRate * dur), b = c.createBuffer(1, n, c.sampleRate), d = b.getChannelData(0);
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
-    const src = c.createBufferSource(), f = c.createBiquadFilter(), e = c.createGain(); f.type = 'lowpass'; f.frequency.value = 900; src.buffer = b; e.gain.value = g;
+    const src = c.createBufferSource(), f = c.createBiquadFilter(), e = c.createGain(); f.type = type || 'lowpass'; f.frequency.value = freq || 900; src.buffer = b; e.gain.value = g;
     src.connect(f); f.connect(e); e.connect(out); src.start(t0);
   };
   return {
     setOn(v){ on = v; }, setTheme(t){ theme = SFX_BANK[t] ? t : 'gold'; },
     play(kind){
-      if (!on) return; const c = C(); if (!c) return; const t = c.currentTime, b = SFX_BANK[theme][kind]; if (!b) return;
+      if (!on) return; const c = C(); if (!c) return; const t = c.currentTime, bk = SFX_BANK[theme], b = bk[kind === 'spark' ? 'bid' : kind]; if (!b) return;
+      lp.frequency.value = bk.lp || 2600; const e = bk.echo; dly.delayTime.value = e ? e[0] : .1; fb.gain.value = e ? e[1] : 0; wet.gain.value = e ? .55 : 0;
       if (kind === 'tick') tone(c, b[0], b[1], t, b[2], b[3], b[4]);
-      else if (kind === 'bid'){ tone(c, b[0], b[0], t, b[2], b[3], b[4]); tone(c, b[1], b[1], t + b[2] * .8, b[2] * 1.3, b[3], b[4]); }
-      else if (kind === 'gavel'){ tone(c, b[0], b[1], t, b[2], b[3], b[4]); noise(c, t, .08, b[5]); }
+      else if (kind === 'bid'){ tone(c, b[0], b[0], t, b[2], b[3], b[4]); tone(c, b[1], b[1], t + b[2] * .8, b[2] * 1.3, b[3], b[4]); if (b[5]) tone(c, b[5], b[5], t + b[2] * 1.7, b[2] * 1.5, b[3], b[4]); }
+      else if (kind === 'spark'){ [1, 1.25, 1.5, 2, 2.5].forEach((m, i) => tone(c, b[0] * m, b[0] * m, t + i * .09, .16, b[3], b[4] * .9)); }
+      else if (kind === 'gavel'){ tone(c, b[0], b[1], t, b[2], b[3], b[4]); noise(c, t, .08, b[5], b[6], b[7]); }
     }
   };
 })();
@@ -1687,7 +1724,7 @@ function SettingsModal({prefs, setPrefs, onClose}){
       <div className="set-row"><span className="set-l">Громкость</span><input type="range" min="0" max="1" step="0.05" value=${prefs.vol} style=${{width:'200px'}} onChange=${e => set({vol:Number(e.target.value)})}/></div>
       <div className="set-row"><span className="set-l">Звуки (молоток, ставки, клики)</span><${Seg} value=${prefs.sfx !== false} options=${onoff} onChange=${v => set({sfx:v})}/></div>
       <div className="set-row" style=${{display:'block'}}><span className="set-l">Оформление сайта (цвета, фон и звуки)</span>
-        <div className="theme-grid mt-2">${THEMES.map(t => html`<button key=${t.id} className=${cx('theme-b', (prefs.theme || 'gold') === t.id && 'on')} onClick=${() => { Sfx.setTheme(t.id); Sfx.play('bid'); set({theme:t.id}); }}><i style=${{background:t.sw}}></i>${t.name}</button>`)}</div></div>
+        <div className="theme-grid mt-2">${THEMES.map(t => html`<button key=${t.id} className=${cx('theme-b', (prefs.theme || 'gold') === t.id && 'on')} onClick=${() => { Sfx.setTheme(t.id); Sfx.play('bid'); set({theme:t.id}); }}><i style=${{'--sw1':t.sw, '--sw2':t.sw2}}></i>${t.name}</button>`)}</div></div>
       <div className="set-row"><span className="set-l">Анимации</span><${Seg} value=${prefs.anim !== false} options=${onoff} onChange=${v => set({anim:v})}/></div>
       <div className="mt-3"><button className="btn sm danger" onClick=${() => setPrefs({...PREF_DEF})}>Сбросить настройки</button></div>
     </div>
@@ -2067,7 +2104,7 @@ function Hub({onOpen}){
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="48" cy="48" r="30" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><text x="48" y="59" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311">$</text><rect x="92" y="26" width="38" height="12" rx="2" fill="#7fb53a"/><rect x="92" y="44" width="30" height="12" rx="2" fill="#9a62d6"/><rect x="92" y="62" width="22" height="12" rx="2" fill="#e58a1f"/></g></svg>`}
     ,{id:'cards', title:'Челлендж-карточки', tag:'1 на 1 · онлайн или на одном экране', desc:'Случайные условия на матч: принимай, меняй или отклоняй. Потом выполняй их в игре.', btn:'Играть',
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><g transform="rotate(-12 48 52)"><rect x="22" y="16" width="52" height="68" rx="5" fill="#9a62d6" stroke="#141311" strokeWidth="3"/><text x="48" y="60" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311" opacity=".6">!</text></g><g transform="rotate(10 106 50)"><rect x="80" y="12" width="52" height="68" rx="5" fill="#e58a1f" stroke="#141311" strokeWidth="3"/><path d="M106 30 120 46 106 62 92 46z" fill="#141311"/></g></g></svg>`}
-    ,{id:'roulette', title:'Рулетка героев', tag:'Соло · перед поиском матча', desc:'Отметь героев, на которых готов играть, и рулетка сама распределит хай-пик, средний и низкий приоритет.', btn:'Крутить',
+    ,{id:'roulette', title:'Рулетка героев', tag:'Соло · перед поиском матча', desc:'Отметь героев, на которых готов играть, и рулетка сама распределит высокий, средний и низкий приоритет.', btn:'Крутить',
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><g className="rl-wheel"><path d="M75 48 75 14A34 34 0 0 1 109 48Z" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><path d="M75 48 109 48A34 34 0 0 1 45.6 65Z" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/><path d="M75 48 45.6 65A34 34 0 0 1 75 14Z" fill="#8d8a82" stroke="#141311" strokeWidth="2.5"/><circle cx="75" cy="48" r="8" fill="#141311"/><circle cx="75" cy="48" r="3.5" fill="#7ec4d1"/></g><path d="M69 6 81 6 75 18Z" fill="#e0c58a" stroke="#141311" strokeWidth="2"/></g></svg>`}
   ];
   const buildsArt = html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="40" cy="36" r="22" fill="#5f93b8" stroke="#141311" strokeWidth="3"/><circle cx="40" cy="30" r="8" fill="#141311" opacity=".55"/><path d="M24 54q16-14 32 0" fill="#141311" opacity=".55"/>
@@ -2861,13 +2898,13 @@ function Guess(){
 /* ---------- вкладки слотов ---------- */
 const TABS = [['all', 'Все предметы', '#c9c3b4'], ['weapon', 'Оружие', 'var(--s-weapon)'], ['spirit', 'Спиритизм', 'var(--s-spirit)'], ['vitality', 'Живучесть', 'var(--s-vitality)']];
 /* ======================= РУЛЕТКА ГЕРОЕВ ======================= */
-// Отмечаешь любое число героев, рулетка сама раздаёт приоритеты поиска: хай-пик (фиолетовый), средний (оранжевый), низкий (серый, для заполнения).
-// Для начала поиска в игре нужно минимум 3 героя. Автоматически: ~12% героев в хай-пик, ~18% в средний, остальные в низкий (но всегда остаётся хотя бы один в низком).
+// Отмечаешь любое число героев, рулетка сама раздаёт приоритеты поиска: высокий (фиолетовый), средний (оранжевый), низкий (серый).
+// Для начала поиска в игре нужно минимум 3 героя. Автоматически: ~12% героев в высокий, ~18% в средний, остальные в низкий (но всегда остаётся хотя бы один в низком).
 const RL_MIN = 3, RL_HI_MAX = 6, RL_MID_MAX = 10;
 const RL_LV = [
-  {k:'hi', name:'Хай-пик', sub:'играть хочется больше всего', col:'var(--t3)'},
-  {k:'mid', name:'Средний', sub:'если хай-пик не выпал', col:'var(--t2)'},
-  {k:'low', name:'Низкий', sub:'для заполнения', col:'#8d8a82'}
+  {k:'hi', name:'Высокий', sub:'Ищется в первую очередь', col:'var(--t3)'},
+  {k:'mid', name:'Средний', sub:'Берётся, если не нашлось высокого', col:'var(--t2)'},
+  {k:'low', name:'Низкий', sub:'Подбирается в последнюю очередь', col:'#8d8a82'}
 ];
 function rlFit(n, hi, mid){   // приводим числа к допустимым: в сумме не больше n-1, чтобы остался хотя бы один низкий
   hi = Math.max(0, Math.min(RL_HI_MAX, Math.round(hi) || 0)); mid = Math.max(0, Math.min(RL_MID_MAX, Math.round(mid) || 0));
@@ -2891,7 +2928,7 @@ function Roulette(){
   const [sel, setSel] = useState(() => { const v = store.get('bd_rl_sel', []); return Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 200) : []; });
   const [auto, setAuto] = useState(true), [man, setMan] = useState({hi:2, mid:3});
   const [q, setQ] = useState(''), [res, setRes] = useState(null), [spinning, setSpinning] = useState(false), [reel, setReel] = useState(null);
-  const timers = useRef([]);
+  const timers = useRef([]), spins = useRef(0);
   const clearAll = () => { timers.current.forEach(t => { clearTimeout(t); clearInterval(t); }); timers.current = []; };
   useEffect(() => clearAll, []);
   useEffect(() => { store.set('bd_rl_sel', sel); }, [sel]);
@@ -2899,6 +2936,8 @@ function Roulette(){
   const picked = heroes.filter(h => selSet.has(h.key)), n = picked.length;
   const cnt = auto ? rlAuto(n) : (n < RL_MIN ? {hi:0, mid:0} : rlFit(n, man.hi, man.mid));
   const low = Math.max(0, n - cnt.hi - cnt.mid);
+  const allPicked = heroes.length >= 10 && n === heroes.length;
+  useEffect(() => { if (allPicked) Fx.toast('Играть на всех? Смелый выбор'); }, [allPicked]);
   const shown = heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)));
   const toggle = k => { if (spinning) return; setRes(null); setSel(s => s.includes(k) ? s.filter(x => x !== k) : s.concat(k)); };
   const allShown = () => { if (spinning) return; setRes(null); setSel(s => Array.from(new Set(s.concat(shown.map(h => h.key))))); };
@@ -2906,7 +2945,7 @@ function Roulette(){
   const randomSet = k => { if (spinning || !heroes.length) return; setRes(null); setSel(rlShuffle(heroes).slice(0, Math.min(k, heroes.length)).map(h => h.key)); };
   const spin = () => {
     if (spinning || n < RL_MIN) return;
-    clearAll();
+    clearAll(); spins.current++; if (spins.current === 10) Fx.toast('Рулетка просит пощады');
     const arr = rlShuffle(picked), g = {hi:arr.slice(0, cnt.hi), mid:arr.slice(cnt.hi, cnt.hi + cnt.mid), low:arr.slice(cnt.hi + cnt.mid)};
     const fast = document.body.classList.contains('no-anim');
     setRes({hi:[], mid:[], low:[]}); setSpinning(true);
@@ -2925,14 +2964,14 @@ function Roulette(){
   const reelH = reel || (spinning ? picked[0] : null);
   return html`<div className="flex flex-col gap-5">
     <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Рулетка героев</h2>
-      <p className="muted" style=${{maxWidth:'62ch',margin:'0 auto'}}>Отметь всех героев, на которых не против сыграть. Рулетка сама раздаст приоритеты для поиска: хай-пик, средний и низкий.</p></div>
+      <p className="muted" style=${{maxWidth:'62ch',margin:'0 auto'}}>Отметь всех героев, на которых не против сыграть. Рулетка сама раздаст приоритеты для поиска: высокий, средний и низкий.</p></div>
     <div className="panel p-4 flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
         <input className="fld" style=${{maxWidth:'240px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
         <button className="btn sm" onClick=${allShown} disabled=${spinning}>Выбрать всех${q ? ' найденных' : ''}</button>
         <button className="btn sm" onClick=${() => randomSet(12)} disabled=${spinning}>Случайные 12</button>
         <button className="btn sm danger" onClick=${none} disabled=${spinning || !n}>Сбросить</button>
-        <span className="chip" style=${{marginLeft:'auto'}}>Выбрано: <b className="num">${n}</b></span>
+        <span className="chip" style=${{marginLeft:'auto'}}>Выбрано: <b className="num bump" key=${n}>${n}</b></span>
       </div>
       ${!heroes.length ? html`<div className="muted">Загружаем героев…</div>` : null}
       <div className="flex flex-wrap gap-2">${shown.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${selSet.has(h.key) ? '✓' : 0} on=${selSet.has(h.key)} nameLang=${nameLang} onClick=${() => toggle(h.key)}/>`)}</div>
@@ -2942,18 +2981,18 @@ function Roulette(){
       <div className="flex flex-wrap items-center justify-between gap-3"><div className="panel-h" style=${{fontSize:'18px'}}>Сколько кому</div>
         <${Seg} value=${auto} options=${[{v:true, l:'Авто'}, {v:false, l:'Вручную'}]} onChange=${setAuto}/></div>
       <div className="grid gap-4 md:grid-cols-3">
-        ${slider('Хай-пик', 'hi', Math.min(RL_HI_MAX, Math.max(0, n - 1)))}
+        ${slider('Высокий', 'hi', Math.min(RL_HI_MAX, Math.max(0, n - 1)))}
         ${slider('Средний', 'mid', Math.min(RL_MID_MAX, Math.max(0, n - 1 - cnt.hi)))}
         <div className="rl-sl"><div className="flex justify-between"><span>Низкий</span><b className="disp num">${low}</b></div><div className="muted" style=${{fontSize:'12px'}}>Все остальные, считается сам.</div></div>
       </div>
-      <div className="muted" style=${{fontSize:'12px'}}>${n < RL_MIN ? 'Для начала поиска в игре нужно минимум ' + RL_MIN + ' героя в пике. Отметь ещё ' + (RL_MIN - n) + '.' : (auto ? 'Авто: примерно 12% героев в хай-пик и 18% в средний, остальные в низкий.' : 'Ручной режим: сумма хай-пика и среднего всегда оставляет хотя бы одного героя в низком.')}</div>
+      <div className="muted" style=${{fontSize:'12px'}}>${n < RL_MIN ? 'Для начала поиска в игре нужно минимум ' + RL_MIN + ' героя в пике. Отметь ещё ' + (RL_MIN - n) + '.' : (auto ? 'Авто: примерно 12% героев получают высокий приоритет и 18% средний, остальные низкий.' : 'Ручной режим: сумма высоких и средних всегда оставляет хотя бы одного героя в низком.')}</div>
       <div className="flex flex-wrap items-center gap-3"><button className="btn gold" onClick=${spin} disabled=${spinning || n < RL_MIN}>${spinning ? 'Крутится…' : (res ? 'Крутить ещё раз' : 'Крутить рулетку')}</button>
         ${res && !spinning ? html`<${CopyBtn} text=${textOf(res)}>Скопировать список<//>` : null}</div>
     </div>
     ${spinning && reelH ? html`<div className="rl-reel panel"><${RlFace} h=${reelH} lang=${nameLang} cls="big"/></div>` : null}
     ${res ? html`<div className="grid gap-4 md:grid-cols-3">${RL_LV.map(l => html`<div key=${l.k} className="panel p-4 rl-col" style=${{'--c':l.col}}>
       <div className="rl-h" style=${{color:l.col}}>${l.name} <span className="muted num" style=${{fontSize:'13px'}}>· ${res[l.k].length}</span></div>
-      <div className="muted" style=${{fontSize:'12px',marginBottom:'10px'}}>${l.sub}</div>
+      <div className="muted" style=${{fontSize:'12px',marginBottom:'10px'}}>${l.k === 'low' && n === RL_MIN ? 'Добор до минимума в 3 героя' : l.sub}</div>
       <div className="flex flex-wrap gap-2">${res[l.k].map(h => html`<${RlFace} key=${h.key} h=${h} lang=${nameLang} cls=${'rl-' + l.k}/>`)}${!res[l.k].length && !spinning ? html`<span className="muted">Пусто</span>` : null}</div></div>`)}</div>` : null}
   </div>`;
 }
@@ -2976,6 +3015,56 @@ function SlotTabs({value, onChange}){
 function Footer(){
   return html`<footer className="foot"><div>Неофициальный фанатский проект, некоммерческий. Не связан с Valve Corporation и не одобрен ею.</div><div>Deadlock, названия, изображения предметов и героев принадлежат Valve. Данные предметов и героев загружаются из открытого сообщественного Deadlock API (deadlock-api.com).</div></footer>`;
 }
+/* ---------- эффекты и пасхалки ---------- */
+const Fx = (() => {
+  const noAnim = () => document.body.classList.contains('no-anim');
+  const toast = msg => { const d = document.createElement('div'); d.className = 'toast'; d.setAttribute('role', 'status'); d.textContent = msg; document.body.appendChild(d); setTimeout(() => d.remove(), 3800); };
+  const rain = (n = 70) => {
+    if (noAnim()) return;
+    const box = document.createElement('div'); box.className = 'fxrain'; box.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < n; i++){ const e = document.createElement('i'); e.className = 'soulfall'; e.style.left = (Math.random() * 100) + '%'; e.style.setProperty('--s', (6 + Math.random() * 12).toFixed(1) + 'px'); e.style.setProperty('--d', (2.2 + Math.random() * 2.4).toFixed(2) + 's'); e.style.setProperty('--dl', (Math.random() * 1.6).toFixed(2) + 's'); box.appendChild(e); }
+    document.body.appendChild(box); setTimeout(() => box.remove(), 6500);
+  };
+  return {toast, rain};
+})();
+const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+const EGG_WORDS = {
+  souls:() => { Fx.toast('Души сыплются с небес'); Fx.rain(80); Sfx.play('spark'); },
+  gg:() => { Fx.toast('GG WP'); Sfx.play('bid'); },
+  urn:() => { Fx.toast('Урну лучше донести до базы'); Sfx.play('gavel'); },
+  deadlock:() => { const t = document.querySelector('.hero-t, .panel-h'); if (t){ t.classList.add('glitch'); setTimeout(() => t.classList.remove('glitch'), 1400); } Fx.toast('Dead… lock?'); Sfx.play('tick'); }
+};
+function installEggs(){
+  let seq = [], word = '', logo = {n:0, t:0}, rainbow = false;
+  const typing = e => { const t = e.target; return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable); };
+  const key = e => {
+    if (typing(e) || e.ctrlKey || e.metaKey || e.altKey) return;
+    seq.push(e.key.length === 1 ? e.key.toLowerCase() : e.key); if (seq.length > KONAMI.length) seq.shift();
+    if (seq.length === KONAMI.length && seq.every((k, i) => k === KONAMI[i]) && !rainbow){
+      seq = []; rainbow = true;
+      const root = document.documentElement, prev = root.getAttribute('data-theme') || 'gold'; let i = 0;
+      Fx.toast('Режим дискотеки'); Fx.rain(120); Sfx.play('spark');
+      const iv = setInterval(() => { root.setAttribute('data-theme', THEMES[i++ % THEMES.length].id); }, 260);
+      setTimeout(() => { clearInterval(iv); root.setAttribute('data-theme', prev); rainbow = false; }, 3400);
+    }
+    if (e.key.length === 1){
+      word = (word + e.key.toLowerCase()).slice(-10);
+      for (const w in EGG_WORDS){ if (word.endsWith(w)){ word = ''; EGG_WORDS[w](); break; } }
+    }
+  };
+  const click = e => {
+    const b = e.target.closest && e.target.closest('.brand'); if (!b) return;
+    const now = Date.now(); logo.n = now - logo.t < 1500 ? logo.n + 1 : 1; logo.t = now;
+    if (logo.n >= 7){ logo.n = 0; Fx.toast('Ты нашёл тайный кристалл'); Fx.rain(40); Sfx.play('spark'); }
+  };
+  let title = document.title;
+  const vis = () => { if (document.hidden){ title = document.title; document.title = 'Вернись, души ещё ждут…'; } else document.title = title; };
+  const move = e => { const c = e.target.closest && e.target.closest('.hub-card'); if (!c) return; const r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); };
+  window.addEventListener('keydown', key); document.addEventListener('click', click, true); document.addEventListener('visibilitychange', vis); document.addEventListener('pointermove', move, {passive:true});
+  try { console.log('%cDeadlock Minigames', 'font:700 18px Georgia;color:#e0c58a', '\nИщешь секреты? Попробуй старый добрый код Konami.'); } catch (e){}
+  return () => { window.removeEventListener('keydown', key); document.removeEventListener('click', click, true); document.removeEventListener('visibilitychange', vis); document.removeEventListener('pointermove', move); };
+}
+let LAST_THEME = null;
 function App(){
   const [prefs, setPrefsS] = useState(() => ({...PREF_DEF, ...store.get('bd_prefs2', {})}));
   const setPrefs = p => { setPrefsS(p); store.set('bd_prefs2', p); };
@@ -2990,7 +3079,17 @@ function App(){
   }, [prefs.musicOn, prefs.track]);
   useEffect(() => { document.body.classList.toggle('no-anim', prefs.anim === false); }, [prefs.anim]);
   useEffect(() => { Sfx.setOn(prefs.sfx !== false); }, [prefs.sfx]);
-  useEffect(() => { document.documentElement.setAttribute('data-theme', prefs.theme || 'gold'); Sfx.setTheme(prefs.theme || 'gold'); }, [prefs.theme]);
+  useEffect(() => {
+    const id = THEMES.some(t => t.id === prefs.theme) ? prefs.theme : 'gold', root = document.documentElement;
+    if (LAST_THEME !== null && LAST_THEME !== id && !document.body.classList.contains('no-anim')){   // плавная смена темы: старый фон растворяется
+      const cs = getComputedStyle(document.body), ov = document.createElement('div');
+      ov.className = 'theme-ov'; ov.style.backgroundColor = cs.backgroundColor; ov.style.backgroundImage = cs.backgroundImage; ov.style.backgroundSize = cs.backgroundSize; ov.style.backgroundPosition = cs.backgroundPosition;
+      document.body.appendChild(ov); setTimeout(() => ov.remove(), 800);
+    }
+    LAST_THEME = id; root.setAttribute('data-theme', id); Sfx.setTheme(id);
+    const mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.setAttribute('content', getComputedStyle(root).getPropertyValue('--bg').trim() || '#141311');
+  }, [prefs.theme]);
+  useEffect(() => installEggs(), []);
   useEffect(() => { const h = e => { if (e.target.closest && e.target.closest('.card:not(.banned)')) Sfx.play('tick'); }; document.addEventListener('click', h, true); return () => document.removeEventListener('click', h, true); }, []);
   const [conn, setConn] = useState('online');
   const [cfg, setCfg] = useState({rounds:8, mode:'balance', order:'ramp', hm:'same'});
