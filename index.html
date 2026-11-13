@@ -728,13 +728,17 @@ function ItemInfo({item}){
     ${(comps.length || ups.length) ? html`<div className="ii-secs">${rel(ru ? 'Компоненты:' : 'Components:', comps)}${rel(ru ? 'Улучшения:' : 'Upgrades:', ups)}</div>` : null}
   </div>`;
 }
+function tipZoom(){ try { const r = document.getElementById('root'); const z = r ? parseFloat(getComputedStyle(r).zoom) : 1; return (z > 0 && z <= 2) ? z : 1; } catch (e){ return 1; } }
+// Подсказка рисуется через портал прямо в body: у #root стоит zoom, и из-за него координаты мыши съезжали (окно появлялось далеко от предмета или поверх него).
 function TipBox({tip}){
-  const w = 340, pad = 16, ref = useRef(null), [h, setH] = useState(0);
-  React.useLayoutEffect(() => { if (ref.current) setH(ref.current.offsetHeight); }, [tip.item, tip.x < 0]);
-  const left = Math.max(8, Math.min(tip.x + pad, window.innerWidth - w - 8));
+  const z = tipZoom(), w = 340 * z, pad = 14, ref = useRef(null), [h, setH] = useState(0);
+  React.useLayoutEffect(() => { if (ref.current) setH(ref.current.getBoundingClientRect().height); }, [tip.item]);
+  const vw = document.documentElement.clientWidth || window.innerWidth, vh = window.innerHeight;
+  let left = tip.x + pad; if (left + w > vw - 8) left = tip.x - pad - w;
+  left = Math.max(8, left);
   let top = tip.y + pad;
-  if (top + h > window.innerHeight - 8) top = (tip.y - h - pad >= 8) ? tip.y - h - pad : Math.max(8, window.innerHeight - h - 8);
-  return html`<div ref=${ref} className="tip" style=${{left:left + 'px', top:top + 'px'}}><${ItemInfo} item=${tip.item}/></div>`;
+  if (top + h > vh - 8) top = Math.max(8, Math.min(tip.y - h - pad, vh - h - 8));
+  return ReactDOM.createPortal(html`<div ref=${ref} className="tip" style=${{left:left + 'px', top:top + 'px', transform:'scale(' + z + ')', transformOrigin:'0 0'}}><${ItemInfo} item=${tip.item}/></div>`, document.body);
 }
 function DetailModal({item, onClose}){
   return html`<div className="modal-bg" onClick=${onClose}>
@@ -755,8 +759,10 @@ function TipHost({children}){
   }), []);
   useEffect(() => {
     const h = () => setTip(null);
-    window.addEventListener('click', h, true); window.addEventListener('scroll', h, true);
-    return () => { window.removeEventListener('click', h, true); window.removeEventListener('scroll', h, true); };
+    // если карточка под мышью исчезла (обновилась игра), подсказка гаснет, как только мышь сдвинулась на что-то другое
+    const ov = e => { if (!(e.target && e.target.closest && e.target.closest('[data-tip]'))) setTip(null); };
+    window.addEventListener('click', h, true); window.addEventListener('scroll', h, true); window.addEventListener('mouseover', ov, true);
+    return () => { window.removeEventListener('click', h, true); window.removeEventListener('scroll', h, true); window.removeEventListener('mouseover', ov, true); };
   }, []);
   useEffect(() => {
     const k = e => { if (e.key === 'Escape') setDetail(null); };
@@ -771,6 +777,7 @@ function TipHost({children}){
 }
 function tipHandlers(ui, item){
   return {
+    'data-tip':'1',
     onMouseEnter:e => ui.showTip(item, e),
     onMouseMove:ui.moveTip,
     onMouseLeave:ui.hideTip,
@@ -807,7 +814,7 @@ function Slot({entry, isNew}){
   if (!entry) return html`<div className="slot">·</div>`;
   const item = BY_ID[entry.id];
   return html`<div ...${tipHandlers(ui, item)} className=${cx('slot', 'full', isNew && 'new')} style=${{'--tc':slotColor(item)}}
-      onClick=${() => ui.openDetail(item)} title=${item.name.ru}>
+      onClick=${() => ui.openDetail(item)}>
     <${ItemIcon} item=${item}/><span className="p num">${item.price}</span>
   </div>`;
 }
@@ -828,9 +835,24 @@ function LangToggles({prefs, setPrefs}){
 function TierChip({tier}){
   return html`<span className="tchip" style=${{'--tc':'var(--t' + tier + ')'}}>Тир ${tier} · ${TIER_PRICE[tier]}</span>`;
 }
+function legacyCopy(t){
+  return new Promise((ok, no) => {
+    try {
+      const a = document.createElement('textarea'); a.value = t; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.appendChild(a); a.select(); a.setSelectionRange(0, a.value.length);
+      const r = document.execCommand('copy'); document.body.removeChild(a); r ? ok() : no(new Error('copy'));
+    } catch (e){ no(e); }
+  });
+}
 function copyText(t){
-  try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t); } catch(e){}
-  return Promise.reject();
+  try { if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).catch(() => legacyCopy(t)); } catch(e){}
+  return legacyCopy(t);
+}
+// Кнопка «Копировать»: показывает, получилось или нет (раньше нажатие ничего не говорило).
+function CopyBtn({text, children}){
+  const [s, setS] = useState('');
+  const go = () => copyText(text).then(() => setS('ok'), () => setS('err')).then(() => setTimeout(() => setS(''), 1800));
+  return html`<button className="btn sm" onClick=${go}>${s === 'ok' ? 'Скопировано ✓' : (s === 'err' ? 'Не вышло, выдели и скопируй сам' : children)}</button>`;
 }
 
 /* ---------- настройки лобби ---------- */
@@ -1471,11 +1493,12 @@ function CatalogError({err, onRetry}){
    Настоящие саундтреки Deadlock мы не вшиваем (авторские права). Свои mp3 можно добавить в FILE_TRACKS: {id:'my', name:'Мой трек', src:'music/my.mp3'}. */
 const FILE_TRACKS = [];
 const THEMES = [
-  {id:'gold', name:'Золото', sw:'#e0c58a'}, {id:'sapphire', name:'Сапфир', sw:'#5f93b8'},
-  {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'graphite', name:'Уголь', sw:'#8d97a1'}, {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'violet', name:'Спиритизм', sw:'#9a62d6'},
-  {id:'amber', name:'Янтарь', sw:'#d98a3a'}, {id:'rose', name:'Роза', sw:'#d96a9a'}, {id:'lime', name:'Лайм', sw:'#a8cc3a'},
-  {id:'indigo', name:'Индиго', sw:'#6a74e0'}, {id:'teal', name:'Бирюза', sw:'#27b5c9'}, {id:'coffee', name:'Кофе', sw:'#b08968'},
-  {id:'sky', name:'Небо', sw:'#4da3ff'}, {id:'ember', name:'Угли', sw:'#e0543a'}, {id:'orchid', name:'Орхидея', sw:'#c45ad6'}, {id:'olive', name:'Олива', sw:'#9aa04a'}, {id:'sand', name:'Песок', sw:'#cdbd94'}, {id:'lavender', name:'Лаванда', sw:'#9b8ee6'}
+  {id:'rose', name:'Роза', sw:'#d96a9a'}, {id:'crimson', name:'Багровый', sw:'#c05a5a'}, {id:'ember', name:'Угли', sw:'#e0543a'},
+  {id:'coffee', name:'Кофе', sw:'#b08968'}, {id:'amber', name:'Янтарь', sw:'#d98a3a'}, {id:'gold', name:'Золото', sw:'#e0c58a'},
+  {id:'sand', name:'Песок', sw:'#cdbd94'}, {id:'olive', name:'Олива', sw:'#9aa04a'}, {id:'lime', name:'Лайм', sw:'#a8cc3a'},
+  {id:'jade', name:'Нефрит', sw:'#5ab88c'}, {id:'teal', name:'Бирюза', sw:'#27b5c9'}, {id:'sapphire', name:'Сапфир', sw:'#5f93b8'},
+  {id:'sky', name:'Небо', sw:'#4da3ff'}, {id:'indigo', name:'Индиго', sw:'#6a74e0'}, {id:'lavender', name:'Лаванда', sw:'#9b8ee6'},
+  {id:'violet', name:'Спиритизм', sw:'#9a62d6'}, {id:'orchid', name:'Орхидея', sw:'#c45ad6'}, {id:'graphite', name:'Уголь', sw:'#8d97a1'}
 ];
 // Звуки меняются вместе с темой. tick/bid: [f1, f2, длительность, форма, громкость]; gavel: [f1, f2, длительность, форма, громкость, шум]
 const SFX_BANK = {
@@ -1841,7 +1864,7 @@ function withHero(Inner){
     const [skip, setSkip] = useState(false), [, bump] = useState(0), seen = useRef(false), t0 = useRef(0);
     if (on && !h.done) seen.current = true;
     if (on && h.done && seen.current && !t0.current) t0.current = Date.now();
-    const ms = on && h.done ? heroMs(h.coin) : 0, from = t0.current || h.t || 0;
+    const ms = on && h.done ? heroMs(h.coin) : 0, from = t0.current || (h && h.t) || 0;
     const revealing = on && h.done && !skip && Date.now() < from + ms;
     useEffect(() => { if (!revealing) return; const t = setTimeout(() => bump(x => x + 1), Math.max(60, from + ms - Date.now() + 60)); return () => clearTimeout(t); }, [revealing, from]);
     if (on && (!h.done || revealing)){
@@ -1950,7 +1973,7 @@ function Builds(){
   useEffect(() => {
     let on = true;
     (async () => {
-      const builds = (await firstJson(['builds.json'])) || [];
+      const b0 = await firstJson(['builds.json']), builds = Array.isArray(b0) ? b0.filter(x => x && typeof x === 'object') : [];
       const he = await firstJson(['heroes-en.min.json', 'heroes-en.json', HERO_API + '?language=english', HERO_API]);
       const hr = await firstJson(['heroes-ru.min.json', 'heroes-ru.json', HERO_API + '?language=russian']);
       const ruBy = {}; (hr || []).forEach(h => { ruBy[h.id] = h.name; });
@@ -1959,7 +1982,7 @@ function Builds(){
       builds.forEach(b => { if (b.hero && !heroes.some(h => sameHero(h.key, b.hero))) heroes.push({key:b.hero, name:{en:b.hero, ru:b.hero}, img:''}); });
       heroes.sort((x, y) => hkey(x.name.en).localeCompare(hkey(y.name.en)));
       if (on) setSt({loading:false, heroes, builds});
-    })();
+    })().catch(() => { if (on) setSt({loading:false, heroes:[], builds:[]}); });
     return () => { on = false; };
   }, []);
   // Ссылка #builds-ID: сразу открываем героя этой сборки, раскрываем её и прокручиваем.
@@ -2275,7 +2298,7 @@ function Auction(){
     return () => r.off('value', h);
   }, [code]);
   const nm = n => n.trim() || 'Игрок';
-  const dispatchOnline = a => fbDb.ref('auctions/' + code + '/state').transaction(cur => (cur ? auReduceH(cur, a) : undefined)).catch(e => setErr(e.message));
+  const dispatchOnline = a => fbDb.ref('auctions/' + code + '/state').transaction(cur => (cur ? auReduceH(cur, a) : cur)).catch(e => setErr(e.message));
   const create = async () => {
     setBusy(true); setErr(null);
     try {
@@ -2295,12 +2318,12 @@ function Auction(){
       const pre = (await fbDb.ref('auctions/' + c + '/state/ver').once('value')).val();
       if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов (у хоста ' + pre + ', у тебя ' + CAT_VER + '). Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
       const res = await fbDb.ref('auctions/' + c + '/state').transaction(cur => {
-        if (!cur) return undefined;
+        if (cur === null) return null;
         if ((cur.seats.A && cur.seats.A.uid === uid) || (cur.seats.B && cur.seats.B.uid === uid)) return cur;
         if (cur.seats.B) return undefined;
         return {...cur, seats:{...cur.seats, B:{uid, name:nm(nick)}}, phase:'nominate'};
       });
-      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      if (!res.committed || !res.snapshot.exists()) throw new Error('Комната не найдена или уже заполнена');
       store.set('bd_aroom', c); setCode(c);
     } catch (e){ setErr(e.message); }
     setBusy(false);
@@ -2312,7 +2335,7 @@ function Auction(){
     if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
     const my = online.seats.A && online.seats.A.uid === uid ? 'A' : (online.seats.B && online.seats.B.uid === uid ? 'B' : null);
     return html`<div className="flex flex-col gap-4">
-      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><button className="btn sm" onClick=${() => { copyText(code); }}>Копировать код</button><button className="btn sm" onClick=${() => { copyText(location.origin + location.pathname + '#auction-' + code); }}>Копировать ссылку-приглашение</button><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b>${online.phase === 'lobby' ? html` · отправь этот код другу` : ''}</span><${CopyBtn} text=${code}>Копировать код<//><${CopyBtn} text=${location.origin + location.pathname + '#auction-' + code}>Копировать ссылку-приглашение<//><button className="btn sm danger" onClick=${leave}>Выйти</button></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
       <${AuctionBoardH} st=${online} controls=${my ? [my] : []} dispatch=${dispatchOnline} onExit=${leave}/>
     </div>`;
@@ -2517,13 +2540,13 @@ function RoomShell({cfg0, path, hash, skey, title, desc, settings, init, reduce,
       const pre = (await ref(c).child('ver').once('value')).val();
       if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов. Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
       const res = await ref(c).transaction(cur => {
-        if (!cur) return undefined;
+        if (cur === null) return null;          // кэша ещё нет: не прерываем, SDK повторит с настоящими данными
         const sa = cur.seats || {};
         if ((sa.A && sa.A.uid === uid) || (sa.B && sa.B.uid === uid)) return cur;
         if (sa.B) return undefined;
         return {...cur, seats:{...sa, B:{uid, name:nm(nick)}}, phase:start};
       });
-      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      if (!res.committed || !res.snapshot.exists()) throw new Error('Комната не найдена или уже заполнена');
       store.set(skey, c); setCode(c);
     } catch (e){ setErr(e.message); }
     setBusy(false);
@@ -2535,9 +2558,9 @@ function RoomShell({cfg0, path, hash, skey, title, desc, settings, init, reduce,
     if (online === null) return html`<div className="panel p-6 text-center"><p>Комната не найдена.</p>${err ? html`<pre className="err">${err}</pre>` : null}<button className="btn mt-3" onClick=${leave}>Назад</button></div>`;
     const sa = online.seats || {}, my = sa.A && sa.A.uid === uid ? 'A' : (sa.B && sa.B.uid === uid ? 'B' : null);
     const link = location.origin + location.pathname + '#' + hash + '-' + code;
-    const dispatch = a => ref(code).transaction(cur => (cur ? reduce(cur, {...a, seat:my, now:Date.now()}) : undefined)).catch(e => setErr(e.message));
+    const dispatch = a => ref(code).transaction(cur => (cur ? reduce(cur, {...a, seat:my, now:Date.now()}) : cur)).catch(e => setErr(e.message));
     return html`<div className="flex flex-col gap-4">
-      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><button className="btn sm" onClick=${() => copyText(code)}>Копировать код</button><button className="btn sm" onClick=${() => copyText(link)}>Копировать ссылку</button></span></div>
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><${CopyBtn} text=${code}>Копировать код<//><${CopyBtn} text=${link}>Копировать ссылку<//></span></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
       <${Board} st=${online} controls=${my ? [my] : []} dispatch=${dispatch} onExit=${leave}/>
     </div>`;
@@ -2564,8 +2587,12 @@ const WaitPanel = ({onExit}) => html`<div className="panel p-6 text-center flex 
 // Кто победил в настоящем матче, игроки отмечают сами; счёт копится между реваншами.
 function buCheck(ids, cfg){
   if (!Array.isArray(ids) || !ids.length || ids.length > cfg.max || new Set(ids).size !== ids.length) return false;
-  let sum = 0, act = 0;
-  for (const id of ids){ const it = CATALOG[id]; if (!it) return false; sum += it.price; if (it.active) act++; }
+  let sum = 0, act = 0; const have = new Set();
+  for (const id of ids){
+    const it = CATALOG[id]; if (!it) return false; sum += it.price; if (it.active) act++;
+    for (const x of closureOf(id)){ if (have.has(x)) return false; }   // улучшение съедает компоненты: предмет и его компонент вместе не берутся
+    closureOf(id).forEach(x => have.add(x));
+  }
   return sum <= cfg.budget && act <= 4;
 }
 function buInit(cfg, seats, score){ return {cfg, ver:CAT_VER, seats, phase:seats.B ? 'build' : 'lobby', picks:{}, ready:{}, score:score || {A:0, B:0}}; }
@@ -2585,10 +2612,11 @@ function BudgetBoard({st, controls, dispatch, onExit}){
   const [draft, setDraft] = useState([]), [q, setQ] = useState(''), [slot, setSlot] = useState('all'), [copied, setCopied] = useState(false);
   const list = useMemo(() => ITEMS.filter(i => !i.missing).sort((a, b) => a.tier - b.tier || a.name.en.localeCompare(b.name.en)), []);
   const items = draft.map(id => BY_ID[id]), spent = items.reduce((t, i) => t + i.price, 0), acts = items.filter(i => i.active).length, left = cfg.budget - spent;
-  const can = it => !draft.includes(it.id) && draft.length < cfg.max && it.price <= left && !(it.active && acts >= 4);
-  const ql = q.trim().toLowerCase(), shown = list.filter(i => (slot === 'all' || i.slot === slot) && (!ql || (i.name.ru + ' ' + i.name.en).toLowerCase().includes(ql))).slice(0, 60);
+  const ui = useContext(UiCtx), bl = blockedSet(draft);
+  const can = it => !bl.has(it.id) && draft.length < cfg.max && it.price <= left && !(it.active && acts >= 4);
+  const ql = q.trim().toLowerCase(), shown = list.filter(i => (slot === 'all' || i.slot === slot) && (!ql || (i.name.ru + ' ' + i.name.en).toLowerCase().includes(ql)));
   const sum = ids => (ids || []).reduce((t, id) => t + BY_ID[id].price, 0);
-  const rows = ids => (ids || []).map(id => { const it = BY_ID[id]; return html`<div key=${id} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num"><${Soul} size=${9}/> ${it.price}</span></div>`; });
+  const rows = ids => (ids || []).map(id => { const it = BY_ID[id]; return html`<div key=${id} ...${tipHandlers(ui, it)} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num"><${Soul} size=${9}/> ${it.price}</span></div>`; });
   const head = html`<div className="panel p-3 flex flex-wrap items-center justify-between gap-3"><span className="muted disp" style=${{fontSize:'13px'}}>Бюджетный билд · бюджет ${cfg.budget} · до ${cfg.max} предметов</span><div className="flex gap-3">${['A', 'B'].map(x => html`<span key=${x} className="chip" style=${me === x ? {borderColor:'var(--gold2)',color:'var(--gold2)'} : null}>${nm(x)}: <b className="num">${sc[x]}</b></span>`)}</div></div>`;
   if (st.phase === 'lobby') return html`<${WaitPanel} onExit=${onExit}/>`;
   if (st.phase === 'reveal'){
@@ -2608,10 +2636,11 @@ function BudgetBoard({st, controls, dispatch, onExit}){
       <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Предметы</div>
         <${SlotTabs} value=${slot} onChange=${setSlot}/>
         <input className="fld" placeholder="Поиск по названию" value=${q} onChange=${e => setQ(e.target.value)}/>
-        <div className="grid gap-2" style=${{maxHeight:'420px',overflowY:'auto'}}>${shown.map(it => html`<button key=${it.id} className="gu-opt" style=${{display:'flex',alignItems:'center',gap:'10px',textAlign:'left',opacity:can(it) ? 1 : .4}} onClick=${() => { if (can(it)) setDraft(d => d.concat(it.id)); }}><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">Т${it.tier} · ${it.price}</span></button>`)}</div></div>
+        <div className="grid gap-2" style=${{maxHeight:'420px',overflowY:'auto'}}>${shown.map(it => html`<button key=${it.id} ...${tipHandlers(ui, it)} className="gu-opt" style=${{display:'flex',alignItems:'center',gap:'10px',textAlign:'left',opacity:can(it) ? 1 : .4}} onClick=${() => { if (can(it)) setDraft(d => d.concat(it.id)); }}><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">Т${it.tier} · ${it.price}</span></button>`)}</div></div>
       <div className="panel p-4 flex flex-col gap-3"><div className="panel-h">Твой билд</div>
         <div className="flex flex-wrap gap-2"><span className="chip">Осталось ${left}</span><span className="chip">${draft.length} из ${cfg.max}</span><span className="chip">Активных ${acts} из 4</span></div>
-        ${items.length ? items.map(it => html`<div key=${it.id} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">${it.price}</span><button className="btn sm" onClick=${() => setDraft(d => d.filter(x => x !== it.id))}>Убрать</button></div>`) : html`<div className="muted">Пока пусто. Выбери предметы слева.</div>`}
+        <div className="muted" style=${{fontSize:'12px'}}>Как в игре: улучшение съедает свои компоненты, поэтому предмет и его компонент вместе взять нельзя (такие предметы в списке затемнены).</div>
+        ${items.length ? items.map(it => html`<div key=${it.id} ...${tipHandlers(ui, it)} className="flex items-center gap-2"><${ItemIcon} item=${it} size=${28}/><span style=${{flex:1}}>${it.name[nameLang]}</span><span className="muted num">${it.price}</span><button className="btn sm" onClick=${() => setDraft(d => d.filter(x => x !== it.id))}>Убрать</button></div>`) : html`<div className="muted">Пока пусто. Выбери предметы слева.</div>`}
         <button className="btn gold" disabled=${!draft.length} onClick=${() => dispatch({t:'ready', ids:draft})}>Готово, отправить билд</button></div>
     </div>
     <div><button className="btn sm" onClick=${onExit}>Выйти</button></div></div>`;
@@ -2709,7 +2738,7 @@ function Guess(){
     return () => r.off('value', h);
   }, [code]);
   const nm = n => n.trim() || 'Игрок';
-  const dispatchOnline = a => fbDb.ref(GU_PATH + '/' + code + '/state').transaction(cur => (cur ? guReduce(cur, a) : undefined)).catch(e => setErr(e.message));
+  const dispatchOnline = a => fbDb.ref(GU_PATH + '/' + code + '/state').transaction(cur => (cur ? guReduce(cur, a) : cur)).catch(e => setErr(e.message));
   const create = async () => {
     setBusy(true); setErr(null);
     try {
@@ -2729,13 +2758,13 @@ function Guess(){
       const pre = (await fbDb.ref(GU_PATH + '/' + c + '/state/ver').once('value')).val();
       if (pre && CAT_VER && pre !== CAT_VER) throw new Error('У вас разные версии каталога предметов. Обнови страницу (Ctrl+F5) и попробуй ещё раз.');
       const res = await fbDb.ref(GU_PATH + '/' + c + '/state').transaction(cur => {
-        if (!cur) return undefined;
+        if (cur === null) return null;
         const sa = cur.seats || {};
         if ((sa.A && sa.A.uid === uid) || (sa.B && sa.B.uid === uid)) return cur;
         if (sa.B || cur.solo) return undefined;
         return {...cur, seats:{...sa, B:{uid, name:nm(nick)}}, phase:'play'};
       });
-      if (!res.committed) throw new Error('Комната не найдена или уже заполнена');
+      if (!res.committed || !res.snapshot.exists()) throw new Error('Комната не найдена или уже заполнена');
       store.set('bd_groom', c); setCode(c);
     } catch (e){ setErr(e.message); }
     setBusy(false);
@@ -2748,7 +2777,7 @@ function Guess(){
     const sa = online.seats || {}, my = sa.A && sa.A.uid === uid ? 'A' : (sa.B && sa.B.uid === uid ? 'B' : null);
     const link = location.origin + location.pathname + '#guess-' + code;
     return html`<div className="flex flex-col gap-4">
-      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><button className="btn sm" onClick=${() => copyText(code)}>Копировать код</button><button className="btn sm" onClick=${() => copyText(link)}>Копировать ссылку</button></span></div>
+      <div className="panel p-3 flex flex-wrap items-center justify-between gap-2"><span>Комната <b className="disp" style=${{color:'var(--gold2)',letterSpacing:'.2em'}}>${code}</b></span><span className="flex gap-2"><${CopyBtn} text=${code}>Копировать код<//><${CopyBtn} text=${link}>Копировать ссылку<//></span></div>
       ${err ? html`<pre className="err">${err}</pre>` : null}
       <${GuessBoard} st=${online} controls=${my ? [my] : []} dispatch=${a => dispatchOnline({...a, seat:my})} onExit=${leave}/>
     </div>`;
