@@ -361,6 +361,20 @@ button.seg-b{transition:background .2s,color .2s}
 .hmini{width:22px;height:22px;border-radius:50%;object-fit:cover;border:1px solid var(--gold)}
 .hchip{padding:2px 12px 2px 4px}
 @media (prefers-reduced-motion:reduce){.card-inner,.card,.slot.new,.spin{transition:none;animation:none}}
+/* Рулетка героев */
+.rl-face{display:flex;flex-direction:column;align-items:center;gap:4px;width:84px;font-size:12px;text-align:center;line-height:1.15;animation:popIn .4s cubic-bezier(.2,.9,.3,1.15) backwards}
+.rl-face img,.rl-face .hph{width:64px;height:64px;object-fit:cover;border-radius:4px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font:800 26px var(--f-head);color:var(--gold2);border:2px solid var(--edge)}
+.rl-face.rl-hi img,.rl-face.rl-hi .hph{border-color:var(--t3);box-shadow:0 0 14px rgba(166,126,230,.55)}
+.rl-face.rl-mid img,.rl-face.rl-mid .hph{border-color:var(--t2);box-shadow:0 0 10px rgba(230,138,46,.4)}
+.rl-face.rl-low img,.rl-face.rl-low .hph{border-color:#8d8a82}
+.rl-face.big{width:150px;font-size:15px;animation:none}.rl-face.big img,.rl-face.big .hph{width:120px;height:120px;font-size:52px;border-color:var(--gold2);box-shadow:0 0 22px rgba(var(--acc),.5)}
+.rl-reel{display:flex;justify-content:center;padding:18px}
+.rl-col{border-top:3px solid var(--c)}
+.rl-h{font-family:var(--f-head);font-weight:800;font-size:20px}
+.rl-sl input[type=range]:disabled{opacity:.5}
+.rl-wheel{transform-origin:75px 48px;animation:rlspin 14s linear infinite}
+@keyframes rlspin{to{transform:rotate(360deg)}}
+body.no-anim .rl-wheel{animation:none}
 </style>
 </head>
 <body>
@@ -1681,10 +1695,10 @@ function SettingsModal({prefs, setPrefs, onClose}){
 }
 
 /* ======================= ХАБ ======================= */
-const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : (/^#guess(-|$)/.test(h) ? 'guess' : (/^#budget(-|$)/.test(h) ? 'budget' : (/^#cards(-|$)/.test(h) ? 'cards' : null))));
+const gameFromHash = h => h === '#draft' ? 'draft' : /^#builds(-|$)/.test(h) ? 'builds' : (/^#auction(-|$)/.test(h) ? 'auction' : (/^#guess(-|$)/.test(h) ? 'guess' : (/^#budget(-|$)/.test(h) ? 'budget' : (/^#cards(-|$)/.test(h) ? 'cards' : (/^#roulette(-|$)/.test(h) ? 'roulette' : null)))));
 const hashRoomG = () => { const m = /^#guess-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
 const hashRoom = () => { const m = /^#auction-([A-Za-z0-9]{4,8})$/.exec(location.hash); return m ? m[1].toUpperCase() : ''; };
-const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', guess:'Угадай предмет', budget:'Бюджетный билд', cards:'Челлендж-карточки', builds:'Сборки героев'};
+const GAME_NAME = {draft:'Слепой драфт', auction:'Чёрный аукцион', guess:'Угадай предмет', budget:'Бюджетный билд', cards:'Челлендж-карточки', roulette:'Рулетка героев', builds:'Сборки героев'};
 const FAQ = [
   ['Что это за сайт?', 'Набор мини-режимов, в которые можно сыграть с другом перед или вместо обычного матча в Deadlock. Сайт только помогает выбрать предметы, сам бой идёт в игре.'],
   ['Нужно ли регистрироваться или что-то скачивать?', 'Нет. Открой сайт, придумай ник и играй. Всё работает прямо в браузере, на компьютере и на телефоне.'],
@@ -2053,6 +2067,8 @@ function Hub({onOpen}){
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="48" cy="48" r="30" fill="#e0c58a" stroke="#b8975a" strokeWidth="4"/><text x="48" y="59" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311">$</text><rect x="92" y="26" width="38" height="12" rx="2" fill="#7fb53a"/><rect x="92" y="44" width="30" height="12" rx="2" fill="#9a62d6"/><rect x="92" y="62" width="22" height="12" rx="2" fill="#e58a1f"/></g></svg>`}
     ,{id:'cards', title:'Челлендж-карточки', tag:'1 на 1 · онлайн или на одном экране', desc:'Случайные условия на матч: принимай, меняй или отклоняй. Потом выполняй их в игре.', btn:'Играть',
      art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><g transform="rotate(-12 48 52)"><rect x="22" y="16" width="52" height="68" rx="5" fill="#9a62d6" stroke="#141311" strokeWidth="3"/><text x="48" y="60" textAnchor="middle" fontSize="30" fontWeight="800" fill="#141311" opacity=".6">!</text></g><g transform="rotate(10 106 50)"><rect x="80" y="12" width="52" height="68" rx="5" fill="#e58a1f" stroke="#141311" strokeWidth="3"/><path d="M106 30 120 46 106 62 92 46z" fill="#141311"/></g></g></svg>`}
+    ,{id:'roulette', title:'Рулетка героев', tag:'Соло · перед поиском матча', desc:'Отметь героев, на которых готов играть, и рулетка сама распределит хай-пик, средний и низкий приоритет.', btn:'Крутить',
+     art:html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><g className="rl-wheel"><path d="M75 48 75 14A34 34 0 0 1 109 48Z" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><path d="M75 48 109 48A34 34 0 0 1 45.6 65Z" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/><path d="M75 48 45.6 65A34 34 0 0 1 75 14Z" fill="#8d8a82" stroke="#141311" strokeWidth="2.5"/><circle cx="75" cy="48" r="8" fill="#141311"/><circle cx="75" cy="48" r="3.5" fill="#7ec4d1"/></g><path d="M69 6 81 6 75 18Z" fill="#e0c58a" stroke="#141311" strokeWidth="2"/></g></svg>`}
   ];
   const buildsArt = html`<svg width="150" height="96" viewBox="0 0 150 96" aria-hidden="true"><g className="fl"><circle cx="40" cy="36" r="22" fill="#5f93b8" stroke="#141311" strokeWidth="3"/><circle cx="40" cy="30" r="8" fill="#141311" opacity=".55"/><path d="M24 54q16-14 32 0" fill="#141311" opacity=".55"/>
        <rect x="76" y="14" width="26" height="26" rx="3" fill="#e0c58a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="14" width="26" height="26" rx="3" fill="#9a62d6" stroke="#141311" strokeWidth="2.5"/><rect x="76" y="46" width="26" height="26" rx="3" fill="#7fb53a" stroke="#141311" strokeWidth="2.5"/><rect x="108" y="46" width="26" height="26" rx="3" fill="#e58a1f" stroke="#141311" strokeWidth="2.5"/></g></svg>`;
@@ -2844,6 +2860,103 @@ function Guess(){
 
 /* ---------- вкладки слотов ---------- */
 const TABS = [['all', 'Все предметы', '#c9c3b4'], ['weapon', 'Оружие', 'var(--s-weapon)'], ['spirit', 'Спиритизм', 'var(--s-spirit)'], ['vitality', 'Живучесть', 'var(--s-vitality)']];
+/* ======================= РУЛЕТКА ГЕРОЕВ ======================= */
+// Отмечаешь любое число героев, рулетка сама раздаёт приоритеты поиска: хай-пик (фиолетовый), средний (оранжевый), низкий (серый, для заполнения).
+// Для начала поиска в игре нужно минимум 3 героя. Автоматически: ~12% героев в хай-пик, ~18% в средний, остальные в низкий (но всегда остаётся хотя бы один в низком).
+const RL_MIN = 3, RL_HI_MAX = 6, RL_MID_MAX = 10;
+const RL_LV = [
+  {k:'hi', name:'Хай-пик', sub:'играть хочется больше всего', col:'var(--t3)'},
+  {k:'mid', name:'Средний', sub:'если хай-пик не выпал', col:'var(--t2)'},
+  {k:'low', name:'Низкий', sub:'для заполнения', col:'#8d8a82'}
+];
+function rlFit(n, hi, mid){   // приводим числа к допустимым: в сумме не больше n-1, чтобы остался хотя бы один низкий
+  hi = Math.max(0, Math.min(RL_HI_MAX, Math.round(hi) || 0)); mid = Math.max(0, Math.min(RL_MID_MAX, Math.round(mid) || 0));
+  const room = Math.max(0, n - 1);
+  if (hi > room) hi = room;
+  if (hi + mid > room) mid = room - hi;
+  return {hi, mid};
+}
+function rlAuto(n){
+  if (n < RL_MIN) return {hi:0, mid:0};
+  return rlFit(n, Math.max(1, Math.round(n * .12)), Math.max(n >= 6 ? 1 : 0, Math.round(n * .18)));
+}
+function rlRand(n){ try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e){ return Math.floor(Math.random() * n); } }
+function rlShuffle(list){ const a = list.slice(); for (let i = a.length - 1; i > 0; i--){ const j = rlRand(i + 1); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function RlFace({h, lang, cls}){
+  const [bad, setBad] = useState(false);
+  return html`<div className=${cx('rl-face', cls)}>${h.img && !bad ? html`<img src=${h.img} alt="" referrerPolicy="no-referrer" onError=${() => setBad(true)}/>` : html`<div className="hph">${h.name.en.replace(/^the\s+/i, '').charAt(0)}</div>`}<span>${h.name[lang]}</span></div>`;
+}
+function Roulette(){
+  const {nameLang} = useContext(PrefCtx), heroes = useHeroes();
+  const [sel, setSel] = useState(() => { const v = store.get('bd_rl_sel', []); return Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 200) : []; });
+  const [auto, setAuto] = useState(true), [man, setMan] = useState({hi:2, mid:3});
+  const [q, setQ] = useState(''), [res, setRes] = useState(null), [spinning, setSpinning] = useState(false), [reel, setReel] = useState(null);
+  const timers = useRef([]);
+  const clearAll = () => { timers.current.forEach(t => { clearTimeout(t); clearInterval(t); }); timers.current = []; };
+  useEffect(() => clearAll, []);
+  useEffect(() => { store.set('bd_rl_sel', sel); }, [sel]);
+  const selSet = useMemo(() => new Set(sel), [sel]);
+  const picked = heroes.filter(h => selSet.has(h.key)), n = picked.length;
+  const cnt = auto ? rlAuto(n) : (n < RL_MIN ? {hi:0, mid:0} : rlFit(n, man.hi, man.mid));
+  const low = Math.max(0, n - cnt.hi - cnt.mid);
+  const shown = heroes.filter(h => normN(h.name.en + ' ' + h.name.ru).includes(normN(q)));
+  const toggle = k => { if (spinning) return; setRes(null); setSel(s => s.includes(k) ? s.filter(x => x !== k) : s.concat(k)); };
+  const allShown = () => { if (spinning) return; setRes(null); setSel(s => Array.from(new Set(s.concat(shown.map(h => h.key))))); };
+  const none = () => { if (spinning) return; setRes(null); setSel([]); };
+  const randomSet = k => { if (spinning || !heroes.length) return; setRes(null); setSel(rlShuffle(heroes).slice(0, Math.min(k, heroes.length)).map(h => h.key)); };
+  const spin = () => {
+    if (spinning || n < RL_MIN) return;
+    clearAll();
+    const arr = rlShuffle(picked), g = {hi:arr.slice(0, cnt.hi), mid:arr.slice(cnt.hi, cnt.hi + cnt.mid), low:arr.slice(cnt.hi + cnt.mid)};
+    const fast = document.body.classList.contains('no-anim');
+    setRes({hi:[], mid:[], low:[]}); setSpinning(true);
+    let t = fast ? 250 : 2000;
+    const iv = setInterval(() => setReel(picked[rlRand(n)]), 85); timers.current.push(iv);
+    timers.current.push(setTimeout(() => { clearInterval(iv); setReel(null); }, t));
+    [['hi', fast ? 0 : 520], ['mid', fast ? 0 : 300], ['low', fast ? 0 : 110]].forEach(([k, d]) => g[k].forEach(h => {
+      t += d;
+      timers.current.push(setTimeout(() => { setRes(r => ({...r, [k]:r[k].concat(h)})); Sfx.play(k === 'hi' ? 'bid' : 'tick'); }, t));
+    }));
+    timers.current.push(setTimeout(() => { setSpinning(false); Sfx.play('gavel'); }, t + 200));
+  };
+  const textOf = r => RL_LV.map(l => l.name + ': ' + (r[l.k].map(h => h.name[nameLang]).join(', ') || '—')).join('\n');
+  const slider = (label, key, max) => html`<div className="rl-sl"><div className="flex justify-between"><span>${label}</span><b className="disp num">${cnt[key]}</b></div>
+    <input type="range" min="0" max=${max} step="1" value=${cnt[key]} disabled=${auto || n < RL_MIN} onChange=${e => setMan(m => ({...m, [key]:Number(e.target.value)}))}/></div>`;
+  const reelH = reel || (spinning ? picked[0] : null);
+  return html`<div className="flex flex-col gap-5">
+    <div className="hero text-center"><h2 className="hero-t" style=${{fontSize:'clamp(28px,6vw,48px)'}}>Рулетка героев</h2>
+      <p className="muted" style=${{maxWidth:'62ch',margin:'0 auto'}}>Отметь всех героев, на которых не против сыграть. Рулетка сама раздаст приоритеты для поиска: хай-пик, средний и низкий.</p></div>
+    <div className="panel p-4 flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <input className="fld" style=${{maxWidth:'240px'}} placeholder="Поиск героя" value=${q} onChange=${e => setQ(e.target.value)}/>
+        <button className="btn sm" onClick=${allShown} disabled=${spinning}>Выбрать всех${q ? ' найденных' : ''}</button>
+        <button className="btn sm" onClick=${() => randomSet(12)} disabled=${spinning}>Случайные 12</button>
+        <button className="btn sm danger" onClick=${none} disabled=${spinning || !n}>Сбросить</button>
+        <span className="chip" style=${{marginLeft:'auto'}}>Выбрано: <b className="num">${n}</b></span>
+      </div>
+      ${!heroes.length ? html`<div className="muted">Загружаем героев…</div>` : null}
+      <div className="flex flex-wrap gap-2">${shown.map(h => html`<${HeroTile} key=${h.key} h=${h} n=${selSet.has(h.key) ? '✓' : 0} on=${selSet.has(h.key)} nameLang=${nameLang} onClick=${() => toggle(h.key)}/>`)}</div>
+      ${heroes.length && !shown.length ? html`<div className="muted">Такого героя нет.</div>` : null}
+    </div>
+    <div className="panel p-4 flex flex-col gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3"><div className="panel-h" style=${{fontSize:'18px'}}>Сколько кому</div>
+        <${Seg} value=${auto} options=${[{v:true, l:'Авто'}, {v:false, l:'Вручную'}]} onChange=${setAuto}/></div>
+      <div className="grid gap-4 md:grid-cols-3">
+        ${slider('Хай-пик', 'hi', Math.min(RL_HI_MAX, Math.max(0, n - 1)))}
+        ${slider('Средний', 'mid', Math.min(RL_MID_MAX, Math.max(0, n - 1 - cnt.hi)))}
+        <div className="rl-sl"><div className="flex justify-between"><span>Низкий</span><b className="disp num">${low}</b></div><div className="muted" style=${{fontSize:'12px'}}>Все остальные, считается сам.</div></div>
+      </div>
+      <div className="muted" style=${{fontSize:'12px'}}>${n < RL_MIN ? 'Для начала поиска в игре нужно минимум ' + RL_MIN + ' героя в пике. Отметь ещё ' + (RL_MIN - n) + '.' : (auto ? 'Авто: примерно 12% героев в хай-пик и 18% в средний, остальные в низкий.' : 'Ручной режим: сумма хай-пика и среднего всегда оставляет хотя бы одного героя в низком.')}</div>
+      <div className="flex flex-wrap items-center gap-3"><button className="btn gold" onClick=${spin} disabled=${spinning || n < RL_MIN}>${spinning ? 'Крутится…' : (res ? 'Крутить ещё раз' : 'Крутить рулетку')}</button>
+        ${res && !spinning ? html`<${CopyBtn} text=${textOf(res)}>Скопировать список<//>` : null}</div>
+    </div>
+    ${spinning && reelH ? html`<div className="rl-reel panel"><${RlFace} h=${reelH} lang=${nameLang} cls="big"/></div>` : null}
+    ${res ? html`<div className="grid gap-4 md:grid-cols-3">${RL_LV.map(l => html`<div key=${l.k} className="panel p-4 rl-col" style=${{'--c':l.col}}>
+      <div className="rl-h" style=${{color:l.col}}>${l.name} <span className="muted num" style=${{fontSize:'13px'}}>· ${res[l.k].length}</span></div>
+      <div className="muted" style=${{fontSize:'12px',marginBottom:'10px'}}>${l.sub}</div>
+      <div className="flex flex-wrap gap-2">${res[l.k].map(h => html`<${RlFace} key=${h.key} h=${h} lang=${nameLang} cls=${'rl-' + l.k}/>`)}${!res[l.k].length && !spinning ? html`<span className="muted">Пусто</span>` : null}</div></div>`)}</div>` : null}
+  </div>`;
+}
 function SlotGlyph({k}){
   const g = {
     all: html`<g fill="currentColor">${[4, 10, 16].flatMap(y => [4, 10, 16].map(x => html`<rect key=${x + '-' + y} x=${x} y=${y} width="4" height="4"/>`))}</g>`,
@@ -2931,6 +3044,7 @@ function App(){
   else if (game === 'guess') body = html`<${Guess}/>`;
   else if (game === 'budget') body = html`<${Budget}/>`;
   else if (game === 'cards') body = html`<${Cards}/>`;
+  else if (game === 'roulette') body = html`<${Roulette}/>`;
   else if (localRun) body = html`<${LocalGame} run=${localRun} onExit=${() => setLocalRun(null)}/>`;
   else if (roomCode && dbh.status === 'ready') body = html`<${OnlineRoom} db=${dbh.db} uid=${dbh.uid} code=${roomCode} canWrite=${dbh.canWrite} onLeave=${leaveRoom}/>`;
   else body = html`<${Lobby} cfg=${cfg} setCfg=${setCfg} names=${names} setNames=${setNames} conn=${conn} setConn=${setConn} dbh=${dbh}
